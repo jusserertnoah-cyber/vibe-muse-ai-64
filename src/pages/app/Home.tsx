@@ -1,28 +1,30 @@
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { getProfile } from "@/lib/profile";
-import { INSPIRATION } from "@/data/inspiration";
+import { INSPIRATION, ALL_STYLES, STYLE_IMAGE } from "@/data/inspiration";
 import { Cloud, Sparkles, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { StyleTag } from "@/lib/types";
 import { useNavigate } from "react-router-dom";
+import { getCurrentWeather } from "@/lib/weather";
 
-const FILTERS: ("Pour toi" | StyleTag)[] = [
-  "Pour toi",
-  "Old Money", "Streetwear", "Gorpcore", "Minimalisme",
-  "Y2K", "Dark Academia", "Blokecore", "Cyber-Y2K",
-  "Modern Gothic", "Clean Fit",
-];
+const FILTERS: ("Pour toi" | StyleTag)[] = ["Pour toi", ...ALL_STYLES];
 
-const PAGE = 40;
+const PAGE = 12;
 
 export default function Home() {
+  const { t } = useTranslation();
   const profile = getProfile();
   const navigate = useNavigate();
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("Pour toi");
   const [count, setCount] = useState(PAGE);
-  const [temp, setTemp] = useState<number | null>(null);
+  const [weather, setWeather] = useState<{ temp: number; city?: string } | null>(null);
 
-  useEffect(() => { setTemp(18); }, []);
+  useEffect(() => {
+    getCurrentWeather().then((w) => {
+      if (w) setWeather({ temp: w.temp, city: w.city });
+    });
+  }, []);
   useEffect(() => { setCount(PAGE); }, [filter]);
 
   const looks = useMemo(() => {
@@ -43,18 +45,44 @@ export default function Home() {
       <header className="flex items-start justify-between">
         <div>
           <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-            Bonjour
+            {t("home.hello")}
           </p>
           <h1 className="mt-1 font-serif text-3xl">{profile?.firstName}</h1>
         </div>
         <div className="flex items-center gap-2 rounded-full glass-panel px-4 py-2 text-sm">
           <Cloud className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
-          <span>{temp ? `${temp}°` : "—"}</span>
-          {profile?.city && (
-            <span className="text-muted-foreground">· {profile.city}</span>
+          <span>{weather ? `${weather.temp}°` : "—"}</span>
+          {weather?.city && (
+            <span className="text-muted-foreground">· {weather.city}</span>
           )}
         </div>
       </header>
+
+      {/* Style spotlight — 6 cartes phares */}
+      <section aria-label="Styles phares">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="font-serif text-xl">{t("home.styles")}</h2>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {ALL_STYLES.map((s) => (
+            <button
+              key={s}
+              onClick={() => navigate("/app/dressing", { state: { presetStyle: s } })}
+              className="group relative aspect-[3/4] overflow-hidden rounded-3xl bg-muted shadow-card transition-all hover:shadow-soft"
+            >
+              <img
+                src={STYLE_IMAGE[s]}
+                alt={s}
+                loading="lazy"
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 to-transparent p-3">
+                <div className="text-sm font-semibold text-background">{s}</div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </section>
 
       {/* Vibers card */}
       <div className="rounded-[28px] bg-gradient-luxe p-5 shadow-soft">
