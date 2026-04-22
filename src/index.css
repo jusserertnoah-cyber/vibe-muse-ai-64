@@ -8,54 +8,51 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* VIBE — Nude Luxe palette */
-    --background: 48 33% 98%;          /* #FAFAF8 off-white */
-    --foreground: 210 6% 18%;          /* anthracite */
+    /* VIBE — Studio Photo / Universal palette */
+    --background: 0 0% 95%;             /* #F2F2F2 light grey */
+    --foreground: 0 0% 10%;              /* #1A1A1A graphite */
 
     --card: 0 0% 100%;
-    --card-foreground: 210 6% 18%;
+    --card-foreground: 0 0% 10%;
 
-    --popover: 48 33% 98%;
-    --popover-foreground: 210 6% 18%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
 
-    --primary: 24 16% 62%;             /* #AF9F90 taupe */
-    --primary-foreground: 48 33% 98%;
+    --primary: 0 0% 10%;                 /* graphite — neutre */
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 14 27% 85%;           /* #E0D7D1 bois de rose */
-    --secondary-foreground: 210 8% 22%;
+    --secondary: 0 0% 92%;
+    --secondary-foreground: 0 0% 10%;
 
-    --muted: 30 15% 94%;
-    --muted-foreground: 24 8% 45%;
+    --muted: 0 0% 90%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 14 27% 85%;
-    --accent-foreground: 210 8% 22%;
+    --accent: 46 65% 53%;                /* #D4AF37 safran */
+    --accent-foreground: 0 0% 10%;
 
     --destructive: 0 65% 55%;
-    --destructive-foreground: 48 33% 98%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 30 12% 88%;
-    --input: 30 12% 90%;
-    --ring: 24 16% 62%;
+    --border: 0 0% 88%;
+    --input: 0 0% 90%;
+    --ring: 46 65% 53%;
 
     --radius: 2rem; /* 32px ultra rounded */
 
-    /* Custom semantic */
-    --taupe: 24 16% 62%;
-    --rose-wood: 14 27% 85%;
-    --cream: 48 33% 98%;
-    --anthracite: 210 6% 18%;
+    /* Custom semantic — kept name `cobalt` as alias to avoid sweeping refactor */
+    --graphite: 0 0% 10%;
+    --safran: 46 65% 53%;
+    --safran-foreground: 0 0% 10%;
+    --cobalt: 46 65% 53%;                /* alias → safran */
+    --cobalt-foreground: 0 0% 10%;
+    --neon: 46 65% 53%;                  /* alias → safran (was orange) */
+    --neon-foreground: 0 0% 10%;
 
-    /* Contrast accents — Cobalt (action) & Néon Orange (alerte/aura) */
-    --cobalt: 218 100% 34%;             /* #0047AB */
-    --cobalt-foreground: 48 33% 98%;
-    --neon: 17 100% 56%;                /* #FF5F1F */
-    --neon-foreground: 48 33% 98%;
-
-    --gradient-luxe: linear-gradient(135deg, hsl(14 27% 90%), hsl(24 16% 78%));
-    --gradient-cobalt: linear-gradient(135deg, hsl(218 100% 38%), hsl(218 100% 28%));
-    --shadow-soft: 0 8px 30px -12px hsl(24 16% 62% / 0.25);
-    --shadow-card: 0 2px 20px -8px hsl(24 16% 50% / 0.12);
-    --shadow-cobalt: 0 10px 40px -12px hsl(218 100% 34% / 0.45);
+    --gradient-luxe: linear-gradient(135deg, hsl(0 0% 97%), hsl(0 0% 90%));
+    --gradient-cobalt: linear-gradient(135deg, hsl(46 65% 58%), hsl(46 65% 48%));
+    --shadow-soft: 0 8px 30px -12px hsl(0 0% 0% / 0.12);
+    --shadow-card: 0 2px 20px -8px hsl(0 0% 0% / 0.08);
+    --shadow-cobalt: 0 10px 40px -12px hsl(46 65% 53% / 0.55);
     --transition-luxe: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
     --sidebar-background: 0 0% 98%;
