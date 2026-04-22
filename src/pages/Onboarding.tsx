@@ -253,7 +253,7 @@ export default function Onboarding() {
             </div>
           )}
 
-          {step === 3 && (
+          {step === 4 && (
             <div className="space-y-6">
               <h1 className="font-serif text-4xl leading-tight text-balance">
                 Tes vibes préférées&nbsp;?
@@ -284,7 +284,7 @@ export default function Onboarding() {
             </div>
           )}
 
-          {step === 4 && (
+          {step === 5 && (
             <div className="space-y-6">
               <h1 className="font-serif text-4xl leading-tight text-balance">
                 Active la localisation
@@ -313,7 +313,7 @@ export default function Onboarding() {
             </div>
           )}
 
-          {step === 5 && (
+          {step === 6 && (
             <div className="space-y-6">
               <h1 className="font-serif text-4xl leading-tight text-balance">
                 Ta photo de référence
@@ -363,7 +363,7 @@ export default function Onboarding() {
             </div>
           )}
 
-          {step === 6 && (
+          {step === 7 && (
             <div className="space-y-6">
               <h1 className="font-serif text-4xl leading-tight text-balance">
                 Ton dressing
@@ -398,7 +398,7 @@ export default function Onboarding() {
           )}
         </div>
 
-        {step < 6 && (
+        {step < 7 && (
           <div className="pb-4 pt-6">
             <Button
               onClick={next}
