@@ -1,0 +1,48 @@
+{
+  "nav": { "home": "Home", "dressing": "Dressing", "scan": "Scan", "profile": "Profile" },
+  "common": {
+    "continue": "Continue",
+    "back": "Back",
+    "skip": "Skip",
+    "generate": "Generate my outfit",
+    "next": "Next",
+    "done": "Done"
+  },
+  "onboarding": {
+    "language": "Choose your language",
+    "languageHint": "You can change it later in your profile.",
+    "welcome": "Welcome.",
+    "yourName": "What's your name?",
+    "namePlaceholder": "Your first name",
+    "nameHint": "I'll use your name to advise you like a stylist friend."
+  },
+  "dressing": {
+    "title": "Build your outfit",
+    "step1": "What's your style today?",
+    "step2": "What's the vibe?",
+    "step3": "Where are you going?",
+    "generating": "Composing your outfit…",
+    "generate": "Generate my outfit"
+  },
+  "profile": {
+    "title": "Profile",
+    "closet": "Vibe Closet",
+    "closetEmpty": "Add your pieces by voice for 100% personalised outfits.",
+    "addPiece": "Add a piece",
+    "subscriptions": "View subscriptions",
+    "premium": "Premium"
+  },
+  "paywall": {
+    "title": "Level up to Icon",
+    "subtitle": "Unlock unlimited generations and HD virtual try-on.",
+    "week": "Week",
+    "month": "Month",
+    "quarter": "Quarter",
+    "popular": "Most popular",
+    "icon": "The Icon offer",
+    "save": "Save 33%",
+    "ideal": "Perfect to try",
+    "restore": "Restore purchases",
+    "subscribe": "Subscribe"
+  }
+}

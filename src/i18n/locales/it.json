@@ -1,0 +1,36 @@
+{
+  "nav": { "home": "Home", "dressing": "Dressing", "scan": "Scan", "profile": "Profilo" },
+  "common": {
+    "continue": "Continua", "back": "Indietro", "skip": "Salta",
+    "generate": "Genera il mio look", "next": "Avanti", "done": "Fatto"
+  },
+  "onboarding": {
+    "language": "Scegli la tua lingua",
+    "languageHint": "Potrai cambiarla nel tuo profilo.",
+    "welcome": "Benvenut@.",
+    "yourName": "Come ti chiami?",
+    "namePlaceholder": "Il tuo nome",
+    "nameHint": "Il tuo nome mi serve per consigliarti come un'amica stylist."
+  },
+  "dressing": {
+    "title": "Componi il tuo look",
+    "step1": "Qual è il tuo stile oggi?",
+    "step2": "Qual è la vibe?",
+    "step3": "Dove vai?",
+    "generating": "Componendo il tuo look…",
+    "generate": "Genera il mio look"
+  },
+  "profile": {
+    "title": "Profilo", "closet": "Vibe Closet",
+    "closetEmpty": "Aggiungi i tuoi capi a voce per look 100% personalizzati.",
+    "addPiece": "Aggiungi un capo",
+    "subscriptions": "Vedi abbonamenti", "premium": "Premium"
+  },
+  "paywall": {
+    "title": "Diventa un'Icona",
+    "subtitle": "Sblocca generazioni illimitate e prova virtuale HD.",
+    "week": "Settimana", "month": "Mese", "quarter": "Trimestre",
+    "popular": "Il più popolare", "icon": "Offerta Icona", "save": "Risparmia 33%",
+    "ideal": "Perfetto per provare", "restore": "Ripristina acquisti", "subscribe": "Abbonati"
+  }
+}
