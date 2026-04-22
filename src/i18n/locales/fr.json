@@ -1,12 +1,14 @@
 {
   "nav": { "home": "Accueil", "dressing": "Dressing", "scan": "Scan", "profile": "Profil" },
+  "home": { "hello": "Bonjour", "styles": "Tes styles" },
   "common": {
     "continue": "Continuer",
     "back": "Retour",
     "skip": "Passer",
     "generate": "Générer ma tenue",
     "next": "Suivant",
-    "done": "Terminer"
+    "done": "Terminer",
+    "save": "Enregistrer"
   },
   "onboarding": {
     "language": "Choisis ta langue",
@@ -22,7 +24,14 @@
     "step2": "Quelle est la vibe ?",
     "step3": "Où vas-tu ?",
     "generating": "Composition de ta tenue en cours…",
-    "generate": "Générer ma tenue"
+    "generate": "Générer mon Aura",
+    "newLook": "Nouvelle tenue",
+    "stylistAdvice": "Avis du styliste",
+    "noImage": "Image indisponible",
+    "completeSteps": "Complète les 3 étapes",
+    "rateLimited": "Trop de demandes. Réessaie dans une minute.",
+    "paymentRequired": "Crédits IA épuisés. Ajoute des crédits dans Lovable.",
+    "error": "Génération impossible. Réessaie."
   },
   "profile": {
     "title": "Profil",
@@ -30,7 +39,31 @@
     "closetEmpty": "Ajoute tes pièces à l'oral pour des tenues 100% personnalisées.",
     "addPiece": "Ajouter une pièce",
     "subscriptions": "Voir les abonnements",
-    "premium": "Premium"
+    "premium": "Premium",
+    "settings": "Paramètres"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "account": "Compte",
+    "firstName": "Prénom",
+    "email": "Email",
+    "height": "Taille (cm)",
+    "weight": "Poids (kg)",
+    "language": "Langue",
+    "subscription": "Abonnement",
+    "manage": "Gérer mon abonnement",
+    "preferences": "Préférences",
+    "morningTip": "Conseil météo du matin",
+    "units": "Unités",
+    "metric": "Métrique",
+    "imperial": "Impérial",
+    "legal": "Légal & Support",
+    "privacy": "Politique de confidentialité",
+    "terms": "CGU",
+    "delete": "Supprimer mon compte",
+    "saved": "Modifications enregistrées",
+    "free": "Gratuit",
+    "stripeSoon": "Portail Stripe bientôt disponible"
   },
   "paywall": {
     "title": "Passe au niveau Icône",

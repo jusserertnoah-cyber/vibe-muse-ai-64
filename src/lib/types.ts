@@ -1,15 +1,11 @@
 export type Gender = "femme" | "homme" | "unisexe";
 export type StyleTag =
+  | "Vintage"
   | "Old Money"
-  | "Streetwear"
-  | "Gorpcore"
-  | "Minimalisme"
-  | "Y2K"
-  | "Dark Academia"
-  | "Blokecore"
-  | "Cyber-Y2K"
-  | "Modern Gothic"
-  | "Clean Fit";
+  | "Classique"
+  | "Sobre"
+  | "Sport"
+  | "Streetwear";
 
 export type Mood =
   | "Confiant" | "Chill" | "Mystérieux" | "Bad Boy/Girl" | "Énervé"
@@ -22,6 +18,7 @@ export type Occasion =
 
 export interface UserProfile {
   firstName: string;
+  email?: string;
   gender: Gender;
   heightCm?: number;
   weightKg?: number;

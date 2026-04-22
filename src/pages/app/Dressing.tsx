@@ -1,31 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Loader2, Sparkles, Wand2, X } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ArrowLeft, Loader2, Sparkles, Wand2, X, CloudSun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import type { Mood, Occasion, StyleTag } from "@/lib/types";
 import { getProfile } from "@/lib/profile";
-import oldMoney from "@/assets/inspo-old-money-1.jpg";
-import streetwear from "@/assets/inspo-streetwear-1.jpg";
-import gorpcore from "@/assets/inspo-gorpcore-1.jpg";
-import minimalism from "@/assets/inspo-minimalism-1.jpg";
-import y2k from "@/assets/inspo-y2k-1.jpg";
-import darkAcademia from "@/assets/inspo-dark-academia-1.jpg";
+import { ALL_STYLES, STYLE_IMAGE } from "@/data/inspiration";
+import { getCurrentWeather, type WeatherSnapshot } from "@/lib/weather";
+import { supabase } from "@/integrations/supabase/client";
 
-const STYLES: { id: StyleTag; img: string }[] = [
-  { id: "Old Money", img: oldMoney },
-  { id: "Streetwear", img: streetwear },
-  { id: "Gorpcore", img: gorpcore },
-  { id: "Minimalisme", img: minimalism },
-  { id: "Y2K", img: y2k },
-  { id: "Dark Academia", img: darkAcademia },
-  { id: "Blokecore", img: streetwear },
-  { id: "Cyber-Y2K", img: y2k },
-  { id: "Modern Gothic", img: darkAcademia },
-  { id: "Clean Fit", img: minimalism },
-];
+const STYLES: { id: StyleTag; img: string }[] = ALL_STYLES.map((id) => ({
+  id,
+  img: STYLE_IMAGE[id],
+}));
 
 const MOODS: Mood[] = [
   "Confiant", "Chill", "Mystérieux", "Bad Boy/Girl", "Énervé",
@@ -41,37 +30,82 @@ const OCCASIONS: Occasion[] = [
 type Step = 0 | 1 | 2 | 3;
 
 export default function Dressing() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const profile = getProfile();
-  const [step, setStep] = useState<Step>(0);
-  const [style, setStyle] = useState<StyleTag | null>(null);
+  const presetStyle = (location.state as any)?.presetStyle as StyleTag | undefined;
+  const [step, setStep] = useState<Step>(presetStyle ? 1 : 0);
+  const [style, setStyle] = useState<StyleTag | null>(presetStyle ?? null);
   const [mood, setMood] = useState<Mood | null>(null);
   const [occasion, setOccasion] = useState<Occasion | null>(null);
   const [loading, setLoading] = useState(false);
-  const [look, setLook] = useState<{ bullets: string[]; advice: string } | null>(null);
+  const [weather, setWeather] = useState<WeatherSnapshot | null>(null);
+  const [look, setLook] = useState<{
+    bullets: string[];
+    advice: string;
+    imageUrl: string | null;
+  } | null>(null);
+
+  useEffect(() => {
+    getCurrentWeather().then((w) => w && setWeather(w));
+  }, []);
 
   const goNext = (s: Step) => setStep(s);
 
-  const generate = () => {
+  const generate = async () => {
     if (!style || !mood || !occasion) {
-      toast("Complète les 3 étapes");
+      toast(t("dressing.completeSteps"));
       return;
     }
     setLoading(true);
     setLook(null);
-    setTimeout(() => {
-      setLook({
-        bullets: [
-          "Pull cachemire crème oversized",
-          "Pantalon tailoring taupe",
-          "Mocassins cuir marron foncé",
-        ],
-        advice:
-          "L'équilibre des volumes affine la silhouette. Cette palette construit une aura raffinée, parfaite pour booster ton mindset.",
+    try {
+      // Fetch fresh weather (best effort)
+      const w = weather ?? (await getCurrentWeather());
+      if (w && !weather) setWeather(w);
+
+      const { data, error } = await supabase.functions.invoke("generate-look", {
+        body: {
+          style,
+          mood,
+          occasion,
+          gender: profile?.gender,
+          heightCm: profile?.heightCm,
+          weightKg: profile?.weightKg,
+          city: w?.city ?? profile?.city,
+          weather: w
+            ? { temp: w.temp, code: w.code, label: w.label }
+            : null,
+          closet: profile?.closet ?? [],
+          referencePhoto: profile?.referencePhoto ?? null,
+          lang: i18n.language?.split("-")[0] ?? "fr",
+        },
       });
+
+      if (error) throw error;
+      if ((data as any)?.error === "rate_limited") {
+        toast.error(t("dressing.rateLimited"));
+        setLoading(false);
+        return;
+      }
+      if ((data as any)?.error === "payment_required") {
+        toast.error(t("dressing.paymentRequired"));
+        setLoading(false);
+        return;
+      }
+
+      setLook({
+        bullets: (data as any)?.bullets ?? [],
+        advice: (data as any)?.advice ?? "",
+        imageUrl: (data as any)?.imageUrl ?? null,
+      });
+    } catch (e) {
+      console.error(e);
+      toast.error(t("dressing.error"));
+    } finally {
       setLoading(false);
-    }, 1400);
+    }
   };
 
   const reset = () => {
@@ -91,17 +125,25 @@ export default function Dressing() {
         <div className="mx-auto max-w-md space-y-4">
           <div className="flex items-center justify-between">
             <button onClick={reset} className="text-xs uppercase tracking-widest text-muted-foreground">
-              Nouvelle tenue
+              {t("dressing.newLook")}
             </button>
             <button onClick={exit}><X className="h-5 w-5" /></button>
           </div>
           <div className="overflow-hidden rounded-3xl bg-card shadow-card">
             <div className="relative aspect-[3/4] w-full bg-gradient-luxe">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="rounded-full glass-panel px-4 py-2 text-xs uppercase tracking-widest">
-                  Visuel IA · à venir
+              {look.imageUrl ? (
+                <img
+                  src={look.imageUrl}
+                  alt={`${style} · ${mood}`}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="rounded-full glass-panel px-4 py-2 text-xs uppercase tracking-widest">
+                    {t("dressing.noImage")}
+                  </div>
                 </div>
-              </div>
+              )}
               <div className="absolute bottom-3 left-3 rounded-full bg-accent px-3 py-1 text-[10px] uppercase tracking-widest text-accent-foreground">
                 {mood} · {style}
               </div>
@@ -117,7 +159,7 @@ export default function Dressing() {
               </ul>
               <div className="rounded-2xl bg-secondary p-4 text-sm leading-relaxed">
                 <div className="mb-1 text-[10px] font-medium uppercase tracking-widest text-accent">
-                  Avis du styliste
+                  {t("dressing.stylistAdvice")}
                 </div>
                 {look.advice}
               </div>

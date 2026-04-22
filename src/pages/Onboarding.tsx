@@ -13,9 +13,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 const STYLES: StyleTag[] = [
-  "Old Money", "Streetwear", "Gorpcore", "Minimalisme",
-  "Y2K", "Dark Academia", "Blokecore", "Cyber-Y2K",
-  "Modern Gothic", "Clean Fit",
+  "Vintage", "Old Money", "Classique", "Sobre", "Sport", "Streetwear",
 ];
 
 const GENDERS: { id: Gender; label: string }[] = [
