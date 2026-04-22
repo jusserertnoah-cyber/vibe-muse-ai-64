@@ -1,0 +1,36 @@
+{
+  "nav": { "home": "Inicio", "dressing": "Vestidor", "scan": "Escaneo", "profile": "Perfil" },
+  "common": {
+    "continue": "Continuar", "back": "Atrás", "skip": "Saltar",
+    "generate": "Generar mi look", "next": "Siguiente", "done": "Listo"
+  },
+  "onboarding": {
+    "language": "Elige tu idioma",
+    "languageHint": "Podrás cambiarlo en tu perfil.",
+    "welcome": "Bienvenid@.",
+    "yourName": "¿Cómo te llamas?",
+    "namePlaceholder": "Tu nombre",
+    "nameHint": "Tu nombre me sirve para aconsejarte como una amiga estilista."
+  },
+  "dressing": {
+    "title": "Compón tu look",
+    "step1": "¿Cuál es tu estilo hoy?",
+    "step2": "¿Cuál es el mood?",
+    "step3": "¿A dónde vas?",
+    "generating": "Componiendo tu look…",
+    "generate": "Generar mi look"
+  },
+  "profile": {
+    "title": "Perfil", "closet": "Vibe Closet",
+    "closetEmpty": "Añade tus prendas por voz para looks 100% personalizados.",
+    "addPiece": "Añadir una prenda",
+    "subscriptions": "Ver suscripciones", "premium": "Premium"
+  },
+  "paywall": {
+    "title": "Sube al nivel Icono",
+    "subtitle": "Desbloquea generaciones ilimitadas y prueba virtual HD.",
+    "week": "Semana", "month": "Mes", "quarter": "Trimestre",
+    "popular": "El más popular", "icon": "Oferta Icono", "save": "Ahorra 33%",
+    "ideal": "Perfecto para probar", "restore": "Restaurar compras", "subscribe": "Suscribirse"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "nav": { "home": "Start", "dressing": "Dressing", "scan": "Scan", "profile": "Profil" },
+  "common": {
+    "continue": "Weiter", "back": "Zurück", "skip": "Überspringen",
+    "generate": "Outfit generieren", "next": "Weiter", "done": "Fertig"
+  },
+  "onboarding": {
+    "language": "Wähle deine Sprache",
+    "languageHint": "Du kannst sie später im Profil ändern.",
+    "welcome": "Willkommen.",
+    "yourName": "Wie heißt du?",
+    "namePlaceholder": "Dein Vorname",
+    "nameHint": "Dein Name hilft mir, dich wie eine Stylistin zu beraten."
+  },
+  "dressing": {
+    "title": "Stelle dein Outfit zusammen",
+    "step1": "Was ist heute dein Style?",
+    "step2": "Welche Vibe?",
+    "step3": "Wohin gehst du?",
+    "generating": "Outfit wird erstellt…",
+    "generate": "Outfit generieren"
+  },
+  "profile": {
+    "title": "Profil", "closet": "Vibe Closet",
+    "closetEmpty": "Füge deine Stücke per Sprache hinzu für 100% personalisierte Outfits.",
+    "addPiece": "Stück hinzufügen",
+    "subscriptions": "Abos ansehen", "premium": "Premium"
+  },
+  "paywall": {
+    "title": "Werde zur Ikone",
+    "subtitle": "Unbegrenzte Generierungen und HD Virtual Try-On.",
+    "week": "Woche", "month": "Monat", "quarter": "Quartal",
+    "popular": "Am beliebtesten", "icon": "Ikone Angebot", "save": "Spare 33%",
+    "ideal": "Ideal zum Testen", "restore": "Käufe wiederherstellen", "subscribe": "Abonnieren"
+  }
+}

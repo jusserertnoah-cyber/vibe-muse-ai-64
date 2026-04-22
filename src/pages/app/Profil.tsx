@@ -1,21 +1,47 @@
-import { getProfile, clearProfile } from "@/lib/profile";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Crown, History, LogOut, Settings, Trophy } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Crown, History, LogOut, Mic, Plus, Settings, Shirt, Trophy, X, Globe } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { getProfile, clearProfile, updateProfile } from "@/lib/profile";
+import { SUPPORTED_LANGUAGES } from "@/i18n";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export default function Profil() {
+  const { t, i18n } = useTranslation();
   const profile = getProfile();
   const navigate = useNavigate();
+  const [closet, setCloset] = useState<string[]>(profile?.closet ?? []);
+  const [newPiece, setNewPiece] = useState("");
 
   const reset = () => {
     clearProfile();
     navigate("/onboarding", { replace: true });
   };
 
+  const addPiece = () => {
+    const v = newPiece.trim();
+    if (!v) return;
+    const next = [...closet, v];
+    setCloset(next);
+    updateProfile({ closet: next });
+    setNewPiece("");
+    toast.success(`Ajouté à ton Vibe Closet : ${v}`);
+  };
+
+  const removePiece = (idx: number) => {
+    const next = closet.filter((_, i) => i !== idx);
+    setCloset(next);
+    updateProfile({ closet: next });
+  };
+
+  const onMic = () => toast("Enregistrement vocal — branché à l'étape suivante");
+
   return (
     <div className="space-y-6 px-5 pt-8">
       <header className="text-center">
-        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-secondary font-serif text-3xl text-foreground">
+        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-accent font-serif text-3xl text-accent-foreground shadow-cobalt">
           {profile?.firstName?.[0]?.toUpperCase()}
         </div>
         <h1 className="mt-3 font-serif text-2xl">{profile?.firstName}</h1>
@@ -27,18 +53,18 @@ export default function Profil() {
       {/* Premium card */}
       <div className="rounded-3xl bg-foreground p-5 text-background shadow-soft">
         <div className="flex items-center gap-2">
-          <Crown className="h-4 w-4" />
-          <span className="text-xs uppercase tracking-widest">Premium</span>
+          <Crown className="h-4 w-4 text-accent" />
+          <span className="text-xs uppercase tracking-widest">{t("profile.premium")}</span>
         </div>
         <p className="mt-2 font-serif text-2xl">Essai 7 jours gratuit</p>
         <p className="mt-1 text-xs text-background/70">
           1 scan + 1 génération par jour, sans carte bancaire.
         </p>
         <Button
-          variant="secondary"
-          className="mt-4 h-11 w-full rounded-2xl text-foreground"
+          onClick={() => navigate("/app/paywall")}
+          className="mt-4 h-11 w-full rounded-2xl bg-accent text-accent-foreground hover:bg-accent/90"
         >
-          Voir les abonnements
+          {t("profile.subscriptions")}
         </Button>
       </div>
 
@@ -46,6 +72,81 @@ export default function Profil() {
         <Stat icon={<Trophy className="h-4 w-4" />} label="Vibers" value={profile?.vibers ?? 0} />
         <Stat icon={<History className="h-4 w-4" />} label="Looks" value={0} />
       </div>
+
+      {/* Vibe Closet */}
+      <section className="rounded-3xl border border-border bg-card p-5">
+        <div className="flex items-start justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <Shirt className="h-4 w-4 text-accent" />
+              <span className="text-sm font-medium">{t("profile.closet")}</span>
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {closet.length === 0 ? t("profile.closetEmpty") : `${closet.length} pièces`}
+            </p>
+          </div>
+          <Button variant="outline" size="sm" onClick={onMic} className="rounded-full">
+            <Mic className="h-4 w-4" />
+          </Button>
+        </div>
+
+        {closet.length > 0 && (
+          <ul className="mt-4 flex flex-wrap gap-2">
+            {closet.map((p, i) => (
+              <li
+                key={`${p}-${i}`}
+                className="group flex items-center gap-1.5 rounded-full border border-border bg-secondary px-3 py-1.5 text-xs"
+              >
+                {p}
+                <button onClick={() => removePiece(i)} aria-label={`Retirer ${p}`}>
+                  <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <div className="mt-4 flex gap-2">
+          <input
+            value={newPiece}
+            onChange={(e) => setNewPiece(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && addPiece()}
+            placeholder="Ex : pull cachemire crème"
+            className="h-11 flex-1 rounded-2xl border border-border bg-background px-4 text-sm outline-none focus:border-accent"
+          />
+          <Button onClick={addPiece} size="icon" className="h-11 w-11 rounded-2xl bg-accent text-accent-foreground hover:bg-accent/90">
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
+      </section>
+
+      {/* Language switcher */}
+      <section className="rounded-3xl border border-border bg-card p-5">
+        <div className="flex items-center gap-2">
+          <Globe className="h-4 w-4 text-accent" />
+          <span className="text-sm font-medium">Langue / Language</span>
+        </div>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {SUPPORTED_LANGUAGES.map((l) => {
+            const active = i18n.language?.startsWith(l.code);
+            return (
+              <button
+                key={l.code}
+                onClick={() => i18n.changeLanguage(l.code)}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition-all",
+                  active
+                    ? "border-accent bg-accent text-accent-foreground"
+                    : "border-border bg-background hover:border-accent/40"
+                )}
+              >
+                <span>{l.flag}</span>
+                {l.label}
+              </button>
+            );
+          })}
+        </div>
+      </section>
 
       <ul className="space-y-2">
         <Row icon={<History className="h-5 w-5" />} label="Historique des Vibers" />
@@ -63,15 +164,7 @@ export default function Profil() {
   );
 }
 
-const Stat = ({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: number;
-}) => (
+const Stat = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) => (
   <div className="rounded-3xl border border-border bg-card p-4">
     <div className="flex items-center gap-2 text-muted-foreground">
       {icon}
@@ -81,13 +174,7 @@ const Stat = ({
   </div>
 );
 
-const Row = ({
-  icon,
-  label,
-}: {
-  icon: React.ReactNode;
-  label: string;
-}) => (
+const Row = ({ icon, label }: { icon: React.ReactNode; label: string }) => (
   <li>
     <button className="flex w-full items-center gap-3 rounded-2xl border border-border bg-card p-4 text-left text-sm">
       <span className="text-muted-foreground">{icon}</span>

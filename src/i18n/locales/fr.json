@@ -1,0 +1,48 @@
+{
+  "nav": { "home": "Accueil", "dressing": "Dressing", "scan": "Scan", "profile": "Profil" },
+  "common": {
+    "continue": "Continuer",
+    "back": "Retour",
+    "skip": "Passer",
+    "generate": "Générer ma tenue",
+    "next": "Suivant",
+    "done": "Terminer"
+  },
+  "onboarding": {
+    "language": "Choisis ta langue",
+    "languageHint": "Tu pourras la changer dans ton profil.",
+    "welcome": "Bienvenue.",
+    "yourName": "Comment t'appelles-tu ?",
+    "namePlaceholder": "Ton prénom",
+    "nameHint": "Ton prénom me sert à te conseiller comme une amie styliste."
+  },
+  "dressing": {
+    "title": "Compose ta tenue",
+    "step1": "Quel est ton style aujourd'hui ?",
+    "step2": "Quelle est la vibe ?",
+    "step3": "Où vas-tu ?",
+    "generating": "Composition de ta tenue en cours…",
+    "generate": "Générer ma tenue"
+  },
+  "profile": {
+    "title": "Profil",
+    "closet": "Vibe Closet",
+    "closetEmpty": "Ajoute tes pièces à l'oral pour des tenues 100% personnalisées.",
+    "addPiece": "Ajouter une pièce",
+    "subscriptions": "Voir les abonnements",
+    "premium": "Premium"
+  },
+  "paywall": {
+    "title": "Passe au niveau Icône",
+    "subtitle": "Débloque des générations illimitées et l'essayage virtuel HD.",
+    "week": "Semaine",
+    "month": "Mois",
+    "quarter": "Trimestre",
+    "popular": "Le plus populaire",
+    "icon": "L'offre Icône",
+    "save": "Économise 33%",
+    "ideal": "Idéal pour tester",
+    "restore": "Restaurer les achats",
+    "subscribe": "S'abonner"
+  }
+}

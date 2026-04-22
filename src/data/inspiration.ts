@@ -49,15 +49,15 @@ const ALL_STYLES: StyleTag[] = [
   "Modern Gothic", "Clean Fit",
 ];
 
-// Génère 500 slots — placeholders en attendant la génération IA serveur.
-export const INSPIRATION: InspoLook[] = Array.from({ length: 500 }, (_, i) => {
-  const style = ALL_STYLES[i % ALL_STYLES.length];
+// 20 looks par style × 10 styles = 200 visuels (placeholders).
+const PER_STYLE = 20;
+export const INSPIRATION: InspoLook[] = ALL_STYLES.flatMap((style) => {
   const titles = TITLES[style];
-  return {
+  return Array.from({ length: PER_STYLE }, (_, i) => ({
     id: `${style.toLowerCase().replace(/[^a-z]/g, "")}-${i}`,
     image: STYLE_IMAGE[style],
     style,
     title: titles[i % titles.length],
     mood: MOODS[i % MOODS.length],
-  };
+  }));
 });

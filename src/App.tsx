@@ -11,6 +11,7 @@ import Home from "./pages/app/Home.tsx";
 import Dressing from "./pages/app/Dressing.tsx";
 import Scan from "./pages/app/Scan.tsx";
 import Profil from "./pages/app/Profil.tsx";
+import Paywall from "./pages/app/Paywall.tsx";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="dressing" element={<Dressing />} />
             <Route path="scan" element={<Scan />} />
             <Route path="profil" element={<Profil />} />
+            <Route path="paywall" element={<Paywall />} />
           </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
