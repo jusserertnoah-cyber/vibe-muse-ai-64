@@ -352,12 +352,14 @@ export default function Onboarding() {
                   {photo ? "Changer la photo" : "Choisir une photo"}
                 </Button>
               </div>
-              <button
-                onClick={next}
-                className="w-full text-xs uppercase tracking-widest text-muted-foreground"
-              >
-                Passer pour l'instant
-              </button>
+              {!photo && (
+                <button
+                  onClick={next}
+                  className="w-full text-xs uppercase tracking-widest text-muted-foreground"
+                >
+                  Passer pour l'instant
+                </button>
+              )}
             </div>
           )}
 
