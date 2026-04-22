@@ -1,49 +1,40 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { VibeLogo } from "@/components/vibe/VibeLogo";
 import { saveProfile } from "@/lib/profile";
 import { getDeviceId } from "@/lib/device";
-import type { Gender, Morphology, StyleTag, UserProfile } from "@/lib/types";
-import { ArrowRight, MapPin, Mic, Sparkles, Check } from "lucide-react";
+import type { Gender, StyleTag, UserProfile } from "@/lib/types";
+import { ArrowRight, Camera, Check, MapPin, Mic, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 const STYLES: StyleTag[] = [
-  "Old Money",
-  "Streetwear",
-  "Gorpcore",
-  "Minimalisme",
-  "Y2K",
-  "Dark Academia",
-];
-
-const MORPHOS: { id: Morphology; label: string; hint: string }[] = [
-  { id: "A", label: "A", hint: "Hanches > épaules" },
-  { id: "V", label: "V", hint: "Épaules > hanches" },
-  { id: "H", label: "H", hint: "Silhouette droite" },
-  { id: "X", label: "X", hint: "Taille marquée" },
-  { id: "O", label: "O", hint: "Taille ronde" },
+  "Old Money", "Streetwear", "Gorpcore", "Minimalisme",
+  "Y2K", "Dark Academia", "Blokecore", "Cyber-Y2K",
+  "Modern Gothic", "Clean Fit",
 ];
 
 const GENDERS: { id: Gender; label: string }[] = [
   { id: "femme", label: "Femme" },
   { id: "homme", label: "Homme" },
-  { id: "unisexe", label: "Unisexe" },
+  { id: "unisexe", label: "Non-binaire / Unisexe" },
 ];
 
-const TOTAL_STEPS = 6;
+const TOTAL_STEPS = 7;
 
 export default function Onboarding() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [firstName, setFirstName] = useState("");
   const [gender, setGender] = useState<Gender | null>(null);
-  const [morphology, setMorphology] = useState<Morphology | null>(null);
+  const [heightCm, setHeightCm] = useState<string>("");
+  const [weightKg, setWeightKg] = useState<string>("");
   const [styles, setStyles] = useState<StyleTag[]>([]);
   const [city, setCity] = useState("");
-  const [closet, setCloset] = useState<string[]>([]);
+  const [photo, setPhoto] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const next = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
   const back = () => setStep((s) => Math.max(s - 1, 0));
@@ -52,6 +43,12 @@ export default function Onboarding() {
     setStyles((prev) =>
       prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]
     );
+
+  const onPhoto = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = () => setPhoto(reader.result as string);
+    reader.readAsDataURL(file);
+  };
 
   const requestLocation = () => {
     if (!("geolocation" in navigator)) {
@@ -78,10 +75,12 @@ export default function Onboarding() {
     const profile: UserProfile = {
       firstName: firstName.trim() || "Vibe",
       gender: gender ?? "unisexe",
-      morphology: morphology ?? "H",
+      heightCm: heightCm ? Number(heightCm) : undefined,
+      weightKg: weightKg ? Number(weightKg) : undefined,
       styles,
       city: city || undefined,
-      closet,
+      referencePhoto: photo ?? undefined,
+      closet: [],
       vibers: 0,
       deviceId,
       createdAt: new Date().toISOString(),
@@ -95,7 +94,10 @@ export default function Onboarding() {
     switch (step) {
       case 0: return firstName.trim().length >= 2;
       case 1: return !!gender;
-      case 2: return !!morphology;
+      case 2: {
+        const h = Number(heightCm), w = Number(weightKg);
+        return h >= 120 && h <= 230 && w >= 30 && w <= 250;
+      }
       case 3: return styles.length > 0;
       default: return true;
     }
@@ -116,14 +118,13 @@ export default function Onboarding() {
           )}
         </header>
 
-        {/* Progress */}
         <div className="mt-6 flex gap-1.5">
           {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
             <div
               key={i}
               className={cn(
                 "h-1 flex-1 rounded-full transition-all duration-500",
-                i <= step ? "bg-primary" : "bg-muted"
+                i <= step ? "bg-cobalt" : "bg-muted"
               )}
             />
           ))}
@@ -161,7 +162,7 @@ export default function Onboarding() {
                     className={cn(
                       "w-full rounded-2xl border bg-card p-5 text-left text-lg font-medium transition-all",
                       gender === g.id
-                        ? "border-primary bg-secondary shadow-soft"
+                        ? "border-cobalt bg-secondary shadow-soft"
                         : "border-border hover:border-primary/40"
                     )}
                   >
@@ -178,24 +179,36 @@ export default function Onboarding() {
                 Ta morphologie&nbsp;?
               </h1>
               <p className="text-sm text-muted-foreground">
-                Pour des coupes qui te flattent vraiment.
+                Ton poids nous aide simplement à mieux ajuster les coupes et les
+                volumes des vêtements suggérés pour un rendu parfait.
               </p>
               <div className="grid grid-cols-2 gap-3">
-                {MORPHOS.map((m) => (
-                  <button
-                    key={m.id}
-                    onClick={() => setMorphology(m.id)}
-                    className={cn(
-                      "rounded-2xl border bg-card p-5 text-left transition-all",
-                      morphology === m.id
-                        ? "border-primary bg-secondary shadow-soft"
-                        : "border-border"
-                    )}
-                  >
-                    <div className="font-serif text-2xl">{m.label}</div>
-                    <div className="mt-1 text-xs text-muted-foreground">{m.hint}</div>
-                  </button>
-                ))}
+                <label className="rounded-2xl border border-border bg-card p-4">
+                  <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                    Taille (cm)
+                  </span>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    value={heightCm}
+                    onChange={(e) => setHeightCm(e.target.value)}
+                    placeholder="175"
+                    className="mt-1 w-full bg-transparent font-serif text-3xl outline-none"
+                  />
+                </label>
+                <label className="rounded-2xl border border-border bg-card p-4">
+                  <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                    Poids (kg)
+                  </span>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    value={weightKg}
+                    onChange={(e) => setWeightKg(e.target.value)}
+                    placeholder="68"
+                    className="mt-1 w-full bg-transparent font-serif text-3xl outline-none"
+                  />
+                </label>
               </div>
             </div>
           )}
@@ -205,7 +218,9 @@ export default function Onboarding() {
               <h1 className="font-serif text-4xl leading-tight text-balance">
                 Tes vibes préférées&nbsp;?
               </h1>
-              <p className="text-sm text-muted-foreground">Choisis-en au moins une.</p>
+              <p className="text-sm text-muted-foreground">
+                Choisis-en au moins une. Tu peux en sélectionner plusieurs.
+              </p>
               <div className="flex flex-wrap gap-2">
                 {STYLES.map((s) => {
                   const active = styles.includes(s);
@@ -216,8 +231,8 @@ export default function Onboarding() {
                       className={cn(
                         "rounded-full border px-4 py-2.5 text-sm transition-all",
                         active
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-border bg-card text-foreground hover:border-primary/40"
+                          ? "border-cobalt bg-cobalt text-cobalt-foreground"
+                          : "border-border bg-card text-foreground hover:border-cobalt/40"
                       )}
                     >
                       {active && <Check className="mr-1.5 inline h-3.5 w-3.5" />}
@@ -235,16 +250,16 @@ export default function Onboarding() {
                 Active la localisation
               </h1>
               <div className="rounded-2xl bg-secondary/60 p-5">
-                <MapPin className="mb-3 h-6 w-6 text-primary" strokeWidth={1.5} />
+                <MapPin className="mb-3 h-6 w-6 text-cobalt" strokeWidth={1.5} />
                 <p className="text-sm text-foreground">
-                  Nous avons besoin de ta localisation pour ajuster tes tenues à la
-                  météo locale et te proposer le look parfait pour ta journée.
+                  VIBE analyse le ciel de ta ville pour que ton look soit aussi
+                  pratique que stylé.
                 </p>
               </div>
               <div className="space-y-3 pt-2">
                 <Button
                   onClick={requestLocation}
-                  className="h-14 w-full rounded-2xl text-base"
+                  className="h-14 w-full rounded-2xl bg-cobalt text-cobalt-foreground hover:bg-cobalt/90 text-base shadow-cobalt"
                 >
                   Activer la localisation
                 </Button>
@@ -261,17 +276,67 @@ export default function Onboarding() {
           {step === 5 && (
             <div className="space-y-6">
               <h1 className="font-serif text-4xl leading-tight text-balance">
+                Ta photo de référence
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                Une photo neutre (debout, face caméra, fond clair) nous permet de
+                projeter virtuellement les tenues sur toi.
+              </p>
+              <div className="rounded-3xl border border-dashed border-border bg-card p-5">
+                {photo ? (
+                  <img
+                    src={photo}
+                    alt="Ta photo de référence"
+                    className="mx-auto h-56 rounded-2xl object-cover"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center gap-3 py-6 text-center">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary">
+                      <Camera className="h-7 w-7 text-cobalt" strokeWidth={1.5} />
+                    </div>
+                    <p className="max-w-xs text-xs text-muted-foreground">
+                      Format portrait recommandé. Tu pourras la modifier dans ton profil.
+                    </p>
+                  </div>
+                )}
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => e.target.files?.[0] && onPhoto(e.target.files[0])}
+                />
+                <Button
+                  variant="outline"
+                  onClick={() => fileRef.current?.click()}
+                  className="mt-4 h-12 w-full rounded-2xl"
+                >
+                  {photo ? "Changer la photo" : "Choisir une photo"}
+                </Button>
+              </div>
+              <button
+                onClick={next}
+                className="w-full text-xs uppercase tracking-widest text-muted-foreground"
+              >
+                Passer pour l'instant
+              </button>
+            </div>
+          )}
+
+          {step === 6 && (
+            <div className="space-y-6">
+              <h1 className="font-serif text-4xl leading-tight text-balance">
                 Ton dressing
               </h1>
               <p className="text-sm text-muted-foreground">
-                Tu peux dicter tes pièces à l'oral plus tard dans l'onglet Dressing.
+                Tu pourras dicter tes pièces à l'oral dans l'onglet Dressing.
                 Sinon, je propose des tenues 100% inspirationnelles.
               </p>
               <div className="space-y-4">
                 <div className="rounded-2xl border border-border bg-card p-5">
                   <div className="flex items-center gap-3">
                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary">
-                      <Mic className="h-5 w-5 text-primary" strokeWidth={1.5} />
+                      <Mic className="h-5 w-5 text-cobalt" strokeWidth={1.5} />
                     </div>
                     <div className="flex-1">
                       <div className="text-sm font-medium">Vibe Closet vocal</div>
@@ -283,7 +348,7 @@ export default function Onboarding() {
                 </div>
                 <Button
                   onClick={finish}
-                  className="h-14 w-full rounded-2xl text-base"
+                  className="h-14 w-full rounded-2xl bg-cobalt text-cobalt-foreground hover:bg-cobalt/90 text-base shadow-cobalt"
                 >
                   <Sparkles className="mr-2 h-4 w-4" />
                   Entrer dans VIBE
@@ -293,12 +358,12 @@ export default function Onboarding() {
           )}
         </div>
 
-        {step < 5 && (
+        {step < 6 && (
           <div className="pb-4 pt-6">
             <Button
               onClick={next}
               disabled={!canProceed()}
-              className="h-14 w-full rounded-2xl text-base"
+              className="h-14 w-full rounded-2xl bg-cobalt text-cobalt-foreground hover:bg-cobalt/90 text-base shadow-cobalt disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none"
             >
               Continuer
               <ArrowRight className="ml-2 h-4 w-4" />

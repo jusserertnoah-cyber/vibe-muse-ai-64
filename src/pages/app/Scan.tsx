@@ -65,7 +65,7 @@ export default function Scan() {
         <div className="mt-5 flex gap-2">
           <Button
             onClick={() => fileRef.current?.click()}
-            className="h-12 flex-1 rounded-2xl"
+            className="h-12 flex-1 rounded-2xl bg-cobalt text-cobalt-foreground hover:bg-cobalt/90 shadow-cobalt"
           >
             <Upload className="mr-2 h-4 w-4" />
             {preview ? "Changer" : "Choisir une photo"}
@@ -80,12 +80,12 @@ export default function Scan() {
               <p className="text-xs uppercase tracking-widest text-foreground/60">
                 Aura
               </p>
-              <div className="font-serif text-5xl">
+              <div className="font-serif text-5xl text-cobalt">
                 {result.score}
                 <span className="text-2xl text-foreground/60">/10</span>
               </div>
             </div>
-            <div className="rounded-full bg-foreground px-3 py-1 text-xs uppercase tracking-widest text-background">
+            <div className="rounded-full bg-neon px-3 py-1 text-xs uppercase tracking-widest text-neon-foreground">
               +10 Vibers
             </div>
           </div>

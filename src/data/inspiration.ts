@@ -14,18 +14,50 @@ export interface InspoLook {
   mood: string;
 }
 
-// Base catalog. Will be expanded server-side later.
-export const INSPIRATION: InspoLook[] = [
-  { id: "om-1", image: oldMoney, style: "Old Money", title: "Cashmere & Loafers", mood: "Élégant" },
-  { id: "sw-1", image: streetwear, style: "Streetwear", title: "Cargo & Hoodie", mood: "Confiant" },
-  { id: "gc-1", image: gorpcore, style: "Gorpcore", title: "Shell Jacket", mood: "Aventurier" },
-  { id: "mn-1", image: minimalism, style: "Minimalisme", title: "White & Black", mood: "Pur" },
-  { id: "y2-1", image: y2k, style: "Y2K", title: "Low-Rise Denim", mood: "Audacieux" },
-  { id: "da-1", image: darkAcademia, style: "Dark Academia", title: "Tweed & Pleats", mood: "Mystérieux" },
-  { id: "om-2", image: oldMoney, style: "Old Money", title: "Quiet Luxury", mood: "Raffiné" },
-  { id: "sw-2", image: streetwear, style: "Streetwear", title: "Urban Layers", mood: "Cool" },
-  { id: "gc-2", image: gorpcore, style: "Gorpcore", title: "Tech Fleece", mood: "Libre" },
-  { id: "mn-2", image: minimalism, style: "Minimalisme", title: "Monochrome", mood: "Calme" },
-  { id: "y2-2", image: y2k, style: "Y2K", title: "Butterfly Era", mood: "Playful" },
-  { id: "da-2", image: darkAcademia, style: "Dark Academia", title: "Library Mood", mood: "Profond" },
+// 10 styles rois — placeholders (les nouveaux styles réutilisent les visuels les plus proches en attendant la génération IA).
+const STYLE_IMAGE: Record<StyleTag, string> = {
+  "Old Money": oldMoney,
+  "Streetwear": streetwear,
+  "Gorpcore": gorpcore,
+  "Minimalisme": minimalism,
+  "Y2K": y2k,
+  "Dark Academia": darkAcademia,
+  "Blokecore": streetwear,
+  "Cyber-Y2K": y2k,
+  "Modern Gothic": darkAcademia,
+  "Clean Fit": minimalism,
+};
+
+const TITLES: Record<StyleTag, string[]> = {
+  "Old Money": ["Cashmere & Loafers", "Quiet Luxury", "Polo Club", "Riviera"],
+  "Streetwear": ["Cargo & Hoodie", "Urban Layers", "Box Logo", "Skate Era"],
+  "Gorpcore": ["Shell Jacket", "Tech Fleece", "Trail Mix", "Summit Ready"],
+  "Minimalisme": ["White & Black", "Monochrome", "Soft Tailoring", "Off-Duty"],
+  "Y2K": ["Low-Rise Denim", "Butterfly Era", "Mesh Top", "Velour"],
+  "Dark Academia": ["Tweed & Pleats", "Library Mood", "Oxford Walks", "Autumn Tome"],
+  "Blokecore": ["Footy Shirt", "Track Top", "Terrace Casual", "Old Trafford"],
+  "Cyber-Y2K": ["Chrome Vibe", "Matrix Coat", "Tokyo Glow", "Holographic"],
+  "Modern Gothic": ["Black Drape", "Crucifix Layers", "Veil Coat", "Onyx Suit"],
+  "Clean Fit": ["Crisp Tee", "Pleated Trouser", "Sneakers Fresh", "Sunday Linen"],
+};
+
+const MOODS = ["Confiant", "Mystérieux", "Chill", "Power", "Raffiné", "Audacieux", "Pur", "Cool"];
+
+const ALL_STYLES: StyleTag[] = [
+  "Old Money", "Streetwear", "Gorpcore", "Minimalisme",
+  "Y2K", "Dark Academia", "Blokecore", "Cyber-Y2K",
+  "Modern Gothic", "Clean Fit",
 ];
+
+// Génère 500 slots — placeholders en attendant la génération IA serveur.
+export const INSPIRATION: InspoLook[] = Array.from({ length: 500 }, (_, i) => {
+  const style = ALL_STYLES[i % ALL_STYLES.length];
+  const titles = TITLES[style];
+  return {
+    id: `${style.toLowerCase().replace(/[^a-z]/g, "")}-${i}`,
+    image: STYLE_IMAGE[style],
+    style,
+    title: titles[i % titles.length],
+    mood: MOODS[i % MOODS.length],
+  };
+});

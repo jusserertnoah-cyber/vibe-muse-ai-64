@@ -45,9 +45,17 @@ All colors MUST be HSL.
     --cream: 48 33% 98%;
     --anthracite: 210 6% 18%;
 
+    /* Contrast accents — Cobalt (action) & Néon Orange (alerte/aura) */
+    --cobalt: 218 100% 34%;             /* #0047AB */
+    --cobalt-foreground: 48 33% 98%;
+    --neon: 17 100% 56%;                /* #FF5F1F */
+    --neon-foreground: 48 33% 98%;
+
     --gradient-luxe: linear-gradient(135deg, hsl(14 27% 90%), hsl(24 16% 78%));
+    --gradient-cobalt: linear-gradient(135deg, hsl(218 100% 38%), hsl(218 100% 28%));
     --shadow-soft: 0 8px 30px -12px hsl(24 16% 62% / 0.25);
     --shadow-card: 0 2px 20px -8px hsl(24 16% 50% / 0.12);
+    --shadow-cobalt: 0 10px 40px -12px hsl(218 100% 34% / 0.45);
     --transition-luxe: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
     --sidebar-background: 0 0% 98%;
@@ -128,6 +136,17 @@ All colors MUST be HSL.
     background: hsl(var(--card) / 0.7);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+  }
+  .glass-panel {
+    background: hsl(var(--background) / 0.55);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    border: 1px solid hsl(var(--border) / 0.6);
+  }
+  .glass-dark {
+    background: hsl(var(--anthracite) / 0.65);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
   }
   .scrollbar-hide::-webkit-scrollbar { display: none; }
   .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
