@@ -150,7 +150,11 @@ export default function Profil() {
 
       <ul className="space-y-2">
         <Row icon={<History className="h-5 w-5" />} label="Historique des Vibers" />
-        <Row icon={<Settings className="h-5 w-5" />} label="Paramètres" />
+        <Row
+          icon={<Settings className="h-5 w-5" />}
+          label={t("profile.settings", { defaultValue: "Paramètres" })}
+          onClick={() => navigate("/app/settings")}
+        />
       </ul>
 
       <button
@@ -174,9 +178,20 @@ const Stat = ({ icon, label, value }: { icon: React.ReactNode; label: string; va
   </div>
 );
 
-const Row = ({ icon, label }: { icon: React.ReactNode; label: string }) => (
+const Row = ({
+  icon,
+  label,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onClick?: () => void;
+}) => (
   <li>
-    <button className="flex w-full items-center gap-3 rounded-2xl border border-border bg-card p-4 text-left text-sm">
+    <button
+      onClick={onClick}
+      className="flex w-full items-center gap-3 rounded-2xl border border-border bg-card p-4 text-left text-sm"
+    >
       <span className="text-muted-foreground">{icon}</span>
       <span className="flex-1">{label}</span>
       <span className="text-muted-foreground">›</span>
