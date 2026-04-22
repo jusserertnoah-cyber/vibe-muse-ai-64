@@ -1,9 +1,15 @@
-import oldMoney from "@/assets/inspo-old-money-1.jpg";
-import streetwear from "@/assets/inspo-streetwear-1.jpg";
-import gorpcore from "@/assets/inspo-gorpcore-1.jpg";
-import minimalism from "@/assets/inspo-minimalism-1.jpg";
-import y2k from "@/assets/inspo-y2k-1.jpg";
-import darkAcademia from "@/assets/inspo-dark-academia-1.jpg";
+import vintageW from "@/assets/inspo-vintage-w.jpg";
+import vintageM from "@/assets/inspo-vintage-m.jpg";
+import oldmoneyW from "@/assets/inspo-oldmoney-w.jpg";
+import oldmoneyM from "@/assets/inspo-oldmoney-m.jpg";
+import classiqueW from "@/assets/inspo-classique-w.jpg";
+import classiqueM from "@/assets/inspo-classique-m.jpg";
+import sobreW from "@/assets/inspo-sobre-w.jpg";
+import sobreM from "@/assets/inspo-sobre-m.jpg";
+import sportW from "@/assets/inspo-sport-w.jpg";
+import sportM from "@/assets/inspo-sport-m.jpg";
+import streetW from "@/assets/inspo-street-w.jpg";
+import streetM from "@/assets/inspo-street-m.jpg";
 import type { StyleTag } from "@/lib/types";
 
 export interface InspoLook {
@@ -12,42 +18,38 @@ export interface InspoLook {
   style: StyleTag;
   title: string;
   mood: string;
+  gender: "F" | "M";
 }
-
-// 10 styles rois — placeholders (les nouveaux styles réutilisent les visuels les plus proches en attendant la génération IA).
-export const STYLE_IMAGE: Record<StyleTag, string> = {
-  "Vintage": y2k,
-  "Old Money": oldMoney,
-  "Classique": darkAcademia,
-  "Sobre": minimalism,
-  "Sport": gorpcore,
-  "Streetwear": streetwear,
-};
-
-const TITLES: Record<StyleTag, string[]> = {
-  "Vintage": ["Friperie 70's", "Denim brut", "Veste suédée", "Rétro chic"],
-  "Old Money": ["Cashmere & Loafers", "Quiet Luxury", "Polo Club", "Riviera"],
-  "Classique": ["Tailleur intemporel", "Chemise blanche", "Trench beige", "Costume marine"],
-  "Sobre": ["Monochrome", "Lin écru", "Tailoring doux", "Off-Duty"],
-  "Sport": ["Tech fleece", "Coupe-vent", "Sneakers fresh", "Relax fit"],
-  "Streetwear": ["Cargo & Hoodie", "Urban Layers", "Box Logo", "Skate Era"],
-};
-
-const MOODS = ["Confiant", "Mystérieux", "Chill", "Power", "Raffiné", "Audacieux", "Pur", "Cool"];
 
 export const ALL_STYLES: StyleTag[] = [
   "Vintage", "Old Money", "Classique", "Sobre", "Sport", "Streetwear",
 ];
 
-// 8 looks max par style — galerie épurée pour la performance.
-const PER_STYLE = 8;
+// Image phare par style (utilisée comme fallback)
+export const STYLE_IMAGE: Record<StyleTag, string> = {
+  "Vintage": vintageW,
+  "Old Money": oldmoneyW,
+  "Classique": classiqueW,
+  "Sobre": sobreW,
+  "Sport": sportW,
+  "Streetwear": streetW,
+};
+
+// 2 looks par style (femme + homme) = 12 looks au total.
+const PAIRS: Record<StyleTag, { f: string; m: string; titleF: string; titleM: string; mood: string }> = {
+  "Vintage":    { f: vintageW,   m: vintageM,   titleF: "Friperie 70's",     titleM: "Velours rétro",      mood: "Chill" },
+  "Old Money":  { f: oldmoneyW,  m: oldmoneyM,  titleF: "Cashmere & Loafers", titleM: "Polo Club",          mood: "Raffiné" },
+  "Classique":  { f: classiqueW, m: classiqueM, titleF: "Trench beige",       titleM: "Costume marine",     mood: "Confiant" },
+  "Sobre":      { f: sobreW,     m: sobreM,     titleF: "Lin écru",           titleM: "Maille douce",       mood: "Pur" },
+  "Sport":      { f: sportW,     m: sportM,     titleF: "Tech fleece",        titleM: "Hoodie & Joggers",   mood: "Énergique" },
+  "Streetwear": { f: streetW,    m: streetM,    titleF: "Hoodie oversize",    titleM: "Cargo & Hoodie",     mood: "Cool" },
+};
+
 export const INSPIRATION: InspoLook[] = ALL_STYLES.flatMap((style) => {
-  const titles = TITLES[style];
-  return Array.from({ length: PER_STYLE }, (_, i) => ({
-    id: `${style.toLowerCase().replace(/[^a-z]/g, "")}-${i}`,
-    image: STYLE_IMAGE[style],
-    style,
-    title: titles[i % titles.length],
-    mood: MOODS[i % MOODS.length],
-  }));
+  const p = PAIRS[style];
+  const slug = style.toLowerCase().replace(/[^a-z]/g, "");
+  return [
+    { id: `${slug}-f`, image: p.f, style, title: p.titleF, mood: p.mood, gender: "F" as const },
+    { id: `${slug}-m`, image: p.m, style, title: p.titleM, mood: p.mood, gender: "M" as const },
+  ];
 });
