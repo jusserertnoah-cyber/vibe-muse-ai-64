@@ -7,14 +7,9 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import type { Mood, Occasion, StyleTag } from "@/lib/types";
 import { getProfile } from "@/lib/profile";
-import { ALL_STYLES, STYLE_IMAGE } from "@/data/inspiration";
+import { ALL_STYLES } from "@/data/inspiration";
 import { getCurrentWeather, type WeatherSnapshot } from "@/lib/weather";
 import { supabase } from "@/integrations/supabase/client";
-
-const STYLES: { id: StyleTag; img: string }[] = ALL_STYLES.map((id) => ({
-  id,
-  img: STYLE_IMAGE[id],
-}));
 
 const MOODS: Mood[] = [
   "Confiant", "Chill", "Mystérieux", "Bad Boy/Girl", "Énervé",
