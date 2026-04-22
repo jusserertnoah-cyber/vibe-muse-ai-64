@@ -1,0 +1,11 @@
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
+
+let cached: string | null = null;
+
+export const getDeviceId = async (): Promise<string> => {
+  if (cached) return cached;
+  const fp = await FingerprintJS.load();
+  const result = await fp.get();
+  cached = result.visitorId;
+  return cached;
+};
