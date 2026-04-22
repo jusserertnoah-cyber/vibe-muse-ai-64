@@ -5,6 +5,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import Onboarding from "./pages/Onboarding.tsx";
+import { AppLayout } from "./components/vibe/AppLayout";
+import Home from "./pages/app/Home.tsx";
+import Dressing from "./pages/app/Dressing.tsx";
+import Scan from "./pages/app/Scan.tsx";
+import Profil from "./pages/app/Profil.tsx";
 
 const queryClient = new QueryClient();
 
@@ -16,6 +22,13 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/onboarding" element={<Onboarding />} />
+          <Route path="/app" element={<AppLayout />}>
+            <Route index element={<Home />} />
+            <Route path="dressing" element={<Dressing />} />
+            <Route path="scan" element={<Scan />} />
+            <Route path="profil" element={<Profil />} />
+          </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
