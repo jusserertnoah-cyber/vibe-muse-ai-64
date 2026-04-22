@@ -57,6 +57,14 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        cobalt: {
+          DEFAULT: "hsl(var(--cobalt))",
+          foreground: "hsl(var(--cobalt-foreground))",
+        },
+        neon: {
+          DEFAULT: "hsl(var(--neon))",
+          foreground: "hsl(var(--neon-foreground))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -71,10 +79,12 @@ export default {
       },
       backgroundImage: {
         'gradient-luxe': 'var(--gradient-luxe)',
+        'gradient-cobalt': 'var(--gradient-cobalt)',
       },
       boxShadow: {
         soft: 'var(--shadow-soft)',
         card: 'var(--shadow-card)',
+        cobalt: 'var(--shadow-cobalt)',
       },
       keyframes: {
         "accordion-down": {
