@@ -1,12 +1,14 @@
 {
   "nav": { "home": "Home", "dressing": "Dressing", "scan": "Scan", "profile": "Profile" },
+  "home": { "hello": "Hello", "styles": "Your styles" },
   "common": {
     "continue": "Continue",
     "back": "Back",
     "skip": "Skip",
     "generate": "Generate my outfit",
     "next": "Next",
-    "done": "Done"
+    "done": "Done",
+    "save": "Save"
   },
   "onboarding": {
     "language": "Choose your language",
@@ -22,7 +24,14 @@
     "step2": "What's the vibe?",
     "step3": "Where are you going?",
     "generating": "Composing your outfit…",
-    "generate": "Generate my outfit"
+    "generate": "Generate my Aura",
+    "newLook": "New outfit",
+    "stylistAdvice": "Stylist advice",
+    "noImage": "Image unavailable",
+    "completeSteps": "Complete the 3 steps",
+    "rateLimited": "Too many requests. Try again in a minute.",
+    "paymentRequired": "AI credits exhausted. Top up in Lovable.",
+    "error": "Generation failed. Try again."
   },
   "profile": {
     "title": "Profile",
@@ -30,7 +39,31 @@
     "closetEmpty": "Add your pieces by voice for 100% personalised outfits.",
     "addPiece": "Add a piece",
     "subscriptions": "View subscriptions",
-    "premium": "Premium"
+    "premium": "Premium",
+    "settings": "Settings"
+  },
+  "settings": {
+    "title": "Settings",
+    "account": "Account",
+    "firstName": "First name",
+    "email": "Email",
+    "height": "Height (cm)",
+    "weight": "Weight (kg)",
+    "language": "Language",
+    "subscription": "Subscription",
+    "manage": "Manage subscription",
+    "preferences": "Preferences",
+    "morningTip": "Morning weather tip",
+    "units": "Units",
+    "metric": "Metric",
+    "imperial": "Imperial",
+    "legal": "Legal & Support",
+    "privacy": "Privacy policy",
+    "terms": "Terms of use",
+    "delete": "Delete my account",
+    "saved": "Changes saved",
+    "free": "Free",
+    "stripeSoon": "Stripe portal coming soon"
   },
   "paywall": {
     "title": "Level up to Icon",
