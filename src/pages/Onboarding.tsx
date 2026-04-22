@@ -1,12 +1,14 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { SUPPORTED_LANGUAGES } from "@/i18n";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { VibeLogo } from "@/components/vibe/VibeLogo";
 import { saveProfile } from "@/lib/profile";
 import { getDeviceId } from "@/lib/device";
 import type { Gender, StyleTag, UserProfile } from "@/lib/types";
-import { ArrowRight, Camera, Check, MapPin, Mic, Sparkles } from "lucide-react";
+import { ArrowRight, Camera, Check, Globe, MapPin, Mic, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -22,10 +24,11 @@ const GENDERS: { id: Gender; label: string }[] = [
   { id: "unisexe", label: "Non-binaire / Unisexe" },
 ];
 
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 8;
 
 export default function Onboarding() {
   const navigate = useNavigate();
+  const { i18n } = useTranslation();
   const [step, setStep] = useState(0);
   const [firstName, setFirstName] = useState("");
   const [gender, setGender] = useState<Gender | null>(null);
@@ -92,13 +95,14 @@ export default function Onboarding() {
 
   const canProceed = () => {
     switch (step) {
-      case 0: return firstName.trim().length >= 2;
-      case 1: return !!gender;
-      case 2: {
+      case 0: return !!i18n.language;
+      case 1: return firstName.trim().length >= 2;
+      case 2: return !!gender;
+      case 3: {
         const h = Number(heightCm), w = Number(weightKg);
         return h >= 120 && h <= 230 && w >= 30 && w <= 250;
       }
-      case 3: return styles.length > 0;
+      case 4: return styles.length > 0;
       default: return true;
     }
   };
