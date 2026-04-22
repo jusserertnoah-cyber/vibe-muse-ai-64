@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getProfile } from "@/lib/profile";
-import { INSPIRATION, ALL_STYLES, STYLE_IMAGE } from "@/data/inspiration";
+import { INSPIRATION, ALL_STYLES } from "@/data/inspiration";
 import { Cloud, Sparkles, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { StyleTag } from "@/lib/types";
@@ -57,32 +57,6 @@ export default function Home() {
           )}
         </div>
       </header>
-
-      {/* Style spotlight — 6 cartes phares */}
-      <section aria-label="Styles phares">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-serif text-xl">{t("home.styles")}</h2>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          {ALL_STYLES.map((s) => (
-            <button
-              key={s}
-              onClick={() => navigate("/app/dressing", { state: { presetStyle: s } })}
-              className="group relative aspect-[3/4] overflow-hidden rounded-3xl bg-muted shadow-card transition-all hover:shadow-soft"
-            >
-              <img
-                src={STYLE_IMAGE[s]}
-                alt={s}
-                loading="lazy"
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 to-transparent p-3">
-                <div className="text-sm font-semibold text-background">{s}</div>
-              </div>
-            </button>
-          ))}
-        </div>
-      </section>
 
       {/* Vibers card */}
       <div className="rounded-[28px] bg-gradient-luxe p-5 shadow-soft">

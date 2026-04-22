@@ -7,14 +7,9 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import type { Mood, Occasion, StyleTag } from "@/lib/types";
 import { getProfile } from "@/lib/profile";
-import { ALL_STYLES, STYLE_IMAGE } from "@/data/inspiration";
+import { ALL_STYLES } from "@/data/inspiration";
 import { getCurrentWeather, type WeatherSnapshot } from "@/lib/weather";
 import { supabase } from "@/integrations/supabase/client";
-
-const STYLES: { id: StyleTag; img: string }[] = ALL_STYLES.map((id) => ({
-  id,
-  img: STYLE_IMAGE[id],
-}));
 
 const MOODS: Mood[] = [
   "Confiant", "Chill", "Mystérieux", "Bad Boy/Girl", "Énervé",
@@ -222,21 +217,20 @@ export default function Dressing() {
                 Choisis l'univers qui te parle aujourd'hui.
               </p>
               <div className="mt-6 grid grid-cols-2 gap-3">
-                {STYLES.map((s) => {
-                  const active = style === s.id;
+                {ALL_STYLES.map((s) => {
+                  const active = style === s;
                   return (
                     <button
-                      key={s.id}
-                      onClick={() => { setStyle(s.id); setTimeout(() => goNext(1), 250); }}
+                      key={s}
+                      onClick={() => { setStyle(s); setTimeout(() => goNext(1), 250); }}
                       className={cn(
-                        "group relative aspect-[3/4] overflow-hidden rounded-3xl shadow-card transition-all",
-                        active && "ring-4 ring-accent ring-offset-2 ring-offset-background scale-[0.98]"
+                        "flex aspect-[5/3] items-center justify-center rounded-3xl border-2 px-4 text-center font-serif text-lg font-medium transition-all",
+                        active
+                          ? "border-accent bg-accent text-accent-foreground scale-[0.97] shadow-cobalt"
+                          : "border-border bg-card text-foreground hover:border-accent/50 hover:bg-accent/10"
                       )}
                     >
-                      <img src={s.img} alt={s.id} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 to-transparent p-3">
-                        <div className="text-sm font-medium text-background">{s.id}</div>
-                      </div>
+                      {s}
                     </button>
                   );
                 })}
