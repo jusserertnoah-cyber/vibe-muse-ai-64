@@ -74,17 +74,21 @@ export default {
         "2xl": "calc(var(--radius) + 16px)",
       },
       fontFamily: {
-        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+        serif: ['"Space Grotesk"', 'Inter', 'system-ui', 'sans-serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['"Space Grotesk"', 'Inter', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-luxe': 'var(--gradient-luxe)',
         'gradient-cobalt': 'var(--gradient-cobalt)',
+        'gradient-brand': 'var(--gradient-brand)',
+        'gradient-brand-soft': 'var(--gradient-brand-soft)',
       },
       boxShadow: {
         soft: 'var(--shadow-soft)',
         card: 'var(--shadow-card)',
         cobalt: 'var(--shadow-cobalt)',
+        brand: 'var(--shadow-brand)',
       },
       keyframes: {
         "accordion-down": {

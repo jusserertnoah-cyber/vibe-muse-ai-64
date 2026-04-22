@@ -200,7 +200,7 @@ export default function Dressing() {
               key={i}
               className={cn(
                 "h-1.5 w-8 rounded-full transition-all duration-500",
-                i <= step ? "bg-accent" : "bg-muted"
+                i <= step ? "bg-gradient-brand" : "bg-muted"
               )}
             />
           ))}
@@ -308,7 +308,7 @@ export default function Dressing() {
             <Button
               onClick={generate}
               disabled={!occasion}
-              className="h-16 w-full rounded-3xl bg-accent text-accent-foreground hover:bg-accent/90 text-lg font-semibold shadow-cobalt disabled:opacity-40 disabled:shadow-none"
+              className="h-16 w-full rounded-3xl bg-gradient-brand text-white hover:opacity-90 text-lg font-semibold shadow-brand disabled:opacity-40 disabled:shadow-none border-0"
             >
               <Wand2 className="mr-2 h-5 w-5" />
               {t("dressing.generate")}

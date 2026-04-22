@@ -35,7 +35,7 @@ export const BottomNav = () => {
                   <span
                     className={cn(
                       "flex h-10 w-10 items-center justify-center rounded-2xl transition-all",
-                      isActive && "bg-cobalt text-cobalt-foreground shadow-cobalt"
+                      isActive && "bg-gradient-brand text-white shadow-brand"
                     )}
                   >
                     <Icon className="h-5 w-5" strokeWidth={1.5} />

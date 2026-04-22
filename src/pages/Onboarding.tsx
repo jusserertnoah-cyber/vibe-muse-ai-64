@@ -126,7 +126,7 @@ export default function Onboarding() {
               key={i}
               className={cn(
                 "h-1 flex-1 rounded-full transition-all duration-500",
-                i <= step ? "bg-cobalt" : "bg-muted"
+                i <= step ? "bg-gradient-brand" : "bg-muted"
               )}
             />
           ))}
@@ -297,7 +297,7 @@ export default function Onboarding() {
               <div className="space-y-3 pt-2">
                 <Button
                   onClick={requestLocation}
-                  className="h-14 w-full rounded-2xl bg-cobalt text-cobalt-foreground hover:bg-cobalt/90 text-base shadow-cobalt"
+                  className="h-14 w-full rounded-2xl bg-gradient-brand text-white hover:opacity-90 text-base shadow-brand border-0"
                 >
                   Activer la localisation
                 </Button>
@@ -352,12 +352,14 @@ export default function Onboarding() {
                   {photo ? "Changer la photo" : "Choisir une photo"}
                 </Button>
               </div>
-              <button
-                onClick={next}
-                className="w-full text-xs uppercase tracking-widest text-muted-foreground"
-              >
-                Passer pour l'instant
-              </button>
+              {!photo && (
+                <button
+                  onClick={next}
+                  className="w-full text-xs uppercase tracking-widest text-muted-foreground"
+                >
+                  Passer pour l'instant
+                </button>
+              )}
             </div>
           )}
 
@@ -386,7 +388,7 @@ export default function Onboarding() {
                 </div>
                 <Button
                   onClick={finish}
-                  className="h-14 w-full rounded-2xl bg-cobalt text-cobalt-foreground hover:bg-cobalt/90 text-base shadow-cobalt"
+                  className="h-14 w-full rounded-2xl bg-gradient-brand text-white hover:opacity-90 text-base shadow-brand border-0"
                 >
                   <Sparkles className="mr-2 h-4 w-4" />
                   Entrer dans VIBE
@@ -401,7 +403,7 @@ export default function Onboarding() {
             <Button
               onClick={next}
               disabled={!canProceed()}
-              className="h-14 w-full rounded-2xl bg-cobalt text-cobalt-foreground hover:bg-cobalt/90 text-base shadow-cobalt disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none"
+              className="h-14 w-full rounded-2xl bg-gradient-brand text-white hover:opacity-90 text-base shadow-brand disabled:bg-muted disabled:bg-none disabled:text-muted-foreground disabled:shadow-none border-0"
             >
               Continuer
               <ArrowRight className="ml-2 h-4 w-4" />
