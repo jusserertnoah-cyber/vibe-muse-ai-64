@@ -1,1 +1,4 @@
-project_id = "vhghhxrofpvogglyhpsn"
+project_id = "vibe"
+
+[functions.generate-look]
+verify_jwt = false
