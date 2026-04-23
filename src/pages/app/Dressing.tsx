@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import type { Mood, Occasion, StyleTag } from "@/lib/types";
 import { getProfile } from "@/lib/profile";
+import { awardVibers } from "@/lib/vibers";
 import { ALL_STYLES } from "@/data/inspiration";
 import { getCurrentWeather, type WeatherSnapshot } from "@/lib/weather";
 import { supabase } from "@/integrations/supabase/client";
@@ -96,6 +97,7 @@ export default function Dressing() {
         advice: (data as any)?.advice ?? "",
         imageUrl: (data as any)?.imageUrl ?? null,
       });
+      awardVibers("look");
     } catch (e) {
       console.error(e);
       toast.error(t("dressing.error"));

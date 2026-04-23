@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Crown, History, LogOut, Mic, Plus, Settings, Shirt, Trophy, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getProfile, clearProfile, updateProfile } from "@/lib/profile";
+import { awardVibers } from "@/lib/vibers";
 import { toast } from "sonner";
 
 export default function Profil() {
@@ -25,7 +26,7 @@ export default function Profil() {
     setCloset(next);
     updateProfile({ closet: next });
     setNewPiece("");
-    toast.success(`Ajouté à ton Vibe Closet : ${v}`);
+    awardVibers("closet");
   };
 
   const removePiece = (idx: number) => {
