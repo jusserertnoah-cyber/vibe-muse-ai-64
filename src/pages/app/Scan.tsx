@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Camera, Upload, Sparkles, Loader2, Palette, Ruler, Layers, Crosshair } from "lucide-react";
+import { Camera, Upload, Loader2, Check, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { getProfile } from "@/lib/profile";
@@ -13,10 +13,8 @@ import { StylistChat } from "@/components/vibe/StylistChat";
 interface ScanResult {
   score: number;
   verdict: string;
-  colorimetrie: string;
-  proportions: string;
-  matieres: string;
-  detailKiller: string;
+  strong: string;
+  weak: string;
   tips: string[];
 }
 
