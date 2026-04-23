@@ -65,6 +65,10 @@ export default {
           DEFAULT: "hsl(var(--neon))",
           foreground: "hsl(var(--neon-foreground))",
         },
+        lime: {
+          DEFAULT: "hsl(var(--lime))",
+          foreground: "hsl(var(--lime-foreground))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -74,9 +78,10 @@ export default {
         "2xl": "calc(var(--radius) + 16px)",
       },
       fontFamily: {
-        serif: ['"Space Grotesk"', 'Inter', 'system-ui', 'sans-serif'],
+        serif: ['Inter', 'system-ui', 'sans-serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['"Space Grotesk"', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', '"Space Mono"', 'ui-monospace', 'monospace'],
       },
       backgroundImage: {
         'gradient-luxe': 'var(--gradient-luxe)',

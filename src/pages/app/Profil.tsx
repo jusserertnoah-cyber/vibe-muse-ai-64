@@ -174,7 +174,7 @@ const Stat = ({ icon, label, value }: { icon: React.ReactNode; label: string; va
       {icon}
       <span className="text-[10px] uppercase tracking-widest">{label}</span>
     </div>
-    <div className="mt-2 font-serif text-2xl">{value}</div>
+    <div className="mt-2 font-mono-tech text-2xl font-bold tracking-tight">{value}</div>
   </div>
 );
 

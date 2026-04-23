@@ -158,13 +158,13 @@ export default function Scan() {
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">
                   Vibe Check
                 </p>
-                <div className={`font-serif text-6xl leading-none ${scoreColor}`}>
+                <div className={`font-mono-tech text-6xl font-bold leading-none tracking-tighter ${scoreColor}`}>
                   {Number.isInteger(result.score) ? result.score : result.score.toFixed(1)}
                   <span className="text-2xl text-muted-foreground">/10</span>
                 </div>
               </div>
-              <div className="rounded-full bg-gradient-brand px-3 py-1 text-[10px] uppercase tracking-widest text-white shadow-brand">
-                +10 Vibers
+              <div className="rounded-full bg-lime px-3 py-1 font-mono-tech text-[10px] uppercase tracking-widest shadow-brand">
+                +10 VIBERS
               </div>
             </div>
             <p className="mt-3 text-sm leading-relaxed">{result.verdict}</p>
