@@ -12,6 +12,7 @@ import {
   Trash2,
   User as UserIcon,
   Check,
+  Palette,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,7 @@ import { getProfile, updateProfile, clearProfile } from "@/lib/profile";
 import { SUPPORTED_LANGUAGES } from "@/i18n";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { THEMES, getSavedTheme, setTheme, resolveTheme, type ThemeName } from "@/lib/theme";
 
 const Section = ({
   icon,
@@ -85,6 +87,12 @@ export default function Settings() {
   const [units, setUnits] = useState<"metric" | "imperial">(
     () => (localStorage.getItem("vibe.units") as any) ?? "metric",
   );
+  const [theme, setThemeState] = useState<ThemeName>(() => getSavedTheme() ?? resolveTheme());
+
+  const chooseTheme = (t: ThemeName) => {
+    setThemeState(t);
+    setTheme(t);
+  };
 
   const save = () => {
     updateProfile({
@@ -222,7 +230,36 @@ export default function Settings() {
         )}
       </Section>
 
-      {/* Subscription */}
+      {/* Theme */}
+      <Section icon={<Palette className="h-4 w-4" />} title="Thème">
+        <p className="text-xs text-muted-foreground">
+          Choisis l'accent couleur de l'app. La base reste crème, blanc et noir.
+        </p>
+        <div className="grid grid-cols-3 gap-2">
+          {THEMES.map((th) => {
+            const active = theme === th.id;
+            return (
+              <button
+                key={th.id}
+                onClick={() => chooseTheme(th.id)}
+                className={cn(
+                  "flex flex-col items-center gap-2 rounded-2xl border-2 p-3 transition-all",
+                  active ? "border-accent bg-accent/10" : "border-border bg-background hover:border-accent/40",
+                )}
+              >
+                <span
+                  className="h-8 w-8 rounded-full ring-1 ring-border"
+                  style={{ background: th.swatch }}
+                />
+                <span className="text-[11px] font-medium">{th.label}</span>
+                {active && <Check className="h-3 w-3 text-accent" />}
+              </button>
+            );
+          })}
+        </div>
+      </Section>
+
+      {/* Subscription (real) */}
       <Section icon={<CreditCard className="h-4 w-4" />} title={t("settings.subscription")}>
         <div className="flex items-center justify-between rounded-xl bg-secondary px-4 py-3 text-sm">
           <span className="text-muted-foreground">Status</span>

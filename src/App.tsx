@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useEffect } from "react";
-import { getProfile } from "@/lib/profile";
+import { applyTheme } from "@/lib/theme";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Onboarding from "./pages/Onboarding.tsx";
@@ -18,24 +18,17 @@ import Settings from "./pages/app/Settings.tsx";
 
 const queryClient = new QueryClient();
 
-const applyGenderTheme = () => {
-  const p = getProfile();
-  const root = document.documentElement;
-  if (p?.gender === "femme") root.classList.add("theme-femme");
-  else root.classList.remove("theme-femme");
-};
-
 const App = () => {
   useEffect(() => {
-    applyGenderTheme();
+    applyTheme();
     const onStorage = (e: StorageEvent) => {
-      if (!e.key || e.key === "vibe.profile.v1") applyGenderTheme();
+      if (!e.key || e.key === "vibe.profile.v1" || e.key === "vibe.theme.v1") applyTheme();
     };
-    const onProfileChange = () => applyGenderTheme();
+    const onProfileChange = () => applyTheme();
     window.addEventListener("storage", onStorage);
     window.addEventListener("vibe:profile-changed", onProfileChange);
     // Re-check on each navigation in case profile was just saved
-    const interval = window.setInterval(applyGenderTheme, 1500);
+    const interval = window.setInterval(applyTheme, 1500);
     return () => {
       window.removeEventListener("storage", onStorage);
       window.removeEventListener("vibe:profile-changed", onProfileChange);
