@@ -38,18 +38,18 @@ serve(async (req) => {
       ({ fr: "français", en: "anglais", es: "espagnol", de: "allemand", it: "italien" } as Record<string, string>)[lang] ??
       "français";
 
-    const baseRules = `Tu es un STYLISTE HAUTE COUTURE expert (Vogue / Saint Laurent). Tu réponds STRICTEMENT en ${langName}.
+    const baseRules = `Tu es un STYLISTE HAUTE COUTURE (Vogue / Saint Laurent). Tu réponds STRICTEMENT en ${langName}.
 RÈGLES :
-- Réponses COURTES (2-4 phrases max), incisives, jamais génériques.
-- Toujours actionnable : couleur précise, coupe précise, matière précise, mesure en cm si pertinent.
-- INTERDIT : "essaie autre chose", "ajoute des accessoires", "c'est sympa", flatteries vides.
-- Tu peux poser UNE question ciblée si elle débloque vraiment le conseil.
-- Tu utilises le tutoiement, ton chaleureux mais expert.`;
+- ULTRA-COURT : 1 à 2 phrases MAX. Lisible en 3 secondes.
+- Toujours concret : couleur, coupe, matière, cm si pertinent.
+- Ton chaleureux, bienveillant, expert. Jamais cassant.
+- INTERDIT : "essaie autre chose", "ajoute des accessoires", flatteries vides.
+- Tu peux poser UNE question ciblée si vraiment nécessaire.`;
 
     let contextLine = "";
     if (mode === "scan" && context?.scan) {
       const s = context.scan;
-      contextLine = `Contexte du Vibe Check précédent — Note: ${s.score}/10. Verdict: ${s.verdict}. Colorimétrie: ${s.colorimetrie}. Proportions: ${s.proportions}. Matières: ${s.matieres}. Détail repéré: ${s.detailKiller}. Conseils déjà donnés: ${(s.tips || []).join(" | ")}.`;
+      contextLine = `Contexte du Vibe Check — Note: ${s.score}/10. Verdict: ${s.verdict}. Point fort: ${s.strong ?? s.colorimetrie ?? ""}. À améliorer: ${s.weak ?? s.detailKiller ?? ""}. Conseils donnés: ${(s.tips || []).join(" | ")}.`;
     } else if (mode === "look" && context?.look) {
       const l = context.look;
       contextLine = `Contexte de la tenue générée — Style: ${l.style}. Mood: ${l.mood}. Occasion: ${l.occasion}. Pièces: ${(l.bullets || []).join(" / ")}. Avis styliste donné: ${l.advice}.`;
