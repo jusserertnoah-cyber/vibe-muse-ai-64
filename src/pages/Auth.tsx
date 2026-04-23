@@ -116,15 +116,62 @@ export default function Auth() {
               <p className="text-sm text-muted-foreground">
                 Tu recevras un code par SMS pour te connecter ou créer ton compte.
               </p>
-              <Input
-                autoFocus
-                type="tel"
-                inputMode="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+33 6 12 34 56 78"
-                className="h-14 rounded-2xl border-border bg-card text-lg"
-              />
+              <div className="flex gap-2">
+                <Popover open={countryOpen} onOpenChange={setCountryOpen}>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      className="flex h-14 items-center gap-2 rounded-2xl border border-border bg-card px-3 text-base"
+                    >
+                      <span className="text-xl leading-none">{findCountryByCode(countryCode).flag}</span>
+                      <span className="font-mono text-sm text-muted-foreground">
+                        +{findCountryByCode(countryCode).dial}
+                      </span>
+                      <ChevronsUpDown className="h-3.5 w-3.5 text-muted-foreground" />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[280px] p-0" align="start">
+                    <Command>
+                      <CommandInput placeholder="Rechercher un pays…" />
+                      <CommandList>
+                        <CommandEmpty>Aucun pays.</CommandEmpty>
+                        <CommandGroup>
+                          {COUNTRIES.map((c) => (
+                            <CommandItem
+                              key={c.code}
+                              value={`${c.name} +${c.dial} ${c.code}`}
+                              onSelect={() => {
+                                setCountryCode(c.code);
+                                setCountryOpen(false);
+                              }}
+                              className="flex items-center gap-2"
+                            >
+                              <span className="text-base">{c.flag}</span>
+                              <span className="flex-1 truncate">{c.name}</span>
+                              <span className="font-mono text-xs text-muted-foreground">+{c.dial}</span>
+                              <Check
+                                className={cn(
+                                  "h-4 w-4 text-accent",
+                                  countryCode === c.code ? "opacity-100" : "opacity-0",
+                                )}
+                              />
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                <Input
+                  autoFocus
+                  type="tel"
+                  inputMode="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="6 12 34 56 78"
+                  className="h-14 flex-1 rounded-2xl border-border bg-card text-lg"
+                />
+              </div>
               <Button
                 onClick={sendCode}
                 disabled={loading}
