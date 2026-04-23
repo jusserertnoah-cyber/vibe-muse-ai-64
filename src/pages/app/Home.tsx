@@ -71,15 +71,16 @@ export default function Home() {
       : Sun;
 
     const gradient =
-      kind === "storm" ? "from-slate-700 via-slate-800 to-slate-900"
-      : kind === "snow" ? "from-sky-200 via-slate-100 to-slate-300"
-      : kind === "rain" ? "from-slate-500 via-slate-600 to-slate-800"
-      : kind === "fog" ? "from-zinc-400 via-zinc-500 to-zinc-700"
-      : kind === "cloud" ? "from-slate-300 via-slate-400 to-slate-600"
-      : isHot ? "from-amber-300 via-orange-400 to-rose-500"
-      : "from-sky-300 via-cyan-400 to-blue-500";
+      kind === "storm" ? "from-stone-700 via-stone-800 to-stone-900"
+      : kind === "snow" ? "from-stone-50 via-stone-100 to-stone-200"
+      : kind === "rain" ? "from-stone-400 via-stone-500 to-stone-700"
+      : kind === "fog" ? "from-stone-300 via-stone-400 to-stone-500"
+      : kind === "cloud" ? "from-stone-200 via-stone-300 to-stone-400"
+      : isHot ? "from-amber-100 via-amber-200 to-orange-300"
+      : "from-amber-50 via-stone-100 to-amber-100";
 
-    const textOnDark = !["snow"].includes(kind);
+    // Texte clair seulement sur fonds vraiment foncés (storm, rain, fog)
+    const textOnDark = ["storm", "rain", "fog"].includes(kind);
 
     return { Icon, gradient, phrase, textOnDark };
   }, [weather, featuredPiece]);
