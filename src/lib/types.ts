@@ -5,7 +5,8 @@ export type StyleTag =
   | "Classique"
   | "Sobre"
   | "Sport"
-  | "Streetwear";
+  | "Oversize"
+  | "Américain";
 
 export type Mood =
   | "Confiant" | "Chill" | "Mystérieux" | "Bad Boy/Girl" | "Énervé"

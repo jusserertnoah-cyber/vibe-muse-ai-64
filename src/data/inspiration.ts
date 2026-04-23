@@ -8,8 +8,10 @@ import sobreW from "@/assets/inspo-sobre-w.jpg";
 import sobreM from "@/assets/inspo-sobre-m.jpg";
 import sportW from "@/assets/inspo-sport-w.jpg";
 import sportM from "@/assets/inspo-sport-m.jpg";
-import streetW from "@/assets/inspo-street-w.jpg";
-import streetM from "@/assets/inspo-street-m.jpg";
+import oversizeW from "@/assets/inspo-oversize-w.jpg";
+import oversizeM from "@/assets/inspo-oversize-m.jpg";
+import americainW from "@/assets/inspo-americain-w.jpg";
+import americainM from "@/assets/inspo-americain-m.jpg";
 import type { StyleTag } from "@/lib/types";
 
 export interface InspoLook {
@@ -22,7 +24,7 @@ export interface InspoLook {
 }
 
 export const ALL_STYLES: StyleTag[] = [
-  "Vintage", "Old Money", "Classique", "Sobre", "Sport", "Streetwear",
+  "Vintage", "Old Money", "Classique", "Sobre", "Sport", "Oversize", "Américain",
 ];
 
 // Image phare par style (utilisée comme fallback)
@@ -32,7 +34,8 @@ export const STYLE_IMAGE: Record<StyleTag, string> = {
   "Classique": classiqueW,
   "Sobre": sobreW,
   "Sport": sportW,
-  "Streetwear": streetW,
+  "Oversize": oversizeW,
+  "Américain": americainW,
 };
 
 // 2 looks par style (femme + homme) = 12 looks au total.
@@ -42,7 +45,8 @@ const PAIRS: Record<StyleTag, { f: string; m: string; titleF: string; titleM: st
   "Classique":  { f: classiqueW, m: classiqueM, titleF: "Trench beige",       titleM: "Costume marine",     mood: "Confiant" },
   "Sobre":      { f: sobreW,     m: sobreM,     titleF: "Lin écru",           titleM: "Maille douce",       mood: "Pur" },
   "Sport":      { f: sportW,     m: sportM,     titleF: "Tech fleece",        titleM: "Hoodie & Joggers",   mood: "Énergique" },
-  "Streetwear": { f: streetW,    m: streetM,    titleF: "Hoodie oversize",    titleM: "Cargo & Hoodie",     mood: "Cool" },
+  "Oversize":   { f: oversizeW,  m: oversizeM,  titleF: "Hoodie XXL",         titleM: "Tee & baggy",        mood: "Cool" },
+  "Américain":  { f: americainW, m: americainM, titleF: "Varsity & jean",     titleM: "Letterman college",  mood: "Énergique" },
 };
 
 export const INSPIRATION: InspoLook[] = ALL_STYLES.flatMap((style) => {
