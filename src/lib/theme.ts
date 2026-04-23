@@ -3,7 +3,7 @@ const KEY = "vibe.theme.v1";
 export type ThemeName = "lime" | "mauve" | "mono";
 export const THEMES: { id: ThemeName; label: string; swatch: string }[] = [
   { id: "lime",  label: "Lime",        swatch: "hsl(71 100% 50%)" },
-  { id: "mauve", label: "Mauve",       swatch: "hsl(280 18% 62%)" },
+  { id: "mauve", label: "Mauve rosé",  swatch: "hsl(320 55% 78%)" },
   { id: "mono",  label: "Noir & blanc", swatch: "hsl(30 10% 12%)" },
 ];
 
