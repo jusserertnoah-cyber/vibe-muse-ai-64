@@ -103,45 +103,7 @@ Tenue cohérente, élégante, détails de matières visibles (texture, plis, omb
       },
     ];
 
-    const imgRes = await fetch(
-      "https://ai.gateway.lovable.dev/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: tier === "premium" ? "google/gemini-3-pro-image-preview" : "google/gemini-2.5-flash-image",
-          messages,
-          modalities: ["image", "text"],
-        }),
-      },
-    );
-
-    if (!imgRes.ok) {
-      const t = await imgRes.text();
-      console.error("image gen failed", imgRes.status, t);
-      if (imgRes.status === 429) {
-        return new Response(JSON.stringify({ error: "rate_limited" }), {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      if (imgRes.status === 402) {
-        return new Response(JSON.stringify({ error: "payment_required" }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      throw new Error(`image gen ${imgRes.status}`);
-    }
-
-    const imgJson = await imgRes.json();
-    const imageUrl =
-      imgJson?.choices?.[0]?.message?.images?.[0]?.image_url?.url ?? null;
-
-    // Stylist advice (text)
+    // Language name shared by image + advice prompts
     const langName =
       { fr: "français", en: "anglais", es: "espagnol", de: "allemand", it: "italien" }[lang] ?? "français";
 
@@ -152,9 +114,21 @@ Réponds via la fonction tool fournie.`;
 
     const adviceUserPrompt = `Style: ${style}. Mood: ${mood}. Occasion: ${occasion}. ${weatherLine} ${closetLine}`;
 
-    const adviceRes = await fetch(
-      "https://ai.gateway.lovable.dev/v1/chat/completions",
-      {
+    // Run image generation and stylist advice IN PARALLEL — wall time ≈ slowest of the two.
+    const imgPromise = fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: tier === "premium" ? "google/gemini-3-pro-image-preview" : "google/gemini-2.5-flash-image",
+        messages,
+        modalities: ["image", "text"],
+      }),
+    });
+
+    const advicePromise = fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${LOVABLE_API_KEY}`,
@@ -189,8 +163,31 @@ Réponds via la fonction tool fournie.`;
           ],
           tool_choice: { type: "function", function: { name: "stylist_output" } },
         }),
-      },
-    );
+    });
+
+    const [imgRes, adviceRes] = await Promise.all([imgPromise, advicePromise]);
+
+    if (!imgRes.ok) {
+      const t = await imgRes.text();
+      console.error("image gen failed", imgRes.status, t);
+      if (imgRes.status === 429) {
+        return new Response(JSON.stringify({ error: "rate_limited" }), {
+          status: 429,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (imgRes.status === 402) {
+        return new Response(JSON.stringify({ error: "payment_required" }), {
+          status: 402,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      throw new Error(`image gen ${imgRes.status}`);
+    }
+
+    const imgJson = await imgRes.json();
+    const imageUrl =
+      imgJson?.choices?.[0]?.message?.images?.[0]?.image_url?.url ?? null;
 
     let bullets: string[] = [];
     let advice = "";
