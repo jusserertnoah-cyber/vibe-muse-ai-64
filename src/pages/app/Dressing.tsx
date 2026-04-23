@@ -330,7 +330,7 @@ export default function Dressing() {
             <Button
               onClick={generate}
               disabled={!occasion}
-              className="h-16 w-full rounded-3xl bg-gradient-brand text-white hover:opacity-90 text-lg font-semibold shadow-brand disabled:opacity-40 disabled:shadow-none border-0"
+              className="h-16 w-full rounded-3xl bg-gradient-brand text-foreground hover:opacity-90 text-lg font-semibold shadow-brand disabled:opacity-40 disabled:shadow-none border-0"
             >
               <Wand2 className="mr-2 h-5 w-5" />
               {t("dressing.generate")}
