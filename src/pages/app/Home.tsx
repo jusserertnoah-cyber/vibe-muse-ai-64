@@ -135,7 +135,7 @@ export default function Home() {
                 <div className="flex items-center gap-1.5 opacity-80">
                   <MapPin className="h-3 w-3" strokeWidth={2} />
                   <span className="text-xs uppercase tracking-[0.2em]">
-                    {weather.city ?? "Localisation"}
+                    {weather.city ?? t("home.location")}
                   </span>
                 </div>
                 <div className="mt-1 flex items-baseline gap-1 font-mono-tech">
@@ -165,7 +165,7 @@ export default function Home() {
             <div className="flex items-center gap-1.5">
               <Trophy className="h-3.5 w-3.5 text-accent" strokeWidth={1.5} />
               <span className="font-serif text-lg leading-none text-foreground">
-                Vibers
+                {t("home.vibers")}
               </span>
             </div>
             <div className="mt-1 flex items-baseline gap-1 font-mono-tech">
@@ -186,7 +186,7 @@ export default function Home() {
           />
         </div>
         <p className="mt-3 text-xs text-muted-foreground">
-          200 Vibers = 1 mois Premium offert
+          {t("home.vibersHint")}
         </p>
       </div>
 
@@ -195,28 +195,28 @@ export default function Home() {
         <div className="flex items-center gap-1.5">
           <Shirt className="h-3.5 w-3.5 text-accent" strokeWidth={1.5} />
           <span className="font-serif text-lg leading-none text-foreground">
-            Smart Closet
+            {t("home.smartCloset")}
           </span>
         </div>
         {closetCount === 0 ? (
           <>
             <p className="mt-3 text-sm leading-snug text-foreground/90">
-              Ton dressing est vide. Ajoute tes pièces pour des suggestions sur-mesure.
+              {t("home.closetEmpty")}
             </p>
             <button
               onClick={() => navigate("/app/profil")}
               className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-xs font-bold tracking-tight text-accent-foreground transition-all hover:opacity-90"
             >
               <Zap className="h-3.5 w-3.5" strokeWidth={2} />
-              Ajouter une pièce
+              {t("home.addPiece")}
             </button>
           </>
         ) : (
           <>
             <p className="mt-3 text-sm leading-snug text-foreground/90">
-              Tu as <span className="font-mono-tech font-bold">{closetCount}</span> pièce{closetCount > 1 ? "s" : ""} enregistrée{closetCount > 1 ? "s" : ""}.
+              {t("home.closetCount", { count: closetCount })}
               {forgottenPiece && (
-                <> Tu n'as pas porté ton <span className="font-medium">{forgottenPiece}</span> depuis 2 semaines, on l'essaye aujourd'hui ?</>
+                <> {t("home.forgotten", { piece: forgottenPiece })}</>
               )}
             </p>
             <button
@@ -224,7 +224,7 @@ export default function Home() {
               className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-xs font-bold tracking-tight text-accent-foreground transition-all hover:opacity-90"
             >
               <Zap className="h-3.5 w-3.5" strokeWidth={2} />
-              Créer un look avec
+              {t("home.createLookWith")}
             </button>
           </>
         )}
@@ -237,7 +237,7 @@ export default function Home() {
             <div className="flex items-center gap-1.5">
               <TrendingUp className="h-3.5 w-3.5 text-accent" strokeWidth={1.5} />
               <span className="font-serif text-lg leading-none text-foreground">
-                Évolution
+                {t("home.evolution")}
               </span>
             </div>
             <div className="flex items-baseline gap-2 font-mono-tech">
@@ -278,7 +278,7 @@ export default function Home() {
             </ResponsiveContainer>
           </div>
           <p className="mt-1 text-[10px] text-muted-foreground font-mono-tech">
-            {scans.length} derniers scans
+            {t("home.lastScans", { count: scans.length })}
           </p>
         </div>
       )}
@@ -289,7 +289,7 @@ export default function Home() {
           <div className="mb-3 flex items-center gap-1.5">
             <HistoryIcon className="h-3.5 w-3.5 text-accent" strokeWidth={1.5} />
             <span className="font-serif text-lg leading-none text-foreground">
-              Historique
+              {t("home.history")}
             </span>
           </div>
           <div className="-mx-5 overflow-x-auto scrollbar-hide">
@@ -327,7 +327,7 @@ export default function Home() {
           <div className="mb-3 flex items-center gap-1.5">
             <BarChart3 className="h-3.5 w-3.5 text-accent" strokeWidth={1.5} />
             <span className="font-serif text-lg leading-none text-foreground">
-              My Stats
+              {t("home.myStats")}
             </span>
           </div>
           <ul className="space-y-2.5">
