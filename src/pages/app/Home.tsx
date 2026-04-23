@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getProfile } from "@/lib/profile";
-import { INSPIRATION, ALL_STYLES } from "@/data/inspiration";
-import { Cloud, Sparkles, Trophy } from "lucide-react";
+import { ALL_STYLES } from "@/data/inspiration";
+import { Cloud, Sparkles, Trophy, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { StyleTag } from "@/lib/types";
 import { useNavigate } from "react-router-dom";
@@ -10,14 +10,21 @@ import { getCurrentWeather } from "@/lib/weather";
 
 const FILTERS: ("Pour toi" | StyleTag)[] = ["Pour toi", ...ALL_STYLES];
 
-const PAGE = 12;
+// Tagline éditoriale par style — pas d'image, que du texte.
+const STYLE_TAGLINES: Record<StyleTag, string> = {
+  "Vintage":    "Friperie 70's, denim brut, cuir patiné.",
+  "Old Money":  "Cashmere, mocassins, blazer croisé.",
+  "Classique":  "Trench, chemise blanche, costume marine.",
+  "Sobre":      "Lin écru, maille douce, palette neutre.",
+  "Sport":      "Tech fleece, sneakers blanches, hoodie net.",
+  "Streetwear": "Cargo ample, hoodie oversize, accessoires bold.",
+};
 
 export default function Home() {
   const { t } = useTranslation();
   const profile = getProfile();
   const navigate = useNavigate();
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("Pour toi");
-  const [count, setCount] = useState(PAGE);
   const [weather, setWeather] = useState<{ temp: number; city?: string } | null>(null);
 
   useEffect(() => {
@@ -25,19 +32,12 @@ export default function Home() {
       if (w) setWeather({ temp: w.temp, city: w.city });
     });
   }, []);
-  useEffect(() => { setCount(PAGE); }, [filter]);
 
-  const looks = useMemo(() => {
-    if (filter === "Pour toi") {
-      return profile?.styles.length
-        ? INSPIRATION.filter((l) => profile.styles.includes(l.style))
-        : INSPIRATION;
-    }
-    return INSPIRATION.filter((l) => l.style === filter);
-  }, [filter, profile?.styles]);
+  const styles = useMemo(() => {
+    if (filter === "Pour toi") return ALL_STYLES;
+    return ALL_STYLES.filter((s) => s === filter);
+  }, [filter]);
 
-  const display = (looks.length ? looks : INSPIRATION).slice(0, count);
-  const total = looks.length || INSPIRATION.length;
   const progress = Math.min(((profile?.vibers ?? 0) / 200) * 100, 100);
 
   return (
@@ -51,7 +51,7 @@ export default function Home() {
         </div>
         <div className="flex items-center gap-2 rounded-full glass-panel px-4 py-2 text-sm">
           <Cloud className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
-          <span>{weather ? `${weather.temp}°` : "—"}</span>
+          <span className="font-mono-tech">{weather ? `${weather.temp}°` : "—"}</span>
           {weather?.city && (
             <span className="text-muted-foreground">· {weather.city}</span>
           )}
@@ -59,24 +59,24 @@ export default function Home() {
       </header>
 
       {/* Vibers card */}
-      <div className="rounded-[28px] bg-gradient-luxe p-5 shadow-soft">
+      <div className="rounded-3xl bg-card p-5 shadow-card border border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Trophy className="h-4 w-4 text-cobalt" strokeWidth={1.5} />
+            <Trophy className="h-4 w-4 text-accent" strokeWidth={1.5} />
             <span className="text-sm font-medium">Tes Vibers</span>
           </div>
-          <span className="font-serif text-xl">
+          <span className="font-mono-tech text-xl font-bold">
             {profile?.vibers ?? 0}
             <span className="text-muted-foreground">/200</span>
           </span>
         </div>
-        <div className="mt-3 h-2 overflow-hidden rounded-full bg-background/60">
+        <div className="mt-3 h-2 overflow-hidden rounded-full bg-secondary">
           <div
-            className="h-full rounded-full bg-cobalt transition-all duration-700"
+            className="h-full rounded-full bg-accent transition-all duration-700"
             style={{ width: `${progress}%` }}
           />
         </div>
-        <p className="mt-3 text-xs text-foreground/70">
+        <p className="mt-3 text-xs text-muted-foreground">
           200 Vibers = 1 mois Premium offert ✨ (limité aux 500 premiers du mois)
         </p>
       </div>
@@ -91,7 +91,7 @@ export default function Home() {
               className={cn(
                 "shrink-0 rounded-full border px-4 py-2 text-xs font-medium transition-all",
                 filter === f
-                  ? "border-cobalt bg-cobalt text-cobalt-foreground"
+                  ? "border-accent bg-accent text-accent-foreground"
                   : "border-border bg-card text-muted-foreground"
               )}
             >
@@ -101,51 +101,34 @@ export default function Home() {
         </div>
       </div>
 
-      <section aria-label="Galerie d'inspiration">
+      <section aria-label="Univers de style">
         <div className="mb-3 flex items-center justify-between">
           <h2 className="font-serif text-xl">Explore</h2>
-          <span className="text-xs text-muted-foreground">
-            {Math.min(count, total)} / {total}
+          <span className="text-xs text-muted-foreground font-mono-tech">
+            {styles.length}/{ALL_STYLES.length}
           </span>
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          {display.map((look, i) => (
+        <div className="grid gap-3">
+          {styles.map((s, i) => (
             <button
-              key={`${look.id}-${i}`}
-              onClick={() => navigate("/app/dressing", { state: { inspo: look } })}
-              className={cn(
-                "group relative overflow-hidden rounded-3xl bg-muted shadow-card transition-all hover:shadow-soft",
-                i % 7 === 0 ? "row-span-2 aspect-[3/5]" : "aspect-[3/4]"
-              )}
+              key={s}
+              onClick={() => navigate("/app/dressing", { state: { presetStyle: s } })}
+              className="group flex items-center justify-between rounded-3xl border border-border bg-card p-5 text-left transition-all hover:border-accent hover:bg-secondary"
             >
-              <img
-                src={look.image}
-                alt={`${look.title} — ${look.style}`}
-                loading="lazy"
-                width={768}
-                height={1024}
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/70 to-transparent p-3">
-                <div className="text-[10px] uppercase tracking-widest text-background/80">
-                  {look.style}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground font-mono-tech">
+                  <Sparkles className="h-3 w-3 text-accent" />
+                  {String(i + 1).padStart(2, "0")} · Univers
                 </div>
-                <div className="mt-0.5 flex items-center gap-1 text-xs font-medium text-background">
-                  <Sparkles className="h-3 w-3" />
-                  {look.title}
-                </div>
+                <div className="mt-1 font-serif text-2xl">{s}</div>
+                <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
+                  {STYLE_TAGLINES[s]}
+                </p>
               </div>
+              <ArrowRight className="ml-3 h-5 w-5 shrink-0 text-muted-foreground transition-all group-hover:text-accent group-hover:translate-x-1" />
             </button>
           ))}
         </div>
-        {count < total && (
-          <button
-            onClick={() => setCount((c) => c + PAGE)}
-            className="mt-6 h-12 w-full rounded-2xl border border-border bg-card text-sm font-medium text-foreground transition-colors hover:border-cobalt/40 hover:text-cobalt"
-          >
-            Voir plus d'inspirations
-          </button>
-        )}
       </section>
     </div>
   );

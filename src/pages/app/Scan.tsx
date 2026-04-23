@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { getProfile } from "@/lib/profile";
 import { toast } from "sonner";
+import { StylistChat } from "@/components/vibe/StylistChat";
 
 interface ScanResult {
   score: number;
@@ -194,6 +195,17 @@ export default function Scan() {
               ))}
             </ol>
           </div>
+
+          <StylistChat
+            mode="scan"
+            context={{ scan: result }}
+            intro="Verdict posé. Pose-moi tes questions — couleur, coupe, accessoire, alternative à acheter."
+            suggestions={[
+              "Quelle couleur de chaussure mettre ?",
+              "Comment porter ça en hiver ?",
+              "Une alternative plus chic ?",
+            ]}
+          />
         </div>
       )}
     </div>

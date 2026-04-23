@@ -1,20 +1,14 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { SUPPORTED_LANGUAGES } from "@/i18n";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { VibeLogo } from "@/components/vibe/VibeLogo";
 import { saveProfile } from "@/lib/profile";
 import { getDeviceId } from "@/lib/device";
-import type { Gender, StyleTag, UserProfile } from "@/lib/types";
-import { ArrowRight, Camera, Check, Globe, MapPin, Mic, Sparkles } from "lucide-react";
+import type { Gender, UserProfile } from "@/lib/types";
+import { ArrowRight, Camera, MapPin, Mic, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-
-const STYLES: StyleTag[] = [
-  "Vintage", "Old Money", "Classique", "Sobre", "Sport", "Streetwear",
-];
 
 const GENDERS: { id: Gender; label: string }[] = [
   { id: "femme", label: "Femme" },
@@ -22,28 +16,21 @@ const GENDERS: { id: Gender; label: string }[] = [
   { id: "unisexe", label: "Non-binaire / Unisexe" },
 ];
 
-const TOTAL_STEPS = 8;
+const TOTAL_STEPS = 6;
 
 export default function Onboarding() {
   const navigate = useNavigate();
-  const { i18n } = useTranslation();
   const [step, setStep] = useState(0);
   const [firstName, setFirstName] = useState("");
   const [gender, setGender] = useState<Gender | null>(null);
   const [heightCm, setHeightCm] = useState<string>("");
   const [weightKg, setWeightKg] = useState<string>("");
-  const [styles, setStyles] = useState<StyleTag[]>([]);
   const [city, setCity] = useState("");
   const [photo, setPhoto] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const next = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
   const back = () => setStep((s) => Math.max(s - 1, 0));
-
-  const toggleStyle = (s: StyleTag) =>
-    setStyles((prev) =>
-      prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]
-    );
 
   const onPhoto = (file: File) => {
     const reader = new FileReader();
@@ -78,7 +65,7 @@ export default function Onboarding() {
       gender: gender ?? "unisexe",
       heightCm: heightCm ? Number(heightCm) : undefined,
       weightKg: weightKg ? Number(weightKg) : undefined,
-      styles,
+      styles: [],
       city: city || undefined,
       referencePhoto: photo ?? undefined,
       closet: [],
@@ -93,14 +80,12 @@ export default function Onboarding() {
 
   const canProceed = () => {
     switch (step) {
-      case 0: return !!i18n.language;
-      case 1: return firstName.trim().length >= 2;
-      case 2: return !!gender;
-      case 3: {
+      case 0: return firstName.trim().length >= 2;
+      case 1: return !!gender;
+      case 2: {
         const h = Number(heightCm), w = Number(weightKg);
         return h >= 120 && h <= 230 && w >= 30 && w <= 250;
       }
-      case 4: return styles.length > 0;
       default: return true;
     }
   };
@@ -136,42 +121,6 @@ export default function Onboarding() {
           {step === 0 && (
             <div className="space-y-6">
               <h1 className="font-serif text-4xl leading-tight text-balance">
-                Choose your language
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Tu pourras la changer plus tard dans ton profil.
-              </p>
-              <div className="grid grid-cols-1 gap-2">
-                {SUPPORTED_LANGUAGES.map((l) => {
-                  const active = i18n.language?.startsWith(l.code);
-                  return (
-                    <button
-                      key={l.code}
-                      onClick={() => i18n.changeLanguage(l.code)}
-                      className={cn(
-                        "flex w-full items-center gap-3 rounded-2xl border bg-card p-4 text-left transition-all",
-                        active
-                          ? "border-accent bg-secondary shadow-cobalt"
-                          : "border-border hover:border-accent/40"
-                      )}
-                    >
-                      <span className="text-2xl">{l.flag}</span>
-                      <span className="flex-1 text-base font-medium">{l.label}</span>
-                      {active && <Check className="h-5 w-5 text-accent" />}
-                    </button>
-                  );
-                })}
-              </div>
-              <div className="flex items-center gap-2 pt-2 text-xs text-muted-foreground">
-                <Globe className="h-3.5 w-3.5" />
-                FR · EN · ES · DE · IT
-              </div>
-            </div>
-          )}
-
-          {step === 1 && (
-            <div className="space-y-6">
-              <h1 className="font-serif text-4xl leading-tight text-balance">
                 Bienvenue.<br />Comment t'appelles-tu&nbsp;?
               </h1>
               <p className="text-sm text-muted-foreground">
@@ -187,7 +136,7 @@ export default function Onboarding() {
             </div>
           )}
 
-          {step === 2 && (
+          {step === 1 && (
             <div className="space-y-6">
               <h1 className="font-serif text-4xl leading-tight text-balance">
                 Tu t'identifies comme&nbsp;?
@@ -211,7 +160,7 @@ export default function Onboarding() {
             </div>
           )}
 
-          {step === 3 && (
+          {step === 2 && (
             <div className="space-y-6">
               <h1 className="font-serif text-4xl leading-tight text-balance">
                 Ta morphologie&nbsp;?
@@ -251,38 +200,7 @@ export default function Onboarding() {
             </div>
           )}
 
-          {step === 4 && (
-            <div className="space-y-6">
-              <h1 className="font-serif text-4xl leading-tight text-balance">
-                Tes vibes préférées&nbsp;?
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Choisis-en au moins une. Tu peux en sélectionner plusieurs.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {STYLES.map((s) => {
-                  const active = styles.includes(s);
-                  return (
-                    <button
-                      key={s}
-                      onClick={() => toggleStyle(s)}
-                      className={cn(
-                        "rounded-full border px-4 py-2.5 text-sm transition-all",
-                        active
-                          ? "border-cobalt bg-cobalt text-cobalt-foreground"
-                          : "border-border bg-card text-foreground hover:border-cobalt/40"
-                      )}
-                    >
-                      {active && <Check className="mr-1.5 inline h-3.5 w-3.5" />}
-                      {s}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {step === 5 && (
+          {step === 3 && (
             <div className="space-y-6">
               <h1 className="font-serif text-4xl leading-tight text-balance">
                 Active la localisation
@@ -311,7 +229,7 @@ export default function Onboarding() {
             </div>
           )}
 
-          {step === 6 && (
+          {step === 4 && (
             <div className="space-y-6">
               <h1 className="font-serif text-4xl leading-tight text-balance">
                 Ta photo de référence
@@ -363,7 +281,7 @@ export default function Onboarding() {
             </div>
           )}
 
-          {step === 7 && (
+          {step === 5 && (
             <div className="space-y-6">
               <h1 className="font-serif text-4xl leading-tight text-balance">
                 Ton dressing
@@ -398,7 +316,7 @@ export default function Onboarding() {
           )}
         </div>
 
-        {step < 7 && (
+        {step < 5 && (
           <div className="pb-4 pt-6">
             <Button
               onClick={next}
