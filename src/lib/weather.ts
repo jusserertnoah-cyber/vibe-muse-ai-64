@@ -5,6 +5,7 @@ export type WeatherSnapshot = {
   code: number;
   label: string;
   city?: string;
+  wind?: number;
 };
 
 const WMO: Record<number, string> = {
@@ -47,10 +48,11 @@ export const getCoords = (): Promise<{ lat: number; lon: number }> =>
 
 export async function fetchWeather(lat: number, lon: number): Promise<WeatherSnapshot> {
   const w = await fetch(
-    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code`,
+    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,wind_speed_10m`,
   ).then((r) => r.json());
   const temp = Math.round(w?.current?.temperature_2m ?? 0);
   const code = Number(w?.current?.weather_code ?? 0);
+  const wind = Math.round(w?.current?.wind_speed_10m ?? 0);
 
   let city: string | undefined;
   try {
@@ -60,7 +62,7 @@ export async function fetchWeather(lat: number, lon: number): Promise<WeatherSna
     city = g?.results?.[0]?.name;
   } catch {}
 
-  return { temp, code, label: labelForCode(code), city };
+  return { temp, code, label: labelForCode(code), city, wind };
 }
 
 export async function getCurrentWeather(): Promise<WeatherSnapshot | null> {
