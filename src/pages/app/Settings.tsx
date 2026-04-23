@@ -191,7 +191,7 @@ export default function Settings() {
 
       {/* Language */}
       <Section icon={<Globe className="h-4 w-4" />} title={t("settings.language")}>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
           {SUPPORTED_LANGUAGES.map((l) => {
             const active = i18n.language?.startsWith(l.code);
             return (
@@ -202,15 +202,15 @@ export default function Settings() {
                   localStorage.setItem("vibe.lang", l.code);
                 }}
                 className={cn(
-                  "flex items-center gap-2 rounded-2xl border-2 px-3 py-2.5 text-left text-sm transition-all",
+                  "flex items-center gap-1.5 rounded-xl border px-2 py-1.5 text-left text-xs transition-all",
                   active
                     ? "border-accent bg-accent/10"
                     : "border-border bg-background hover:border-accent/40",
                 )}
               >
-                <span className="text-xl leading-none">{l.flag}</span>
+                <span className="text-sm leading-none">{l.flag}</span>
                 <span className="flex-1 truncate font-medium">{l.label}</span>
-                {active && <Check className="h-4 w-4 text-accent" />}
+                {active && <Check className="h-3 w-3 text-accent" />}
               </button>
             );
           })}
