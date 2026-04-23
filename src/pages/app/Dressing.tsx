@@ -9,6 +9,7 @@ import type { Mood, Occasion, StyleTag } from "@/lib/types";
 import { getProfile } from "@/lib/profile";
 import { awardVibers } from "@/lib/vibers";
 import { getTier } from "@/lib/tier";
+import { pushHistory } from "@/lib/history";
 import { ALL_STYLES } from "@/data/inspiration";
 import { getCurrentWeather, type WeatherSnapshot } from "@/lib/weather";
 import { supabase } from "@/integrations/supabase/client";
@@ -100,6 +101,7 @@ export default function Dressing() {
         imageUrl: (data as any)?.imageUrl ?? null,
       });
       awardVibers("look");
+      pushHistory({ type: "look", imageUrl: (data as any)?.imageUrl ?? null, style: style ?? undefined });
     } catch (e) {
       console.error(e);
       toast.error(t("dressing.error"));

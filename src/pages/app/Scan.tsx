@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getProfile } from "@/lib/profile";
 import { awardVibers } from "@/lib/vibers";
 import { getTier } from "@/lib/tier";
+import { pushHistory } from "@/lib/history";
 import { toast } from "sonner";
 import { StylistChat } from "@/components/vibe/StylistChat";
 
@@ -76,6 +77,7 @@ export default function Scan() {
       }
       setResult(data as ScanResult);
       awardVibers("scan");
+      pushHistory({ type: "scan", imageUrl: img, score: (data as any).score });
     } catch (e) {
       console.error(e);
       toast.error("Scan impossible. Réessaie.");
