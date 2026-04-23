@@ -1,15 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Crown, History, LogOut, Mic, Plus, Settings, Shirt, Trophy, X, Globe } from "lucide-react";
+import { Crown, History, LogOut, Mic, Plus, Settings, Shirt, Trophy, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getProfile, clearProfile, updateProfile } from "@/lib/profile";
-import { SUPPORTED_LANGUAGES } from "@/i18n";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 
 export default function Profil() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const profile = getProfile();
   const navigate = useNavigate();
   const [closet, setCloset] = useState<string[]>(profile?.closet ?? []);
@@ -117,34 +115,6 @@ export default function Profil() {
           <Button onClick={addPiece} size="icon" className="h-11 w-11 rounded-2xl bg-accent text-accent-foreground hover:bg-accent/90">
             <Plus className="h-4 w-4" />
           </Button>
-        </div>
-      </section>
-
-      {/* Language switcher */}
-      <section className="rounded-3xl border border-border bg-card p-5">
-        <div className="flex items-center gap-2">
-          <Globe className="h-4 w-4 text-accent" />
-          <span className="text-sm font-medium">Langue / Language</span>
-        </div>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {SUPPORTED_LANGUAGES.map((l) => {
-            const active = i18n.language?.startsWith(l.code);
-            return (
-              <button
-                key={l.code}
-                onClick={() => i18n.changeLanguage(l.code)}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition-all",
-                  active
-                    ? "border-accent bg-accent text-accent-foreground"
-                    : "border-border bg-background hover:border-accent/40"
-                )}
-              >
-                <span>{l.flag}</span>
-                {l.label}
-              </button>
-            );
-          })}
         </div>
       </section>
 
