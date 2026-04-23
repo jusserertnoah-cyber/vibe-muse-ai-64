@@ -27,33 +27,33 @@ All colors MUST be HSL.
     --muted: 38 24% 90%;                  /* #ECE6DC */
     --muted-foreground: 30 6% 40%;
 
-    --accent: 71 85% 48%;                 /* lime — touches accent uniquement */
-    --accent-foreground: 30 10% 12%;
+    --accent: 71 100% 50%;                /* #DFFF00 lime électrique — touches accent */
+    --accent-foreground: 0 0% 7%;
 
     --destructive: 0 72% 50%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 38 22% 86%;                 /* #E2DBCE beige clair */
     --input: 38 22% 88%;
-    --ring: 71 85% 48%;
+    --ring: 71 100% 50%;
 
     --radius: 1.25rem;                    /* 20px — plus tech */
 
     /* Lime accent (5–10% de l'app) */
-    --lime: 71 85% 48%;                   /* lime équilibré sur crème */
-    --lime-foreground: 30 10% 12%;
+    --lime: 71 100% 50%;                  /* #DFFF00 électrique */
+    --lime-foreground: 0 0% 7%;
 
     /* Aliases (legacy) — tous mappés sur lime */
-    --cobalt: 71 85% 48%;
-    --cobalt-foreground: 30 10% 12%;
-    --neon: 71 85% 48%;
-    --neon-foreground: 30 10% 12%;
-    --brand-violet: 71 85% 48%;
-    --brand-blue:   71 85% 48%;
-    --brand-pink:   71 85% 48%;
+    --cobalt: 71 100% 50%;
+    --cobalt-foreground: 0 0% 7%;
+    --neon: 71 100% 50%;
+    --neon-foreground: 0 0% 7%;
+    --brand-violet: 71 100% 50%;
+    --brand-blue:   71 100% 50%;
+    --brand-pink:   71 100% 50%;
 
-    --gradient-brand: linear-gradient(135deg, hsl(71 90% 55%) 0%, hsl(71 85% 48%) 50%, hsl(71 80% 42%) 100%);
-    --gradient-brand-soft: linear-gradient(135deg, hsl(71 85% 48% / 0.18) 0%, hsl(71 85% 48% / 0.06) 100%);
+    --gradient-brand: linear-gradient(135deg, hsl(71 100% 55%) 0%, hsl(71 100% 50%) 50%, hsl(71 100% 45%) 100%);
+    --gradient-brand-soft: linear-gradient(135deg, hsl(71 100% 50% / 0.18) 0%, hsl(71 100% 50% / 0.06) 100%);
     --gradient-luxe: linear-gradient(135deg, hsl(40 35% 96%), hsl(38 28% 92%));
     --gradient-cobalt: var(--gradient-brand);
     --shadow-soft: 0 8px 30px -12px hsl(30 10% 20% / 0.12);
@@ -77,6 +77,23 @@ All colors MUST be HSL.
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  /* Thème "femme" — mauve discret poussiéreux (override de l'accent) */
+  .theme-femme {
+    --accent: 280 18% 62%;
+    --accent-foreground: 0 0% 100%;
+    --ring: 280 18% 62%;
+    --lime: 280 18% 62%;
+    --lime-foreground: 0 0% 100%;
+    --cobalt: 280 18% 62%;
+    --cobalt-foreground: 0 0% 100%;
+    --neon: 280 18% 62%;
+    --neon-foreground: 0 0% 100%;
+    --gradient-brand: linear-gradient(135deg, hsl(285 22% 70%) 0%, hsl(280 18% 62%) 50%, hsl(275 16% 54%) 100%);
+    --gradient-brand-soft: linear-gradient(135deg, hsl(280 18% 62% / 0.18) 0%, hsl(280 18% 62% / 0.06) 100%);
+    --shadow-cobalt: 0 12px 40px -12px hsl(280 18% 62% / 0.40);
+    --shadow-brand: 0 0 24px -6px hsl(280 18% 62% / 0.35), 0 8px 24px -10px hsl(280 18% 62% / 0.22);
   }
 
   .dark {
