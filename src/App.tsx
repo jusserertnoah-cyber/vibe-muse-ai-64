@@ -15,6 +15,7 @@ import Scan from "./pages/app/Scan.tsx";
 import Profil from "./pages/app/Profil.tsx";
 import Paywall from "./pages/app/Paywall.tsx";
 import Settings from "./pages/app/Settings.tsx";
+import HistoryPage from "./pages/app/HistoryPage.tsx";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ const App = () => {
             <Route path="profil" element={<Profil />} />
             <Route path="paywall" element={<Paywall />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="history" element={<HistoryPage />} />
           </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
