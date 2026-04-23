@@ -1,30 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getProfile } from "@/lib/profile";
-import { ALL_STYLES } from "@/data/inspiration";
-import { Cloud, Sparkles, Trophy, ArrowRight, Shirt, Zap } from "lucide-react";
-import { cn } from "@/lib/utils";
-import type { StyleTag } from "@/lib/types";
+import { Cloud, Trophy, Shirt, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentWeather } from "@/lib/weather";
-
-const FILTERS: ("Pour toi" | StyleTag)[] = ["Pour toi", ...ALL_STYLES];
-
-// Tagline éditoriale par style — pas d'image, que du texte.
-const STYLE_TAGLINES: Record<StyleTag, string> = {
-  "Vintage":    "Friperie 70's, denim brut, cuir patiné.",
-  "Old Money":  "Cashmere, mocassins, blazer croisé.",
-  "Classique":  "Trench, chemise blanche, costume marine.",
-  "Sobre":      "Lin écru, maille douce, palette neutre.",
-  "Sport":      "Tech fleece, sneakers blanches, hoodie net.",
-  "Streetwear": "Cargo ample, hoodie oversize, accessoires bold.",
-};
 
 export default function Home() {
   const { t } = useTranslation();
   const profile = getProfile();
   const navigate = useNavigate();
-  const [filter, setFilter] = useState<(typeof FILTERS)[number]>("Pour toi");
   const [weather, setWeather] = useState<{ temp: number; city?: string; label?: string } | null>(null);
 
   useEffect(() => {
@@ -32,11 +16,6 @@ export default function Home() {
       if (w) setWeather({ temp: w.temp, city: w.city, label: w.label });
     });
   }, []);
-
-  const styles = useMemo(() => {
-    if (filter === "Pour toi") return ALL_STYLES;
-    return ALL_STYLES.filter((s) => s === filter);
-  }, [filter]);
 
   const progress = Math.min(((profile?.vibers ?? 0) / 200) * 100, 100);
   const closetCount = profile?.closet?.length ?? 0;
@@ -161,56 +140,6 @@ export default function Home() {
           </>
         )}
       </div>
-
-      {/* Filters */}
-      <div className="-mx-5 overflow-x-auto scrollbar-hide">
-        <div className="flex gap-2 px-5">
-          {FILTERS.map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={cn(
-                "shrink-0 rounded-full border px-4 py-2 text-xs font-medium transition-all",
-                filter === f
-                  ? "border-accent bg-accent text-accent-foreground"
-                  : "border-border bg-card text-muted-foreground"
-              )}
-            >
-              {f}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <section aria-label="Univers de style">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-serif text-xl">Explore</h2>
-          <span className="text-xs text-muted-foreground font-mono-tech">
-            {styles.length}/{ALL_STYLES.length}
-          </span>
-        </div>
-        <div className="grid gap-3">
-          {styles.map((s, i) => (
-            <button
-              key={s}
-              onClick={() => navigate("/app/dressing", { state: { presetStyle: s } })}
-              className="group flex items-center justify-between rounded-3xl border border-border bg-card p-5 text-left transition-all hover:border-accent hover:bg-secondary"
-            >
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground font-mono-tech">
-                  <Sparkles className="h-3 w-3 text-accent" />
-                  {String(i + 1).padStart(2, "0")} · Univers
-                </div>
-                <div className="mt-1 font-serif text-2xl">{s}</div>
-                <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
-                  {STYLE_TAGLINES[s]}
-                </p>
-              </div>
-              <ArrowRight className="ml-3 h-5 w-5 shrink-0 text-muted-foreground transition-all group-hover:text-accent group-hover:translate-x-1" />
-            </button>
-          ))}
-        </div>
-      </section>
     </div>
   );
 }
