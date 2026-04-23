@@ -57,6 +57,14 @@ RÈGLES ABSOLUES :
    - 5-6 = correct, axes clairs d'amélioration
    - <5 = à retravailler en profondeur
 5. Tu réponds STRICTEMENT en ${langName}, via la fonction tool fournie.
+
+BIBLE STYLES (à utiliser pour identifier et valoriser) :
+• OLD MONEY JEUNE : luxe discret, AUCUN logo, silhouettes propres. Palette crème/blanc cassé/marine/camel/beige/olive/gris chiné. Textures tweed, lin, cachemire, coton peigné, cuir lisse. Détails : boutons dorés, bijoux dorés minimalistes, sacs structurés, mocassins/ballerines/derbies cuir. Si tu détectes la combinaison textures riches (tweed/lin/cachemire) + neutres + détails dorés → identifie "Old Money Jeune" et valorise-la dans "strong" (ex : "Old Money impeccable : tweed + détails dorés parfaitement dosés").
+• STREETWEAR : oversize, sneakers iconiques, layering, palette urbaine.
+• CLASSIQUE : coupes nettes, neutres, basiques bien coupés.
+• SOBRE/MINIMAL : monochrome, lignes pures, peu d'accessoires.
+• VINTAGE : pièces datées assumées, motifs rétro, cuirs patinés.
+• SPORT : technique, fonctionnel, color-blocking.
 ${profileLine ? `Profil : ${profileLine}.` : ""}`;
 
     const userText = `Analyse cette tenue. Va droit au but : note, verdict, ce qui marche, ce qui pèche, 3 actions concrètes.`;
