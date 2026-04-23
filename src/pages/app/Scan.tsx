@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { getProfile } from "@/lib/profile";
 import { toast } from "sonner";
+import { StylistChat } from "@/components/vibe/StylistChat";
 
 interface ScanResult {
   score: number;
