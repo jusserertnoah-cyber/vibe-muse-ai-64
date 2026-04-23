@@ -139,7 +139,7 @@ export default function Scan() {
           <Button
             onClick={() => fileRef.current?.click()}
             disabled={loading}
-            className="h-14 flex-1 rounded-3xl bg-gradient-brand font-serif text-lg text-white hover:opacity-90 shadow-brand border-0"
+            className="h-14 flex-1 rounded-3xl bg-gradient-brand font-serif text-lg text-foreground hover:opacity-90 shadow-brand border-0"
           >
             {loading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -195,7 +195,7 @@ export default function Scan() {
             <ol className="space-y-3">
               {result.tips.map((t, i) => (
                 <li key={i} className="flex gap-3 text-sm leading-relaxed">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-brand text-[11px] font-semibold text-white">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-brand text-[11px] font-semibold text-foreground">
                     {i + 1}
                   </span>
                   <p>{t}</p>
@@ -234,11 +234,11 @@ function AnalysisRow({
   return (
     <div
       className={`rounded-3xl p-4 ${
-        highlight ? "bg-gradient-brand text-white shadow-brand" : "bg-card shadow-card"
+        highlight ? "bg-gradient-brand text-foreground shadow-brand" : "bg-card shadow-card"
       }`}
     >
       <div className={`flex items-center gap-2 text-[10px] font-medium uppercase tracking-widest ${
-        highlight ? "text-white/80" : "text-muted-foreground"
+        highlight ? "text-foreground/70" : "text-muted-foreground"
       }`}>
         {icon}
         {label}
