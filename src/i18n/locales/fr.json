@@ -1,6 +1,23 @@
 {
   "nav": { "home": "Accueil", "dressing": "Dressing", "scan": "Scan", "profile": "Profil" },
-  "home": { "hello": "Bonjour", "styles": "Tes styles" },
+  "home": {
+    "hello": "Bonjour",
+    "styles": "Tes styles",
+    "vibers": "Vibers",
+    "vibersHint": "200 Vibers = 1 mois Premium offert",
+    "smartCloset": "Smart Closet",
+    "closetEmpty": "Ton dressing est vide. Ajoute tes pièces pour des suggestions sur-mesure.",
+    "addPiece": "Ajouter une pièce",
+    "createLookWith": "Créer un look avec",
+    "closetCount_one": "Tu as {{count}} pièce enregistrée.",
+    "closetCount_other": "Tu as {{count}} pièces enregistrées.",
+    "forgotten": "Tu n'as pas porté ton {{piece}} depuis 2 semaines, on l'essaye aujourd'hui ?",
+    "evolution": "Évolution",
+    "lastScans": "{{count}} derniers scans",
+    "history": "Historique",
+    "myStats": "My Stats",
+    "location": "Localisation"
+  },
   "common": {
     "continue": "Continuer",
     "back": "Retour",
@@ -21,8 +38,11 @@
   "dressing": {
     "title": "Compose ta tenue",
     "step1": "Quel est ton style aujourd'hui ?",
+    "step1Hint": "Choisis l'univers qui te parle aujourd'hui.",
     "step2": "Quelle est la vibe ?",
+    "step2Hint": "L'émotion que tu veux dégager.",
     "step3": "Où vas-tu ?",
+    "step3Hint": "Le contexte change tout.",
     "generating": "Composition de ta tenue en cours…",
     "generate": "Générer ma tenue",
     "newLook": "Nouvelle tenue",
@@ -31,7 +51,27 @@
     "completeSteps": "Complète les 3 étapes",
     "rateLimited": "Trop de demandes. Réessaie dans une minute.",
     "paymentRequired": "Crédits IA épuisés. Ajoute des crédits dans Lovable.",
-    "error": "Génération impossible. Réessaie."
+    "error": "Génération impossible. Réessaie.",
+    "closetUsed": "{{count}} pièces de ton Vibe Closet seront prises en compte."
+  },
+  "scan": {
+    "kicker": "Vibe Check",
+    "title": "Note ton look",
+    "subtitle": "Analyse couture, sévère mais juste.",
+    "hint": "Prends-toi en photo (en pied, lumière naturelle) pour un scan honnête.",
+    "choose": "Choisir une photo",
+    "change": "Changer de photo",
+    "loading": "Analyse en cours…",
+    "rescore": "Re-noter",
+    "strong": "Ce qui marche",
+    "weak": "À améliorer",
+    "tipsTitle": "3 actions rapides",
+    "errors": {
+      "rate": "Trop de scans. Réessaie dans une minute.",
+      "credits": "Crédits IA épuisés.",
+      "blur": "Analyse impossible. Reprends une photo plus nette.",
+      "generic": "Scan impossible. Réessaie."
+    }
   },
   "profile": {
     "title": "Profil",
@@ -49,7 +89,10 @@
     "email": "Email",
     "height": "Taille (cm)",
     "weight": "Poids (kg)",
+    "age": "Âge",
     "language": "Langue",
+    "theme": "Thème",
+    "themeHint": "Choisis l'accent couleur de l'app. La base reste crème, blanc et noir.",
     "subscription": "Abonnement",
     "manage": "Gérer mon abonnement",
     "preferences": "Préférences",
@@ -68,14 +111,8 @@
   "paywall": {
     "title": "Passe au niveau Icône",
     "subtitle": "Débloque des générations illimitées et l'essayage virtuel HD.",
-    "week": "Semaine",
-    "month": "Mois",
-    "quarter": "Trimestre",
-    "popular": "Le plus populaire",
-    "icon": "L'offre Icône",
-    "save": "Économise 33%",
-    "ideal": "Idéal pour tester",
-    "restore": "Restaurer les achats",
-    "subscribe": "S'abonner"
+    "week": "Semaine", "month": "Mois", "quarter": "Trimestre",
+    "popular": "Le plus populaire", "icon": "L'offre Icône", "save": "Économise 33%",
+    "ideal": "Idéal pour tester", "restore": "Restaurer les achats", "subscribe": "S'abonner"
   }
 }

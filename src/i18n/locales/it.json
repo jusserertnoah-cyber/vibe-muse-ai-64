@@ -1,8 +1,26 @@
 {
   "nav": { "home": "Home", "dressing": "Dressing", "scan": "Scan", "profile": "Profilo" },
+  "home": {
+    "hello": "Ciao",
+    "styles": "I tuoi stili",
+    "vibers": "Vibers",
+    "vibersHint": "200 Vibers = 1 mese Premium gratis",
+    "smartCloset": "Smart Closet",
+    "closetEmpty": "Il tuo armadio è vuoto. Aggiungi i tuoi capi per suggerimenti su misura.",
+    "addPiece": "Aggiungi un capo",
+    "createLookWith": "Crea un look con",
+    "closetCount_one": "Hai {{count}} capo salvato.",
+    "closetCount_other": "Hai {{count}} capi salvati.",
+    "forgotten": "Non indossi il tuo {{piece}} da 2 settimane, lo proviamo oggi?",
+    "evolution": "Evoluzione",
+    "lastScans": "Ultimi {{count}} scan",
+    "history": "Cronologia",
+    "myStats": "My Stats",
+    "location": "Posizione"
+  },
   "common": {
     "continue": "Continua", "back": "Indietro", "skip": "Salta",
-    "generate": "Genera il mio look", "next": "Avanti", "done": "Fatto"
+    "generate": "Genera il mio look", "next": "Avanti", "done": "Fatto", "save": "Salva"
   },
   "onboarding": {
     "language": "Scegli la tua lingua",
@@ -15,16 +33,59 @@
   "dressing": {
     "title": "Componi il tuo look",
     "step1": "Qual è il tuo stile oggi?",
+    "step1Hint": "Scegli l'universo che ti parla oggi.",
     "step2": "Qual è la vibe?",
+    "step2Hint": "L'emozione che vuoi trasmettere.",
     "step3": "Dove vai?",
+    "step3Hint": "Il contesto cambia tutto.",
     "generating": "Componendo il tuo look…",
-    "generate": "Genera il mio look"
+    "generate": "Genera il mio look",
+    "newLook": "Nuovo look",
+    "stylistAdvice": "Consiglio dello stylist",
+    "noImage": "Immagine non disponibile",
+    "completeSteps": "Completa i 3 step",
+    "rateLimited": "Troppe richieste. Riprova tra un minuto.",
+    "paymentRequired": "Crediti AI esauriti.",
+    "error": "Generazione impossibile. Riprova.",
+    "closetUsed": "Verranno usati {{count}} capi dal tuo Vibe Closet."
+  },
+  "scan": {
+    "kicker": "Vibe Check",
+    "title": "Vota il tuo look",
+    "subtitle": "Analisi couture, onesta e diretta.",
+    "hint": "Fatti una foto a figura intera in luce naturale per uno scan onesto.",
+    "choose": "Scegli una foto",
+    "change": "Cambia foto",
+    "loading": "Analisi in corso…",
+    "rescore": "Rivota",
+    "strong": "Cosa funziona",
+    "weak": "Da migliorare",
+    "tipsTitle": "3 azioni rapide",
+    "errors": {
+      "rate": "Troppi scan. Riprova tra un minuto.",
+      "credits": "Crediti AI esauriti.",
+      "blur": "Analisi impossibile. Scatta una foto più nitida.",
+      "generic": "Scan impossibile. Riprova."
+    }
   },
   "profile": {
     "title": "Profilo", "closet": "Vibe Closet",
     "closetEmpty": "Aggiungi i tuoi capi a voce per look 100% personalizzati.",
-    "addPiece": "Aggiungi un capo",
-    "subscriptions": "Vedi abbonamenti", "premium": "Premium"
+    "addPiece": "Aggiungi un capo", "subscriptions": "Vedi abbonamenti",
+    "premium": "Premium", "settings": "Impostazioni"
+  },
+  "settings": {
+    "title": "Impostazioni", "account": "Account",
+    "firstName": "Nome", "email": "Email",
+    "height": "Altezza (cm)", "weight": "Peso (kg)", "age": "Età",
+    "language": "Lingua", "theme": "Tema",
+    "themeHint": "Scegli il colore di accento. La base resta crema, bianco e nero.",
+    "subscription": "Abbonamento", "manage": "Gestisci abbonamento",
+    "preferences": "Preferenze", "morningTip": "Consiglio meteo del mattino",
+    "units": "Unità", "metric": "Metrico", "imperial": "Imperiale",
+    "legal": "Legale e supporto", "privacy": "Privacy", "terms": "Termini d'uso",
+    "delete": "Elimina account", "saved": "Modifiche salvate",
+    "free": "Gratis", "stripeSoon": "Portale Stripe in arrivo"
   },
   "paywall": {
     "title": "Diventa un'Icona",

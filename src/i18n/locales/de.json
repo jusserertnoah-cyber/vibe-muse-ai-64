@@ -1,8 +1,26 @@
 {
   "nav": { "home": "Start", "dressing": "Dressing", "scan": "Scan", "profile": "Profil" },
+  "home": {
+    "hello": "Hallo",
+    "styles": "Deine Stile",
+    "vibers": "Vibers",
+    "vibersHint": "200 Vibers = 1 Monat Premium gratis",
+    "smartCloset": "Smart Closet",
+    "closetEmpty": "Dein Kleiderschrank ist leer. Füge Stücke hinzu für maßgeschneiderte Vorschläge.",
+    "addPiece": "Stück hinzufügen",
+    "createLookWith": "Look erstellen mit",
+    "closetCount_one": "Du hast {{count}} Stück gespeichert.",
+    "closetCount_other": "Du hast {{count}} Stücke gespeichert.",
+    "forgotten": "Du hast dein {{piece}} seit 2 Wochen nicht getragen — heute ausprobieren?",
+    "evolution": "Entwicklung",
+    "lastScans": "Letzte {{count}} Scans",
+    "history": "Verlauf",
+    "myStats": "Meine Stats",
+    "location": "Standort"
+  },
   "common": {
     "continue": "Weiter", "back": "Zurück", "skip": "Überspringen",
-    "generate": "Outfit generieren", "next": "Weiter", "done": "Fertig"
+    "generate": "Outfit generieren", "next": "Weiter", "done": "Fertig", "save": "Speichern"
   },
   "onboarding": {
     "language": "Wähle deine Sprache",
@@ -15,16 +33,59 @@
   "dressing": {
     "title": "Stelle dein Outfit zusammen",
     "step1": "Was ist heute dein Style?",
+    "step1Hint": "Wähle die Welt, die dich heute anspricht.",
     "step2": "Welche Vibe?",
+    "step2Hint": "Die Energie, die du ausstrahlen willst.",
     "step3": "Wohin gehst du?",
+    "step3Hint": "Der Kontext ändert alles.",
     "generating": "Outfit wird erstellt…",
-    "generate": "Outfit generieren"
+    "generate": "Outfit generieren",
+    "newLook": "Neues Outfit",
+    "stylistAdvice": "Stylist-Tipp",
+    "noImage": "Bild nicht verfügbar",
+    "completeSteps": "Schließe die 3 Schritte ab",
+    "rateLimited": "Zu viele Anfragen. In einer Minute erneut versuchen.",
+    "paymentRequired": "KI-Guthaben aufgebraucht.",
+    "error": "Generierung fehlgeschlagen. Erneut versuchen.",
+    "closetUsed": "{{count}} Stücke aus deinem Vibe Closet werden verwendet."
+  },
+  "scan": {
+    "kicker": "Vibe Check",
+    "title": "Bewerte dein Look",
+    "subtitle": "Couture-Analyse — ehrlich und scharf.",
+    "hint": "Mach ein Ganzkörperfoto bei Tageslicht für einen ehrlichen Scan.",
+    "choose": "Foto wählen",
+    "change": "Foto ändern",
+    "loading": "Analysiere…",
+    "rescore": "Neu bewerten",
+    "strong": "Was funktioniert",
+    "weak": "Zu verbessern",
+    "tipsTitle": "3 schnelle Aktionen",
+    "errors": {
+      "rate": "Zu viele Scans. In einer Minute erneut versuchen.",
+      "credits": "KI-Guthaben aufgebraucht.",
+      "blur": "Analyse unmöglich. Mach ein schärferes Foto.",
+      "generic": "Scan fehlgeschlagen. Erneut versuchen."
+    }
   },
   "profile": {
     "title": "Profil", "closet": "Vibe Closet",
     "closetEmpty": "Füge deine Stücke per Sprache hinzu für 100% personalisierte Outfits.",
-    "addPiece": "Stück hinzufügen",
-    "subscriptions": "Abos ansehen", "premium": "Premium"
+    "addPiece": "Stück hinzufügen", "subscriptions": "Abos ansehen",
+    "premium": "Premium", "settings": "Einstellungen"
+  },
+  "settings": {
+    "title": "Einstellungen", "account": "Konto",
+    "firstName": "Vorname", "email": "E-Mail",
+    "height": "Größe (cm)", "weight": "Gewicht (kg)", "age": "Alter",
+    "language": "Sprache", "theme": "Theme",
+    "themeHint": "Wähle die Akzentfarbe. Basis bleibt creme, weiß und schwarz.",
+    "subscription": "Abo", "manage": "Abo verwalten",
+    "preferences": "Einstellungen", "morningTip": "Morgendlicher Wettertipp",
+    "units": "Einheiten", "metric": "Metrisch", "imperial": "Imperial",
+    "legal": "Rechtliches & Support", "privacy": "Datenschutz", "terms": "AGB",
+    "delete": "Konto löschen", "saved": "Änderungen gespeichert",
+    "free": "Kostenlos", "stripeSoon": "Stripe-Portal bald verfügbar"
   },
   "paywall": {
     "title": "Werde zur Ikone",
