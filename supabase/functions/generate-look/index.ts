@@ -29,6 +29,7 @@ serve(async (req) => {
       closet,
       referencePhoto, // data URL or null
       lang = "fr",
+      tier = "free",
     } = body ?? {};
 
     if (!style || !mood || !occasion) {
@@ -78,7 +79,7 @@ Tenue cohérente, élégante, détails de matières visibles (texture, plis, omb
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash-image",
+          model: tier === "premium" ? "google/gemini-3-pro-image-preview" : "google/gemini-2.5-flash-image",
           messages,
           modalities: ["image", "text"],
         }),
@@ -127,7 +128,7 @@ Réponds via la fonction tool fournie.`;
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
+          model: tier === "premium" ? "google/gemini-2.5-pro" : "google/gemini-2.5-flash-lite",
           messages: [
             { role: "system", content: adviceSystem },
             { role: "user", content: adviceUserPrompt },

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Send, Loader2, Sparkles } from "lucide-react";
 import { getProfile } from "@/lib/profile";
+import { getTier } from "@/lib/tier";
 import { toast } from "sonner";
 
 type Msg = { role: "user" | "assistant"; content: string };
@@ -69,6 +70,7 @@ export function StylistChat({ mode, context, intro, suggestions = [] }: Props) {
               : null,
           },
           lang: i18n.language?.split("-")[0] ?? "fr",
+          tier: getTier(),
         }),
       });
 

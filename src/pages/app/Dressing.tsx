@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import type { Mood, Occasion, StyleTag } from "@/lib/types";
 import { getProfile } from "@/lib/profile";
 import { awardVibers } from "@/lib/vibers";
+import { getTier } from "@/lib/tier";
 import { ALL_STYLES } from "@/data/inspiration";
 import { getCurrentWeather, type WeatherSnapshot } from "@/lib/weather";
 import { supabase } from "@/integrations/supabase/client";
@@ -77,6 +78,7 @@ export default function Dressing() {
           closet: profile?.closet ?? [],
           referencePhoto: profile?.referencePhoto ?? null,
           lang: i18n.language?.split("-")[0] ?? "fr",
+          tier: getTier(),
         },
       });
 

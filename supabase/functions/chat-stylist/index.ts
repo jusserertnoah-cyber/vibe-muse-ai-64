@@ -24,6 +24,7 @@ serve(async (req) => {
       messages = [],
       context = {},
       lang = "fr",
+      tier = "free",
     } = body ?? {};
 
     if (!Array.isArray(messages) || messages.length === 0) {
@@ -72,7 +73,7 @@ RÈGLES :
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
+          model: tier === "premium" ? "google/gemini-2.5-pro" : "google/gemini-2.5-flash-lite",
           messages: [
             { role: "system", content: systemPrompt },
             ...messages.slice(-12).map((m: Msg) => ({ role: m.role, content: m.content })),

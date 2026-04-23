@@ -19,23 +19,41 @@ export default function Paywall() {
       price: "3,99 €",
       period: t("paywall.week"),
       tag: t("paywall.ideal"),
-      benefits: ["Générations illimitées", "Vibe Check HD", "Annulable à tout moment"],
+      benefits: [
+        "IA Pro (analyses + visuels haute fidélité)",
+        "Générations illimitées",
+        "Vibe Check HD",
+        "Annulable à tout moment",
+      ],
     },
     {
       id: "month",
       price: "9,99 €",
       period: t("paywall.month"),
       tag: t("paywall.popular"),
-      benefits: ["Tout du plan Semaine", "Essayage virtuel HD", "Vibe Closet illimité"],
+      benefits: [
+        "Tout du plan Semaine",
+        "IA Pro Max (Gemini 2.5 Pro + Nano Banana 2)",
+        "Essayage virtuel HD",
+        "Vibe Closet illimité",
+      ],
     },
     {
       id: "quarter",
       price: "19,99 €",
       period: t("paywall.quarter"),
       tag: t("paywall.icon") + " · " + t("paywall.save"),
-      benefits: ["Tout du plan Mois", "Accès anticipé aux nouveautés", "Support prioritaire"],
+      benefits: [
+        "Tout du plan Mois",
+        "Modèles IA premium en priorité",
+        "Accès anticipé aux nouveautés",
+        "Support prioritaire",
+      ],
     },
   ];
+
+  // Bandeau comparatif IA — visible avant les plans
+  const FREE_NOTE = "Essai gratuit : IA standard rapide (Gemini Flash). Passe Premium pour débloquer l'IA Pro (analyses chirurgicales + visuels HD).";
 
   return (
     <div className="min-h-screen bg-background pb-32">
@@ -57,6 +75,9 @@ export default function Paywall() {
             {t("paywall.title")}
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">{t("paywall.subtitle")}</p>
+          <p className="mt-3 rounded-2xl border border-border bg-card px-4 py-3 text-xs text-muted-foreground">
+            {FREE_NOTE}
+          </p>
         </div>
 
         <div className="mt-8 space-y-3">
