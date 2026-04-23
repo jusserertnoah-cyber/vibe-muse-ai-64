@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { VibeLogo } from "@/components/vibe/VibeLogo";
@@ -9,6 +9,8 @@ import type { Gender, UserProfile } from "@/lib/types";
 import { ArrowRight, Camera, MapPin, Mic, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useSession } from "@/hooks/useSession";
+import { supabase } from "@/integrations/supabase/client";
 
 const GENDERS: { id: Gender; label: string }[] = [
   { id: "femme", label: "Femme" },
@@ -20,6 +22,7 @@ const TOTAL_STEPS = 6;
 
 export default function Onboarding() {
   const navigate = useNavigate();
+  const { session, loading } = useSession();
   const [step, setStep] = useState(0);
   const [firstName, setFirstName] = useState("");
   const [gender, setGender] = useState<Gender | null>(null);
@@ -76,9 +79,25 @@ export default function Onboarding() {
       createdAt: new Date().toISOString(),
     };
     saveProfile(profile);
+    // Persistance côté DB
+    if (session?.user?.id) {
+      await supabase.from("profiles").update({
+        first_name: profile.firstName,
+        gender: profile.gender,
+        age: profile.age,
+        height: profile.heightCm,
+        weight: profile.weightKg,
+        styles: profile.styles,
+        vibers: profile.vibers,
+        onboarded: true,
+      }).eq("id", session.user.id);
+    }
     toast.success(`Bienvenue ${profile.firstName} ✨ +20 Vibers offerts`);
     navigate("/app", { replace: true });
   };
+
+  if (loading) return null;
+  if (!session) return <Navigate to="/auth" replace />;
 
   const canProceed = () => {
     switch (step) {
