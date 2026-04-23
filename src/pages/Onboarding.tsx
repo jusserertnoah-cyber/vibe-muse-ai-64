@@ -1,20 +1,14 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { SUPPORTED_LANGUAGES } from "@/i18n";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { VibeLogo } from "@/components/vibe/VibeLogo";
 import { saveProfile } from "@/lib/profile";
 import { getDeviceId } from "@/lib/device";
-import type { Gender, StyleTag, UserProfile } from "@/lib/types";
-import { ArrowRight, Camera, Check, Globe, MapPin, Mic, Sparkles } from "lucide-react";
+import type { Gender, UserProfile } from "@/lib/types";
+import { ArrowRight, Camera, MapPin, Mic, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-
-const STYLES: StyleTag[] = [
-  "Vintage", "Old Money", "Classique", "Sobre", "Sport", "Streetwear",
-];
 
 const GENDERS: { id: Gender; label: string }[] = [
   { id: "femme", label: "Femme" },
@@ -22,28 +16,21 @@ const GENDERS: { id: Gender; label: string }[] = [
   { id: "unisexe", label: "Non-binaire / Unisexe" },
 ];
 
-const TOTAL_STEPS = 8;
+const TOTAL_STEPS = 6;
 
 export default function Onboarding() {
   const navigate = useNavigate();
-  const { i18n } = useTranslation();
   const [step, setStep] = useState(0);
   const [firstName, setFirstName] = useState("");
   const [gender, setGender] = useState<Gender | null>(null);
   const [heightCm, setHeightCm] = useState<string>("");
   const [weightKg, setWeightKg] = useState<string>("");
-  const [styles, setStyles] = useState<StyleTag[]>([]);
   const [city, setCity] = useState("");
   const [photo, setPhoto] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const next = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
   const back = () => setStep((s) => Math.max(s - 1, 0));
-
-  const toggleStyle = (s: StyleTag) =>
-    setStyles((prev) =>
-      prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]
-    );
 
   const onPhoto = (file: File) => {
     const reader = new FileReader();
@@ -78,7 +65,7 @@ export default function Onboarding() {
       gender: gender ?? "unisexe",
       heightCm: heightCm ? Number(heightCm) : undefined,
       weightKg: weightKg ? Number(weightKg) : undefined,
-      styles,
+      styles: [],
       city: city || undefined,
       referencePhoto: photo ?? undefined,
       closet: [],
@@ -93,14 +80,12 @@ export default function Onboarding() {
 
   const canProceed = () => {
     switch (step) {
-      case 0: return !!i18n.language;
-      case 1: return firstName.trim().length >= 2;
-      case 2: return !!gender;
-      case 3: {
+      case 0: return firstName.trim().length >= 2;
+      case 1: return !!gender;
+      case 2: {
         const h = Number(heightCm), w = Number(weightKg);
         return h >= 120 && h <= 230 && w >= 30 && w <= 250;
       }
-      case 4: return styles.length > 0;
       default: return true;
     }
   };
