@@ -208,7 +208,12 @@ export default function Settings() {
                     : "border-border bg-background hover:border-accent/40",
                 )}
               >
-                <span className="text-sm leading-none">{l.flag}</span>
+                <img
+                  src={`https://flagcdn.com/w40/${l.code === "en" ? "gb" : l.code}.png`}
+                  alt=""
+                  className="h-3.5 w-5 rounded-sm object-cover"
+                  loading="lazy"
+                />
                 <span className="flex-1 truncate font-medium">{l.label}</span>
                 {active && <Check className="h-3 w-3 text-accent" />}
               </button>
