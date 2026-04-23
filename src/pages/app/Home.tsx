@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getProfile } from "@/lib/profile";
-import { Trophy, Shirt, Zap, TrendingUp, History as HistoryIcon, BarChart3, Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, Wind, MapPin } from "lucide-react";
+import { Trophy, Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, Wind, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentWeather } from "@/lib/weather";
-import { getRecentScans, getStyleStats, getHistory } from "@/lib/history";
-import { LineChart, Line, ResponsiveContainer, YAxis, Tooltip } from "recharts";
+import { MissionStory } from "@/components/vibe/MissionStory";
 
 export default function Home() {
   const { t } = useTranslation();
