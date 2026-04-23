@@ -133,7 +133,7 @@ export default function Home() {
               <div>
                 <div className="flex items-center gap-1.5 opacity-80">
                   <MapPin className="h-3 w-3" strokeWidth={2} />
-                  <span className="text-[10px] uppercase tracking-[0.2em]">
+                  <span className="text-xs uppercase tracking-[0.2em]">
                     {weather.city ?? "Localisation"}
                   </span>
                 </div>
@@ -150,7 +150,7 @@ export default function Home() {
               <weatherVisual.Icon className="h-14 w-14 drop-shadow-lg" strokeWidth={1.4} />
             </div>
 
-            <p className="mt-4 font-serif text-xl leading-snug">
+            <p className="mt-4 font-serif text-base leading-snug">
               {weatherVisual.phrase}
             </p>
           </div>
@@ -163,7 +163,7 @@ export default function Home() {
           <div>
             <div className="flex items-center gap-1.5">
               <Trophy className="h-3.5 w-3.5 text-accent" strokeWidth={1.5} />
-              <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+              <span className="font-serif text-lg leading-none text-foreground">
                 Vibers
               </span>
             </div>
@@ -193,13 +193,13 @@ export default function Home() {
       <div className="rounded-3xl border border-border bg-card p-5">
         <div className="flex items-center gap-1.5">
           <Shirt className="h-3.5 w-3.5 text-accent" strokeWidth={1.5} />
-          <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+          <span className="font-serif text-lg leading-none text-foreground">
             Smart Closet
           </span>
         </div>
         {closetCount === 0 ? (
           <>
-            <p className="mt-3 font-serif text-xl leading-snug text-foreground">
+            <p className="mt-3 text-sm leading-snug text-foreground/90">
               Ton dressing est vide. Ajoute tes pièces pour des suggestions sur-mesure.
             </p>
             <button
@@ -212,7 +212,7 @@ export default function Home() {
           </>
         ) : (
           <>
-            <p className="mt-3 font-serif text-xl leading-snug text-foreground">
+            <p className="mt-3 text-sm leading-snug text-foreground/90">
               Tu as <span className="font-mono-tech font-bold">{closetCount}</span> pièce{closetCount > 1 ? "s" : ""} enregistrée{closetCount > 1 ? "s" : ""}.
               {forgottenPiece && (
                 <> Tu n'as pas porté ton <span className="font-medium">{forgottenPiece}</span> depuis 2 semaines, on l'essaye aujourd'hui ?</>
@@ -235,8 +235,8 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <TrendingUp className="h-3.5 w-3.5 text-accent" strokeWidth={1.5} />
-              <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-mono-tech">
-                EVOLUTION
+              <span className="font-serif text-lg leading-none text-foreground">
+                Évolution
               </span>
             </div>
             <div className="flex items-baseline gap-2 font-mono-tech">
@@ -287,8 +287,8 @@ export default function Home() {
         <div>
           <div className="mb-3 flex items-center gap-1.5">
             <HistoryIcon className="h-3.5 w-3.5 text-accent" strokeWidth={1.5} />
-            <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-mono-tech">
-              HISTORY
+            <span className="font-serif text-lg leading-none text-foreground">
+              Historique
             </span>
           </div>
           <div className="-mx-5 overflow-x-auto scrollbar-hide">
@@ -325,8 +325,8 @@ export default function Home() {
         <div className="rounded-3xl border border-border bg-card p-5">
           <div className="mb-3 flex items-center gap-1.5">
             <BarChart3 className="h-3.5 w-3.5 text-accent" strokeWidth={1.5} />
-            <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-mono-tech">
-              MY STATS
+            <span className="font-serif text-lg leading-none text-foreground">
+              My Stats
             </span>
           </div>
           <ul className="space-y-2.5">
