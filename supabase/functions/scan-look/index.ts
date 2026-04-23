@@ -60,11 +60,14 @@ RÈGLES ABSOLUES :
 
 BIBLE STYLES (à utiliser pour identifier et valoriser) :
 • OLD MONEY JEUNE : luxe discret, AUCUN logo, silhouettes propres. Palette crème/blanc cassé/marine/camel/beige/olive/gris chiné. Textures tweed, lin, cachemire, coton peigné, cuir lisse. Détails : boutons dorés, bijoux dorés minimalistes, sacs structurés, mocassins/ballerines/derbies cuir. Si tu détectes la combinaison textures riches (tweed/lin/cachemire) + neutres + détails dorés → identifie "Old Money Jeune" et valorise-la dans "strong" (ex : "Old Money impeccable : tweed + détails dorés parfaitement dosés").
-• STREETWEAR : oversize, sneakers iconiques, layering, palette urbaine.
+• OVERSIZE : silhouettes XXL, hoodies/tees boxy, baggy/cargo, sneakers chunky, layering urbain.
+• AMÉRICAIN : varsity/letterman jacket, sweat college, casquette baseball, jean droit/skinny, sneakers blanches (Converse, Air Force), vibe US college/preppy/sport.
 • CLASSIQUE : coupes nettes, neutres, basiques bien coupés.
 • SOBRE/MINIMAL : monochrome, lignes pures, peu d'accessoires.
 • VINTAGE : pièces datées assumées, motifs rétro, cuirs patinés.
 • SPORT : technique, fonctionnel, color-blocking.
+
+IMPORTANT : tu DOIS toujours retourner un champ "style" qui correspond EXACTEMENT à l'un de ces labels (tels qu'écrits) : "Vintage", "Old Money", "Classique", "Sobre", "Sport", "Oversize", "Américain". Choisis celui qui colle le mieux à la tenue scannée.
 ${profileLine ? `Profil : ${profileLine}.` : ""}`;
 
     const userText = `Analyse cette tenue. Va droit au but : note, verdict, ce qui marche, ce qui pèche, 3 actions concrètes.`;
@@ -99,6 +102,11 @@ ${profileLine ? `Profil : ${profileLine}.` : ""}`;
                   type: "object",
                   properties: {
                     score: { type: "number", description: "Note /10, décimales OK." },
+                    style: {
+                      type: "string",
+                      enum: ["Vintage", "Old Money", "Classique", "Sobre", "Sport", "Oversize", "Américain"],
+                      description: "Style identifié sur la tenue (un seul, le plus dominant).",
+                    },
                     verdict: { type: "string", description: "1 phrase courte (max 12 mots), bienveillante mais nette." },
                     strong: { type: "string", description: "Le point fort principal en 1 phrase concrète (couleur/coupe/matière nommée)." },
                     weak: { type: "string", description: "Le point à améliorer principal en 1 phrase concrète." },
@@ -110,7 +118,7 @@ ${profileLine ? `Profil : ${profileLine}.` : ""}`;
                       maxItems: 3,
                     },
                   },
-                  required: ["score", "verdict", "strong", "weak", "tips"],
+                  required: ["score", "style", "verdict", "strong", "weak", "tips"],
                   additionalProperties: false,
                 },
               },

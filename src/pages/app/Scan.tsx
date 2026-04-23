@@ -12,6 +12,7 @@ import { StylistChat } from "@/components/vibe/StylistChat";
 
 interface ScanResult {
   score: number;
+  style?: string;
   verdict: string;
   strong: string;
   weak: string;
@@ -75,7 +76,12 @@ export default function Scan() {
       }
       setResult(data as ScanResult);
       awardVibers("scan");
-      pushHistory({ type: "scan", imageUrl: img, score: (data as any).score });
+      pushHistory({
+        type: "scan",
+        imageUrl: img,
+        score: (data as any).score,
+        style: (data as any).style,
+      });
     } catch (e) {
       console.error(e);
       toast.error("Scan impossible. Réessaie.");
