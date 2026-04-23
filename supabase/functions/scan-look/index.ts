@@ -45,30 +45,21 @@ serve(async (req) => {
       .filter(Boolean)
       .join(", ");
 
-    const systemPrompt = `Tu es un EXPERT STYLISTE HAUTE COUTURE et CONSULTANT EN IMAGE de niveau international (Vogue, Dior, Saint Laurent). Tu analyses une photo de tenue avec une PRÉCISION CHIRURGICALE.
+    const systemPrompt = `Tu es un STYLISTE HAUTE COUTURE (Vogue, Saint Laurent). Tu analyses une tenue en allant DROIT AU BUT.
 
-RÈGLES ABSOLUES — tu DOIS les respecter sinon ta réponse est nulle :
-1. INTERDICTION TOTALE de conseils génériques. JAMAIS "ajoute un accessoire", "essaie autre chose", "c'est sympa", "bon style".
-2. ANALYSE TECHNIQUE OBLIGATOIRE :
-   - Colorimétrie : nomme les couleurs précises et juge l'harmonie avec la carnation visible (ex: "Le bleu cobalt jure avec ton sous-ton chaud doré").
-   - Proportions : compare les volumes des pièces entre elles${heightCm ? ` et avec la morphologie (${heightCm}cm)` : ""} (ex: "Le pantalon trop large tasse ta silhouette de ${heightCm ?? "X"}cm").
-   - Matières : identifie les textures (laine, coton oxford, denim brut, satin…) et juge leur association.
-3. LE DÉTAIL QUI TUE : repère UN détail précis et concret visible sur la photo (lacet mal serré, manche qui dépasse, bouton mal aligné, association de textures osée, ourlet trop long, montre dépareillée…) et commente-le explicitement.
-4. NOTE /10 sévère mais juste, JAMAIS la même valeur banale :
-   - 8-10 réservé aux looks PARFAITS (cohérence totale, détails maîtrisés)
-   - 7 = solide avec 1 vraie faiblesse
-   - 4-6 = potentiel mais erreurs de débutant
-   - 1-3 = incohérent
-   Utilise des décimales possibles (ex: 6.5).
-5. 3 CONSEILS — chacun = ACTION IMMÉDIATE chiffrée et concrète, jamais vague.
-   ✅ "Remonte tes manches de 3cm pour affiner les poignets"
-   ✅ "Remplace cette ceinture noire par un cuir marron foncé pour rappeler tes derbies"
-   ❌ "Ajoute des accessoires" / "Essaie un autre haut"
+RÈGLES ABSOLUES :
+1. ULTRA-COURT. Chaque champ = 1 phrase max, percutante, lisible en 2 secondes.
+2. Ton bienveillant mais expert : tu encourages d'abord, tu corrigeras ensuite. Jamais cassant, jamais condescendant.
+3. JAMAIS de conseils vagues ("essaie autre chose", "ajoute un accessoire"). Toujours CONCRET (couleur, coupe, cm, matière précise).
+4. NOTE /10 honnête, décimales OK :
+   - 9-10 = look parfait
+   - 7-8 = très bon, 1 détail à peaufiner
+   - 5-6 = correct, axes clairs d'amélioration
+   - <5 = à retravailler en profondeur
+5. Tu réponds STRICTEMENT en ${langName}, via la fonction tool fournie.
+${profileLine ? `Profil : ${profileLine}.` : ""}`;
 
-Tu réponds STRICTEMENT en ${langName}. Tu réponds UNIQUEMENT via la fonction tool fournie.
-${profileLine ? `Profil porteur : ${profileLine}.` : ""}`;
-
-    const userText = `Analyse cette tenue avec ta grille technique. Sois sévère, précis, chirurgical. Repère LE détail qui tue.`;
+    const userText = `Analyse cette tenue. Va droit au but : note, verdict, ce qui marche, ce qui pèche, 3 actions concrètes.`;
 
     const aiRes = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
@@ -95,51 +86,23 @@ ${profileLine ? `Profil porteur : ${profileLine}.` : ""}`;
               type: "function",
               function: {
                 name: "vibe_check",
-                description: "Returns the strict couture analysis of the outfit.",
+                description: "Analyse courte et actionnable d'une tenue.",
                 parameters: {
                   type: "object",
                   properties: {
-                    score: {
-                      type: "number",
-                      description: "Note /10, peut être décimale (ex 6.5).",
-                    },
-                    verdict: {
-                      type: "string",
-                      description: "1 phrase punch — verdict global.",
-                    },
-                    colorimetrie: {
-                      type: "string",
-                      description: "Analyse couleur précise vs carnation.",
-                    },
-                    proportions: {
-                      type: "string",
-                      description: "Analyse volumes & morpho.",
-                    },
-                    matieres: {
-                      type: "string",
-                      description: "Analyse des textures / matières.",
-                    },
-                    detailKiller: {
-                      type: "string",
-                      description: "LE détail précis repéré sur la photo.",
-                    },
+                    score: { type: "number", description: "Note /10, décimales OK." },
+                    verdict: { type: "string", description: "1 phrase courte (max 12 mots), bienveillante mais nette." },
+                    strong: { type: "string", description: "Le point fort principal en 1 phrase concrète (couleur/coupe/matière nommée)." },
+                    weak: { type: "string", description: "Le point à améliorer principal en 1 phrase concrète." },
                     tips: {
                       type: "array",
                       items: { type: "string" },
-                      description: "Exactement 3 actions immédiates chiffrées.",
+                      description: "Exactement 3 actions ultra-courtes (max 10 mots), concrètes et chiffrées.",
                       minItems: 3,
                       maxItems: 3,
                     },
                   },
-                  required: [
-                    "score",
-                    "verdict",
-                    "colorimetrie",
-                    "proportions",
-                    "matieres",
-                    "detailKiller",
-                    "tips",
-                  ],
+                  required: ["score", "verdict", "strong", "weak", "tips"],
                   additionalProperties: false,
                 },
               },
