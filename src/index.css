@@ -79,8 +79,8 @@ All colors MUST be HSL.
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
-  /* Thème "femme" — mauve discret poussiéreux (override de l'accent) */
-  .theme-femme {
+  /* Thème mauve — discret poussiéreux (femme / non-binaire / choix manuel) */
+  .theme-mauve {
     --accent: 280 18% 62%;
     --accent-foreground: 0 0% 100%;
     --ring: 280 18% 62%;
@@ -94,6 +94,23 @@ All colors MUST be HSL.
     --gradient-brand-soft: linear-gradient(135deg, hsl(280 18% 62% / 0.18) 0%, hsl(280 18% 62% / 0.06) 100%);
     --shadow-cobalt: 0 12px 40px -12px hsl(280 18% 62% / 0.40);
     --shadow-brand: 0 0 24px -6px hsl(280 18% 62% / 0.35), 0 8px 24px -10px hsl(280 18% 62% / 0.22);
+  }
+
+  /* Thème "mono" — noir & blanc sur base crème (accent anthracite) */
+  .theme-mono {
+    --accent: 30 10% 12%;
+    --accent-foreground: 40 40% 98%;
+    --ring: 30 10% 12%;
+    --lime: 30 10% 12%;
+    --lime-foreground: 40 40% 98%;
+    --cobalt: 30 10% 12%;
+    --cobalt-foreground: 40 40% 98%;
+    --neon: 30 10% 12%;
+    --neon-foreground: 40 40% 98%;
+    --gradient-brand: linear-gradient(135deg, hsl(30 10% 22%) 0%, hsl(30 10% 12%) 50%, hsl(30 10% 8%) 100%);
+    --gradient-brand-soft: linear-gradient(135deg, hsl(30 10% 12% / 0.15) 0%, hsl(30 10% 12% / 0.05) 100%);
+    --shadow-cobalt: 0 12px 40px -12px hsl(30 10% 12% / 0.35);
+    --shadow-brand: 0 0 24px -6px hsl(30 10% 12% / 0.30), 0 8px 24px -10px hsl(30 10% 12% / 0.20);
   }
 
   .dark {

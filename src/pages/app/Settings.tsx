@@ -12,6 +12,7 @@ import {
   Trash2,
   User as UserIcon,
   Check,
+  Palette,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,7 @@ import { getProfile, updateProfile, clearProfile } from "@/lib/profile";
 import { SUPPORTED_LANGUAGES } from "@/i18n";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { THEMES, getSavedTheme, setTheme, resolveTheme, type ThemeName } from "@/lib/theme";
 
 const Section = ({
   icon,
@@ -85,6 +87,12 @@ export default function Settings() {
   const [units, setUnits] = useState<"metric" | "imperial">(
     () => (localStorage.getItem("vibe.units") as any) ?? "metric",
   );
+  const [theme, setThemeState] = useState<ThemeName>(() => getSavedTheme() ?? resolveTheme());
+
+  const chooseTheme = (t: ThemeName) => {
+    setThemeState(t);
+    setTheme(t);
+  };
 
   const save = () => {
     updateProfile({
