@@ -191,7 +191,7 @@ export default function Settings() {
 
       {/* Language */}
       <Section icon={<Globe className="h-4 w-4" />} title={t("settings.language")}>
-        <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {SUPPORTED_LANGUAGES.map((l) => {
             const active = i18n.language?.startsWith(l.code);
             return (
