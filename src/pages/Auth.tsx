@@ -32,7 +32,10 @@ const normalizePhone = (local: string, countryCode: string): string | null => {
 export default function Auth() {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>("phone");
+  const [countryCode, setCountryCode] = useState<string>("FR");
+  const [countryOpen, setCountryOpen] = useState(false);
   const [phone, setPhone] = useState("");
+  const [e164, setE164] = useState("");
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -44,16 +47,16 @@ export default function Auth() {
   }, [navigate]);
 
   const sendCode = async () => {
-    const e164 = normalizePhone(phone);
-    if (!e164) {
+    const normalized = normalizePhone(phone, countryCode);
+    if (!normalized) {
       toast.error("Numéro invalide", {
-        description: "Format international avec indicatif. Ex : +33612345678",
+        description: "Vérifie le pays et le numéro saisi.",
       });
       return;
     }
     setLoading(true);
     const { error } = await supabase.auth.signInWithOtp({
-      phone: e164,
+      phone: normalized,
       options: { channel: "sms" },
     });
     setLoading(false);
@@ -61,8 +64,8 @@ export default function Auth() {
       toast.error("Envoi impossible", { description: error.message });
       return;
     }
-    toast.success("Code envoyé", { description: `Vérifie tes SMS sur ${e164}` });
-    setPhone(e164);
+    toast.success("Code envoyé", { description: `Vérifie tes SMS sur ${normalized}` });
+    setE164(normalized);
     setStep("otp");
   };
 
@@ -73,7 +76,7 @@ export default function Auth() {
     }
     setLoading(true);
     const { error } = await supabase.auth.verifyOtp({
-      phone,
+      phone: e164,
       token: otp,
       type: "sms",
     });
