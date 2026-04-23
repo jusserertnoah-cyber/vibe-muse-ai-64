@@ -83,6 +83,50 @@ Détails clés : boutons dorés (vestes/cardigans), bijoux dorés minimalistes, 
 Tenue à composer (varie cette base, n'invente pas un autre style) : ${variant}`;
     }
 
+    const oversizeFemmeVariants = [
+      "Hoodie XXL crème oversize, cargo baggy beige, sneakers chunky blanches, casquette noire, sac banane en bandoulière. Rue urbaine.",
+      "Tee boxy noir oversize, jean baggy bleu délavé, sneakers chunky grises, lunettes ovales, chaîne argent. Skatepark béton.",
+      "Sweat oversize gris chiné rentré dans un short cargo kaki, chaussettes mi-mollet, sneakers chunky, bob coton. Parking urbain.",
+      "Chemise oversize blanche déboutonnée sur brassière noire, cargo parachute beige, sneakers blanches montantes, sac tote. Friche industrielle.",
+      "Trench oversize beige sur hoodie noir, jogging baggy noir, sneakers chunky, lunettes carrées noires. Sortie de métro.",
+    ];
+    const oversizeHommeVariants = [
+      "Tee boxy noir oversize, jean baggy bleu foncé, sneakers chunky blanches/grises, lunettes solaires, chaîne argent. Rue urbaine.",
+      "Hoodie XXL beige sable, cargo baggy noir, sneakers chunky blanches, casquette noire. Skatepark.",
+      "Chemise oversize denim sur tee blanc, jogging baggy gris, sneakers chunky noires, bob. Friche industrielle.",
+      "Sweat crewneck oversize gris, short cargo long kaki, chaussettes hautes, sneakers basses chunky, lunettes rectangulaires. Parking béton.",
+      "Trench oversize camel sur hoodie noir, jean parachute baggy, sneakers chunky blanches. Bord de route urbain.",
+    ];
+    if (styleKey.includes("oversize")) {
+      const pool = isFemme ? oversizeFemmeVariants : oversizeHommeVariants;
+      const variant = pool[Math.floor(Math.random() * pool.length)];
+      styleDirective = `STYLE STRICT — OVERSIZE (${isFemme ? "fille" : "garçon"}) :
+Silhouettes XXL, coupes très amples, layering visible. Sneakers chunky obligatoires. Palette urbaine (noir, blanc cassé, beige, gris, kaki, denim). AUCUN logo agressif.
+Tenue à composer (varie cette base) : ${variant}`;
+    }
+
+    const americainFemmeVariants = [
+      "Varsity letterman jacket marine et crème avec lettre brodée, tee blanc basique, jean droit bleu clair, sneakers Converse blanches montantes, casquette baseball blanche. Campus US.",
+      "Sweat college oversize gris à logo université, mini-jupe plissée à carreaux, chaussettes hautes blanches, sneakers blanches basses, scrunchie. Pelouse de campus.",
+      "Tee blanc rentré dans un jean mom bleu, chemise carreaux rouge nouée à la taille, baskets blanches Air Force, casquette baseball. Diner américain.",
+      "Hoodie sport gris université, jogging assorti, baskets blanches, casquette baseball noire, tote bag toile. Bibliothèque universitaire.",
+      "Robe cheerleader-inspired courte plissée, sweat oversize college par-dessus, chaussettes hautes, baskets blanches. Stade.",
+    ];
+    const americainHommeVariants = [
+      "Varsity letterman jacket marine manches cuir crème lettre brodée, tee blanc, jean droit bleu, sneakers Converse blanches, casquette baseball. Campus US.",
+      "Hoodie college gris à logo université, jogging assorti, baskets blanches Air Force, casquette baseball. Cour de campus.",
+      "Tee blanc basique, surchemise carreaux rouge/noir ouverte, jean droit bleu, baskets blanches, casquette. Diner américain.",
+      "Polo rugby rayé bleu/blanc, chino kaki, baskets blanches basses, casquette baseball. Tailgate party.",
+      "Sweat crewneck université crème lettre flockée, jean droit, baskets Converse blanches montantes, sac à dos toile. Allée de campus.",
+    ];
+    if (styleKey.includes("améric") || styleKey.includes("americain") || styleKey.includes("american")) {
+      const pool = isFemme ? americainFemmeVariants : americainHommeVariants;
+      const variant = pool[Math.floor(Math.random() * pool.length)];
+      styleDirective = `STYLE STRICT — AMÉRICAIN / US PREPPY-COLLEGE (${isFemme ? "fille" : "garçon"}) :
+Inspiration college américain : varsity/letterman jackets, sweats université, casquettes baseball, jeans droits, sneakers blanches iconiques (Converse, Air Force). Palette : marine, blanc, crème, rouge, denim. Vibe US lycée/campus, énergique et sportive.
+Tenue à composer (varie cette base) : ${variant}`;
+    }
+
     const imagePrompt = `Photographie mode éditoriale plein corps, ultra réaliste, lumière studio douce, fond neutre clair.
 Style: ${style}. Mood: ${mood}. Occasion: ${occasion}.
 ${styleDirective}
