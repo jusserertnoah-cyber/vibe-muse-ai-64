@@ -230,11 +230,7 @@ export default function Settings() {
         )}
       </Section>
 
-      {/* Subscription */}
-      <Section icon={<CreditCard className="h-4 w-4" />} title={t("settings.subscription")}>
-      </Section>
-
-      {/* Theme — placed before subscription continues below */}
+      {/* Theme */}
       <Section icon={<Palette className="h-4 w-4" />} title="Thème">
         <p className="text-xs text-muted-foreground">
           Choisis l'accent couleur de l'app. La base reste crème, blanc et noir.
