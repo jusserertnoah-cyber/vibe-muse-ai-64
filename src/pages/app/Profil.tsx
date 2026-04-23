@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { getProfile, clearProfile, updateProfile } from "@/lib/profile";
 import { toast } from "sonner";
 import { getHistory } from "@/lib/history";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Profil() {
   const { t } = useTranslation();
@@ -18,6 +19,12 @@ export default function Profil() {
   const reset = () => {
     clearProfile();
     navigate("/onboarding", { replace: true });
+  };
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    clearProfile();
+    navigate("/auth", { replace: true });
   };
 
   const addPiece = () => {
@@ -185,6 +192,14 @@ export default function Profil() {
       >
         <LogOut className="h-4 w-4" />
         Réinitialiser le profil
+      </button>
+
+      <button
+        onClick={signOut}
+        className="flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground p-4 text-sm font-medium text-background"
+      >
+        <LogOut className="h-4 w-4" />
+        Se déconnecter
       </button>
     </div>
   );

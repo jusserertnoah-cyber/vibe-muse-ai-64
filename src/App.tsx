@@ -8,6 +8,7 @@ import { applyTheme } from "@/lib/theme";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Onboarding from "./pages/Onboarding.tsx";
+import Auth from "./pages/Auth.tsx";
 import { AppLayout } from "./components/vibe/AppLayout";
 import Home from "./pages/app/Home.tsx";
 import Dressing from "./pages/app/Dressing.tsx";
@@ -45,6 +46,7 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/app" element={<AppLayout />}>
             <Route index element={<Home />} />
