@@ -13,6 +13,7 @@ export const getProfile = (): UserProfile | null => {
 
 export const saveProfile = (p: UserProfile) => {
   localStorage.setItem(KEY, JSON.stringify(p));
+  try { window.dispatchEvent(new CustomEvent("vibe:profile-changed")); } catch {}
 };
 
 export const updateProfile = (patch: Partial<UserProfile>) => {
@@ -23,4 +24,7 @@ export const updateProfile = (patch: Partial<UserProfile>) => {
   return next;
 };
 
-export const clearProfile = () => localStorage.removeItem(KEY);
+export const clearProfile = () => {
+  localStorage.removeItem(KEY);
+  try { window.dispatchEvent(new CustomEvent("vibe:profile-changed")); } catch {}
+};
