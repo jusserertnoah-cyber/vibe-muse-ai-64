@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getProfile } from "@/lib/profile";
-import { Trophy, Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, Wind, MapPin } from "lucide-react";
+import { Trophy, TrendingUp, Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, Wind, MapPin } from "lucide-react";
 import { getCurrentWeather } from "@/lib/weather";
 import { MissionStory } from "@/components/vibe/MissionStory";
+import { getRecentScans } from "@/lib/history";
+import { LineChart, Line, ResponsiveContainer, YAxis, Tooltip } from "recharts";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -81,6 +83,13 @@ export default function Home() {
 
     return { Icon, gradient, phrase, textOnDark };
   }, [weather, featuredPiece]);
+
+  // Évolution des notes (7 derniers scans)
+  const scans = useMemo(() => getRecentScans(7).slice().reverse(), []);
+  const chartData = scans.map((s, i) => ({ i: i + 1, score: s.score ?? 0 }));
+  const lastScore = scans.length ? scans[scans.length - 1].score ?? 0 : null;
+  const firstScore = scans.length ? scans[0].score ?? 0 : null;
+  const trend = lastScore !== null && firstScore !== null ? lastScore - firstScore : 0;
 
   return (
     <div className="space-y-6 px-5 pt-8">
@@ -168,6 +177,59 @@ export default function Home() {
 
       {/* Mission Story — +30 Vibers */}
       <MissionStory />
+
+      {/* Évolution des notes */}
+      {scans.length > 0 && (
+        <div className="rounded-3xl border border-border bg-card p-5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <TrendingUp className="h-3.5 w-3.5 text-accent" strokeWidth={1.5} />
+              <span className="font-serif text-lg leading-none text-foreground">
+                {t("home.evolution")}
+              </span>
+            </div>
+            <div className="flex items-baseline gap-2 font-mono-tech">
+              <span className="text-2xl font-bold tracking-tighter">
+                {lastScore?.toFixed(1)}
+              </span>
+              <span className={`text-xs ${trend >= 0 ? "text-accent" : "text-muted-foreground"}`}>
+                {trend >= 0 ? "+" : ""}{trend.toFixed(1)}
+              </span>
+            </div>
+          </div>
+          <div className="mt-3 h-24 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
+                <YAxis domain={[0, 10]} hide />
+                <Tooltip
+                  cursor={false}
+                  contentStyle={{
+                    background: "hsl(var(--background))",
+                    border: "1px solid hsl(var(--border))",
+                    borderRadius: 12,
+                    fontSize: 11,
+                    fontFamily: "JetBrains Mono, monospace",
+                  }}
+                  labelFormatter={() => ""}
+                  formatter={(v: number) => [`${v}/10`, "Note"]}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="score"
+                  stroke="hsl(var(--accent))"
+                  strokeWidth={2}
+                  dot={{ fill: "hsl(var(--accent))", r: 3, strokeWidth: 0 }}
+                  activeDot={{ r: 5 }}
+                  isAnimationActive
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <p className="mt-1 text-[10px] text-muted-foreground font-mono-tech">
+            {t("home.lastScans", { count: scans.length })}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

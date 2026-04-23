@@ -68,16 +68,13 @@ export default function Profil() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <Stat icon={<Trophy className="h-4 w-4" />} label="Vibers" value={profile?.vibers ?? 0} />
-        <Stat icon={<History className="h-4 w-4" />} label="Looks" value={looks.length} />
-      </div>
+      <Stat icon={<Trophy className="h-4 w-4" />} label="Vibers" value={profile?.vibers ?? 0} />
 
-      {/* Looks — historique visuel */}
+      {/* Mon historique — visuel */}
       <section className="rounded-3xl border border-border bg-card p-5">
         <div className="flex items-center gap-2">
           <History className="h-4 w-4 text-accent" />
-          <span className="text-sm font-medium">Mes looks</span>
+          <span className="text-sm font-medium">Mon historique</span>
         </div>
         {looks.length === 0 ? (
           <p className="mt-2 text-xs text-muted-foreground">
