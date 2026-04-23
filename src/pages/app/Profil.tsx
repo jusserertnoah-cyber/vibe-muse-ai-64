@@ -190,16 +190,6 @@ export default function Profil() {
   );
 }
 
-const Stat = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) => (
-  <div className="rounded-3xl border border-border bg-card p-4">
-    <div className="flex items-center gap-2 text-muted-foreground">
-      {icon}
-      <span className="text-[10px] uppercase tracking-widest">{label}</span>
-    </div>
-    <div className="mt-2 font-mono-tech text-2xl font-bold tracking-tight">{value}</div>
-  </div>
-);
-
 const Row = ({
   icon,
   label,
