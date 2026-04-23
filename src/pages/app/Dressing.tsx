@@ -70,6 +70,7 @@ export default function Dressing() {
           mood,
           occasion,
           gender: profile?.gender,
+          age: profile?.age,
           heightCm: profile?.heightCm,
           weightKg: profile?.weightKg,
           city: w?.city ?? profile?.city,

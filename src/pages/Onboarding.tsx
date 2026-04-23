@@ -25,6 +25,7 @@ export default function Onboarding() {
   const [gender, setGender] = useState<Gender | null>(null);
   const [heightCm, setHeightCm] = useState<string>("");
   const [weightKg, setWeightKg] = useState<string>("");
+  const [age, setAge] = useState<string>("");
   const [city, setCity] = useState("");
   const [photo, setPhoto] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -65,6 +66,7 @@ export default function Onboarding() {
       gender: gender ?? "unisexe",
       heightCm: heightCm ? Number(heightCm) : undefined,
       weightKg: weightKg ? Number(weightKg) : undefined,
+      age: age ? Number(age) : undefined,
       styles: [],
       city: city || undefined,
       referencePhoto: photo ?? undefined,
@@ -84,7 +86,8 @@ export default function Onboarding() {
       case 1: return !!gender;
       case 2: {
         const h = Number(heightCm), w = Number(weightKg);
-        return h >= 120 && h <= 230 && w >= 30 && w <= 250;
+        const a = Number(age);
+        return h >= 120 && h <= 230 && w >= 30 && w <= 250 && a >= 10 && a <= 100;
       }
       default: return true;
     }
@@ -195,6 +198,22 @@ export default function Onboarding() {
                     placeholder="68"
                     className="mt-1 w-full bg-transparent font-serif text-3xl outline-none"
                   />
+                </label>
+                <label className="col-span-2 rounded-2xl border border-border bg-card p-4">
+                  <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                    Âge
+                  </span>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    value={age}
+                    onChange={(e) => setAge(e.target.value)}
+                    placeholder="25"
+                    className="mt-1 w-full bg-transparent font-serif text-3xl outline-none"
+                  />
+                  <span className="mt-1 block text-[11px] text-muted-foreground">
+                    Pour un mannequin IA fidèle à ton âge si tu n'ajoutes pas de photo.
+                  </span>
                 </label>
               </div>
             </div>

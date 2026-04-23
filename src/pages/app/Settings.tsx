@@ -77,6 +77,7 @@ export default function Settings() {
   const [email, setEmail] = useState(profile?.email ?? "");
   const [heightCm, setHeightCm] = useState(profile?.heightCm?.toString() ?? "");
   const [weightKg, setWeightKg] = useState(profile?.weightKg?.toString() ?? "");
+  const [age, setAge] = useState(profile?.age?.toString() ?? "");
   const [showLang, setShowLang] = useState(false);
   const [morningTip, setMorningTip] = useState(
     () => localStorage.getItem("vibe.morningTip") === "1",
@@ -91,6 +92,7 @@ export default function Settings() {
       email: email.trim() || undefined,
       heightCm: heightCm ? Number(heightCm) : undefined,
       weightKg: weightKg ? Number(weightKg) : undefined,
+      age: age ? Number(age) : undefined,
     });
     toast.success(t("settings.saved"));
   };
@@ -162,6 +164,16 @@ export default function Settings() {
             />
           </Field>
         </div>
+        <Field label="Âge">
+          <Input
+            type="number"
+            inputMode="numeric"
+            value={age}
+            onChange={(e) => setAge(e.target.value)}
+            placeholder="25"
+            className="h-11 rounded-xl border-border bg-background"
+          />
+        </Field>
         <Button
           onClick={save}
           className="h-11 w-full rounded-xl bg-accent text-accent-foreground hover:bg-accent/90"

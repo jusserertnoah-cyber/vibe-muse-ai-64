@@ -20,6 +20,7 @@ export interface UserProfile {
   firstName: string;
   email?: string;
   gender: Gender;
+  age?: number;
   heightCm?: number;
   weightKg?: number;
   styles: StyleTag[];
