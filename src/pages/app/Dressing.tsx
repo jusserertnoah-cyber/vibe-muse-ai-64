@@ -10,6 +10,7 @@ import { getProfile } from "@/lib/profile";
 import { ALL_STYLES } from "@/data/inspiration";
 import { getCurrentWeather, type WeatherSnapshot } from "@/lib/weather";
 import { supabase } from "@/integrations/supabase/client";
+import { StylistChat } from "@/components/vibe/StylistChat";
 
 const MOODS: Mood[] = [
   "Confiant", "Chill", "Mystérieux", "Bad Boy/Girl", "Énervé",

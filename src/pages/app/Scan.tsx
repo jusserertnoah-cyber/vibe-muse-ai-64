@@ -195,6 +195,17 @@ export default function Scan() {
               ))}
             </ol>
           </div>
+
+          <StylistChat
+            mode="scan"
+            context={{ scan: result }}
+            intro="Verdict posé. Pose-moi tes questions — couleur, coupe, accessoire, alternative à acheter."
+            suggestions={[
+              "Quelle couleur de chaussure mettre ?",
+              "Comment porter ça en hiver ?",
+              "Une alternative plus chic ?",
+            ]}
+          />
         </div>
       )}
     </div>
