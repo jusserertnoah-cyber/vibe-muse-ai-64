@@ -79,21 +79,21 @@ All colors MUST be HSL.
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
-  /* Thème mauve — discret poussiéreux (femme / non-binaire / choix manuel) */
+  /* Thème mauve-rosé — clair, doux (femme / non-binaire / choix manuel) */
   .theme-mauve {
-    --accent: 280 18% 62%;
-    --accent-foreground: 0 0% 100%;
-    --ring: 280 18% 62%;
-    --lime: 280 18% 62%;
-    --lime-foreground: 0 0% 100%;
-    --cobalt: 280 18% 62%;
-    --cobalt-foreground: 0 0% 100%;
-    --neon: 280 18% 62%;
-    --neon-foreground: 0 0% 100%;
-    --gradient-brand: linear-gradient(135deg, hsl(285 22% 70%) 0%, hsl(280 18% 62%) 50%, hsl(275 16% 54%) 100%);
-    --gradient-brand-soft: linear-gradient(135deg, hsl(280 18% 62% / 0.18) 0%, hsl(280 18% 62% / 0.06) 100%);
-    --shadow-cobalt: 0 12px 40px -12px hsl(280 18% 62% / 0.40);
-    --shadow-brand: 0 0 24px -6px hsl(280 18% 62% / 0.35), 0 8px 24px -10px hsl(280 18% 62% / 0.22);
+    --accent: 320 55% 78%;                /* mauve-rose clair */
+    --accent-foreground: 30 12% 18%;
+    --ring: 320 55% 78%;
+    --lime: 320 55% 78%;
+    --lime-foreground: 30 12% 18%;
+    --cobalt: 320 55% 78%;
+    --cobalt-foreground: 30 12% 18%;
+    --neon: 320 55% 78%;
+    --neon-foreground: 30 12% 18%;
+    --gradient-brand: linear-gradient(135deg, hsl(330 70% 85%) 0%, hsl(320 55% 78%) 50%, hsl(305 45% 72%) 100%);
+    --gradient-brand-soft: linear-gradient(135deg, hsl(320 55% 78% / 0.22) 0%, hsl(320 55% 78% / 0.08) 100%);
+    --shadow-cobalt: 0 12px 40px -12px hsl(320 55% 78% / 0.45);
+    --shadow-brand: 0 0 24px -6px hsl(320 55% 78% / 0.40), 0 8px 24px -10px hsl(320 55% 78% / 0.25);
   }
 
   /* Thème "mono" — noir & blanc sur base crème (accent anthracite) */

@@ -28,7 +28,7 @@ const fileToDataUrl = (file: File) =>
   });
 
 export default function Scan() {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const fileRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [dataUrl, setDataUrl] = useState<string | null>(null);
@@ -63,15 +63,15 @@ export default function Scan() {
       });
       if (error) throw error;
       if ((data as any)?.error === "rate_limited") {
-        toast.error("Trop de scans. Réessaie dans une minute.");
+        toast.error(t("scan.errors.rate"));
         return;
       }
       if ((data as any)?.error === "payment_required") {
-        toast.error("Crédits IA épuisés.");
+        toast.error(t("scan.errors.credits"));
         return;
       }
       if (!(data as any)?.score) {
-        toast.error("Analyse impossible. Reprends une photo plus nette.");
+        toast.error(t("scan.errors.blur"));
         return;
       }
       setResult(data as ScanResult);
@@ -84,7 +84,7 @@ export default function Scan() {
       });
     } catch (e) {
       console.error(e);
-      toast.error("Scan impossible. Réessaie.");
+      toast.error(t("scan.errors.generic"));
     } finally {
       setLoading(false);
     }
@@ -102,11 +102,11 @@ export default function Scan() {
     <div className="space-y-6 px-5 pt-8">
       <header>
         <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          Vibe Check
+          {t("scan.kicker")}
         </p>
-        <h1 className="mt-1 font-serif text-3xl">Note ton look</h1>
+        <h1 className="mt-1 font-serif text-3xl">{t("scan.title")}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Analyse couture, sévère mais juste.
+          {t("scan.subtitle")}
         </p>
       </header>
 
@@ -123,7 +123,7 @@ export default function Scan() {
               <Camera className="h-7 w-7 text-foreground" strokeWidth={1.5} />
             </div>
             <p className="max-w-xs text-sm leading-snug text-muted-foreground">
-              Prends-toi en photo (en pied, lumière naturelle) pour un scan honnête.
+              {t("scan.hint")}
             </p>
           </div>
         )}
@@ -146,7 +146,7 @@ export default function Scan() {
             ) : (
               <Upload className="mr-2 h-4 w-4" />
             )}
-            {loading ? "Analyse en cours…" : preview ? "Changer de photo" : "Choisir une photo"}
+            {loading ? t("scan.loading") : preview ? t("scan.change") : t("scan.choose")}
           </Button>
           {preview && !loading && result && (
             <Button
@@ -154,7 +154,7 @@ export default function Scan() {
               onClick={() => dataUrl && analyze(dataUrl)}
               className="h-12 rounded-3xl"
             >
-              Re-noter
+              {t("scan.rescore")}
             </Button>
           )}
         </div>
@@ -167,7 +167,7 @@ export default function Scan() {
             <div className="flex items-end justify-between">
               <div>
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                  Vibe Check
+                  {t("scan.kicker")}
                 </p>
                 <div className={`font-mono-tech text-6xl font-bold leading-none tracking-tighter ${scoreColor}`}>
                   {Number.isInteger(result.score) ? result.score : result.score.toFixed(1)}
@@ -183,14 +183,14 @@ export default function Scan() {
 
           {/* Points forts / À améliorer */}
           <div className="grid gap-3">
-            <AnalysisRow icon={<Check className="h-4 w-4" />} label="Ce qui marche" text={result.strong} />
-            <AnalysisRow icon={<AlertCircle className="h-4 w-4" />} label="À améliorer" text={result.weak} highlight />
+            <AnalysisRow icon={<Check className="h-4 w-4" />} label={t("scan.strong")} text={result.strong} />
+            <AnalysisRow icon={<AlertCircle className="h-4 w-4" />} label={t("scan.weak")} text={result.weak} highlight />
           </div>
 
           {/* Conseils */}
           <div className="rounded-3xl bg-secondary p-5">
             <p className="mb-3 font-serif text-lg leading-none">
-              3 actions rapides
+              {t("scan.tipsTitle")}
             </p>
             <ol className="space-y-3">
               {result.tips.map((t, i) => (

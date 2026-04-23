@@ -1,14 +1,26 @@
 {
   "nav": { "home": "Home", "dressing": "Dressing", "scan": "Scan", "profile": "Profile" },
-  "home": { "hello": "Hello", "styles": "Your styles" },
+  "home": {
+    "hello": "Hello",
+    "styles": "Your styles",
+    "vibers": "Vibers",
+    "vibersHint": "200 Vibers = 1 month of Premium",
+    "smartCloset": "Smart Closet",
+    "closetEmpty": "Your closet is empty. Add your pieces for tailored suggestions.",
+    "addPiece": "Add a piece",
+    "createLookWith": "Create a look with",
+    "closetCount_one": "You have {{count}} piece saved.",
+    "closetCount_other": "You have {{count}} pieces saved.",
+    "forgotten": "You haven't worn your {{piece}} in 2 weeks — try it today?",
+    "evolution": "Evolution",
+    "lastScans": "Last {{count}} scans",
+    "history": "History",
+    "myStats": "My Stats",
+    "location": "Location"
+  },
   "common": {
-    "continue": "Continue",
-    "back": "Back",
-    "skip": "Skip",
-    "generate": "Generate my outfit",
-    "next": "Next",
-    "done": "Done",
-    "save": "Save"
+    "continue": "Continue", "back": "Back", "skip": "Skip",
+    "generate": "Generate my outfit", "next": "Next", "done": "Done", "save": "Save"
   },
   "onboarding": {
     "language": "Choose your language",
@@ -21,8 +33,11 @@
   "dressing": {
     "title": "Build your outfit",
     "step1": "What's your style today?",
+    "step1Hint": "Pick the world that speaks to you today.",
     "step2": "What's the vibe?",
+    "step2Hint": "The energy you want to give off.",
     "step3": "Where are you going?",
+    "step3Hint": "Context changes everything.",
     "generating": "Composing your outfit…",
     "generate": "Generate my outfit",
     "newLook": "New outfit",
@@ -31,51 +46,52 @@
     "completeSteps": "Complete the 3 steps",
     "rateLimited": "Too many requests. Try again in a minute.",
     "paymentRequired": "AI credits exhausted. Top up in Lovable.",
-    "error": "Generation failed. Try again."
+    "error": "Generation failed. Try again.",
+    "closetUsed": "{{count}} pieces from your Vibe Closet will be used."
+  },
+  "scan": {
+    "kicker": "Vibe Check",
+    "title": "Rate your look",
+    "subtitle": "Couture analysis — honest and sharp.",
+    "hint": "Take a full-body photo in natural light for an honest scan.",
+    "choose": "Choose a photo",
+    "change": "Change photo",
+    "loading": "Analyzing…",
+    "rescore": "Re-score",
+    "strong": "What works",
+    "weak": "To improve",
+    "tipsTitle": "3 quick actions",
+    "errors": {
+      "rate": "Too many scans. Try again in a minute.",
+      "credits": "AI credits exhausted.",
+      "blur": "Analysis impossible. Take a sharper photo.",
+      "generic": "Scan failed. Try again."
+    }
   },
   "profile": {
-    "title": "Profile",
-    "closet": "Vibe Closet",
+    "title": "Profile", "closet": "Vibe Closet",
     "closetEmpty": "Add your pieces by voice for 100% personalised outfits.",
-    "addPiece": "Add a piece",
-    "subscriptions": "View subscriptions",
-    "premium": "Premium",
-    "settings": "Settings"
+    "addPiece": "Add a piece", "subscriptions": "View subscriptions",
+    "premium": "Premium", "settings": "Settings"
   },
   "settings": {
-    "title": "Settings",
-    "account": "Account",
-    "firstName": "First name",
-    "email": "Email",
-    "height": "Height (cm)",
-    "weight": "Weight (kg)",
-    "language": "Language",
-    "subscription": "Subscription",
-    "manage": "Manage subscription",
-    "preferences": "Preferences",
-    "morningTip": "Morning weather tip",
-    "units": "Units",
-    "metric": "Metric",
-    "imperial": "Imperial",
-    "legal": "Legal & Support",
-    "privacy": "Privacy policy",
-    "terms": "Terms of use",
-    "delete": "Delete my account",
-    "saved": "Changes saved",
-    "free": "Free",
-    "stripeSoon": "Stripe portal coming soon"
+    "title": "Settings", "account": "Account",
+    "firstName": "First name", "email": "Email",
+    "height": "Height (cm)", "weight": "Weight (kg)", "age": "Age",
+    "language": "Language", "theme": "Theme",
+    "themeHint": "Pick the accent color. Base stays cream, white and black.",
+    "subscription": "Subscription", "manage": "Manage subscription",
+    "preferences": "Preferences", "morningTip": "Morning weather tip",
+    "units": "Units", "metric": "Metric", "imperial": "Imperial",
+    "legal": "Legal & Support", "privacy": "Privacy policy", "terms": "Terms of use",
+    "delete": "Delete my account", "saved": "Changes saved",
+    "free": "Free", "stripeSoon": "Stripe portal coming soon"
   },
   "paywall": {
     "title": "Level up to Icon",
     "subtitle": "Unlock unlimited generations and HD virtual try-on.",
-    "week": "Week",
-    "month": "Month",
-    "quarter": "Quarter",
-    "popular": "Most popular",
-    "icon": "The Icon offer",
-    "save": "Save 33%",
-    "ideal": "Perfect to try",
-    "restore": "Restore purchases",
-    "subscribe": "Subscribe"
+    "week": "Week", "month": "Month", "quarter": "Quarter",
+    "popular": "Most popular", "icon": "The Icon offer", "save": "Save 33%",
+    "ideal": "Perfect to try", "restore": "Restore purchases", "subscribe": "Subscribe"
   }
 }

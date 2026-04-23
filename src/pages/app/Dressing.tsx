@@ -235,9 +235,7 @@ export default function Dressing() {
           {step === 0 && (
             <>
               <h2 className="font-serif text-3xl leading-tight">{t("dressing.step1")}</h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Choisis l'univers qui te parle aujourd'hui.
-              </p>
+              <p className="mt-2 text-sm text-muted-foreground">{t("dressing.step1Hint")}</p>
               <div className="mt-6 grid grid-cols-2 gap-3">
                 {ALL_STYLES.map((s) => {
                   const active = style === s;
@@ -263,9 +261,7 @@ export default function Dressing() {
           {step === 1 && (
             <>
               <h2 className="font-serif text-3xl leading-tight">{t("dressing.step2")}</h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                L'émotion que tu veux dégager.
-              </p>
+              <p className="mt-2 text-sm text-muted-foreground">{t("dressing.step2Hint")}</p>
               <div className="mt-6 flex flex-wrap gap-3">
                 {MOODS.map((m) => {
                   const active = mood === m;
@@ -291,9 +287,7 @@ export default function Dressing() {
           {step === 2 && (
             <>
               <h2 className="font-serif text-3xl leading-tight">{t("dressing.step3")}</h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Le contexte change tout.
-              </p>
+              <p className="mt-2 text-sm text-muted-foreground">{t("dressing.step3Hint")}</p>
               <div className="mt-6 flex flex-wrap gap-2">
                 {OCCASIONS.map((o) => {
                   const active = occasion === o;
@@ -315,7 +309,7 @@ export default function Dressing() {
               </div>
               {profile?.closet?.length ? (
                 <p className="mt-6 text-xs text-muted-foreground">
-                  ✨ {profile.closet.length} pièces de ton Vibe Closet seront prises en compte.
+                  ✨ {t("dressing.closetUsed", { count: profile.closet.length })}
                 </p>
               ) : null}
             </>

@@ -80,7 +80,6 @@ export default function Settings() {
   const [heightCm, setHeightCm] = useState(profile?.heightCm?.toString() ?? "");
   const [weightKg, setWeightKg] = useState(profile?.weightKg?.toString() ?? "");
   const [age, setAge] = useState(profile?.age?.toString() ?? "");
-  const [showLang, setShowLang] = useState(false);
   const [morningTip, setMorningTip] = useState(
     () => localStorage.getItem("vibe.morningTip") === "1",
   );
@@ -192,49 +191,35 @@ export default function Settings() {
 
       {/* Language */}
       <Section icon={<Globe className="h-4 w-4" />} title={t("settings.language")}>
-        <button
-          onClick={() => setShowLang((v) => !v)}
-          className="flex w-full items-center justify-between rounded-xl border border-border bg-background px-4 py-3 text-sm"
-        >
-          <span className="flex items-center gap-2">
-            {SUPPORTED_LANGUAGES.find((l) => i18n.language?.startsWith(l.code))?.flag}{" "}
-            {SUPPORTED_LANGUAGES.find((l) => i18n.language?.startsWith(l.code))?.label}
-          </span>
-          <span className="text-muted-foreground">›</span>
-        </button>
-        {showLang && (
-          <div className="mt-2 flex flex-wrap gap-2">
-            {SUPPORTED_LANGUAGES.map((l) => {
-              const active = i18n.language?.startsWith(l.code);
-              return (
-                <button
-                  key={l.code}
-                  onClick={() => {
-                    i18n.changeLanguage(l.code);
-                    setShowLang(false);
-                  }}
-                  className={cn(
-                    "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs",
-                    active
-                      ? "border-accent bg-accent text-accent-foreground"
-                      : "border-border bg-background",
-                  )}
-                >
-                  <span>{l.flag}</span>
-                  {l.label}
-                  {active && <Check className="h-3 w-3" />}
-                </button>
-              );
-            })}
-          </div>
-        )}
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {SUPPORTED_LANGUAGES.map((l) => {
+            const active = i18n.language?.startsWith(l.code);
+            return (
+              <button
+                key={l.code}
+                onClick={() => {
+                  i18n.changeLanguage(l.code);
+                  localStorage.setItem("vibe.lang", l.code);
+                }}
+                className={cn(
+                  "flex items-center gap-2 rounded-2xl border-2 px-3 py-2.5 text-left text-sm transition-all",
+                  active
+                    ? "border-accent bg-accent/10"
+                    : "border-border bg-background hover:border-accent/40",
+                )}
+              >
+                <span className="text-xl leading-none">{l.flag}</span>
+                <span className="flex-1 truncate font-medium">{l.label}</span>
+                {active && <Check className="h-4 w-4 text-accent" />}
+              </button>
+            );
+          })}
+        </div>
       </Section>
 
       {/* Theme */}
-      <Section icon={<Palette className="h-4 w-4" />} title="Thème">
-        <p className="text-xs text-muted-foreground">
-          Choisis l'accent couleur de l'app. La base reste crème, blanc et noir.
-        </p>
+      <Section icon={<Palette className="h-4 w-4" />} title={t("settings.theme")}>
+        <p className="text-xs text-muted-foreground">{t("settings.themeHint")}</p>
         <div className="grid grid-cols-3 gap-2">
           {THEMES.map((th) => {
             const active = theme === th.id;
