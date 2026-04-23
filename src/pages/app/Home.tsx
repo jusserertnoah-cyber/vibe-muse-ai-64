@@ -1,30 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getProfile } from "@/lib/profile";
-import { ALL_STYLES } from "@/data/inspiration";
-import { Cloud, Sparkles, Trophy, ArrowRight, Shirt, Zap } from "lucide-react";
-import { cn } from "@/lib/utils";
-import type { StyleTag } from "@/lib/types";
+import { Cloud, Trophy, Shirt, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentWeather } from "@/lib/weather";
-
-const FILTERS: ("Pour toi" | StyleTag)[] = ["Pour toi", ...ALL_STYLES];
-
-// Tagline éditoriale par style — pas d'image, que du texte.
-const STYLE_TAGLINES: Record<StyleTag, string> = {
-  "Vintage":    "Friperie 70's, denim brut, cuir patiné.",
-  "Old Money":  "Cashmere, mocassins, blazer croisé.",
-  "Classique":  "Trench, chemise blanche, costume marine.",
-  "Sobre":      "Lin écru, maille douce, palette neutre.",
-  "Sport":      "Tech fleece, sneakers blanches, hoodie net.",
-  "Streetwear": "Cargo ample, hoodie oversize, accessoires bold.",
-};
 
 export default function Home() {
   const { t } = useTranslation();
   const profile = getProfile();
   const navigate = useNavigate();
-  const [filter, setFilter] = useState<(typeof FILTERS)[number]>("Pour toi");
   const [weather, setWeather] = useState<{ temp: number; city?: string; label?: string } | null>(null);
 
   useEffect(() => {
@@ -32,11 +16,6 @@ export default function Home() {
       if (w) setWeather({ temp: w.temp, city: w.city, label: w.label });
     });
   }, []);
-
-  const styles = useMemo(() => {
-    if (filter === "Pour toi") return ALL_STYLES;
-    return ALL_STYLES.filter((s) => s === filter);
-  }, [filter]);
 
   const progress = Math.min(((profile?.vibers ?? 0) / 200) * 100, 100);
   const closetCount = profile?.closet?.length ?? 0;
