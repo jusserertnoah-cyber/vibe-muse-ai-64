@@ -23,6 +23,7 @@ serve(async (req) => {
       heightCm,
       weightKg,
       lang = "fr",
+      tier = "free",
     } = body ?? {};
 
     if (!imageDataUrl) {
@@ -78,7 +79,7 @@ ${profileLine ? `Profil porteur : ${profileLine}.` : ""}`;
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "google/gemini-2.5-pro",
+          model: tier === "premium" ? "google/gemini-2.5-pro" : "google/gemini-2.5-flash",
           messages: [
             { role: "system", content: systemPrompt },
             {
