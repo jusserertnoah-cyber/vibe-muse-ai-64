@@ -178,9 +178,8 @@ export default function Home() {
       {/* Mission Story — +30 Vibers */}
       <MissionStory />
 
-      {/* Évolution des notes */}
-      {scans.length > 0 && (
-        <div className="rounded-3xl border border-border bg-card p-5">
+      {/* Évolution des notes — toujours visible */}
+      <div className="rounded-3xl border border-border bg-card p-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <TrendingUp className="h-3.5 w-3.5 text-accent" strokeWidth={1.5} />
@@ -188,15 +187,21 @@ export default function Home() {
                 {t("home.evolution")}
               </span>
             </div>
-            <div className="flex items-baseline gap-2 font-mono-tech">
-              <span className="text-2xl font-bold tracking-tighter">
-                {lastScore?.toFixed(1)}
-              </span>
-              <span className={`text-xs ${trend >= 0 ? "text-accent" : "text-muted-foreground"}`}>
-                {trend >= 0 ? "+" : ""}{trend.toFixed(1)}
-              </span>
-            </div>
+            {scans.length > 0 ? (
+              <div className="flex items-baseline gap-2 font-mono-tech">
+                <span className="text-2xl font-bold tracking-tighter">
+                  {lastScore?.toFixed(1)}
+                </span>
+                <span className={`text-xs ${trend >= 0 ? "text-accent" : "text-muted-foreground"}`}>
+                  {trend >= 0 ? "+" : ""}{trend.toFixed(1)}
+                </span>
+              </div>
+            ) : (
+              <span className="font-mono-tech text-xs text-muted-foreground">—</span>
+            )}
           </div>
+        {scans.length > 0 ? (
+          <>
           <div className="mt-3 h-24 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
@@ -228,8 +233,13 @@ export default function Home() {
           <p className="mt-1 text-[10px] text-muted-foreground font-mono-tech">
             {t("home.lastScans", { count: scans.length })}
           </p>
-        </div>
-      )}
+          </>
+        ) : (
+          <div className="mt-3 flex h-24 items-center justify-center rounded-2xl border border-dashed border-border text-center text-xs text-muted-foreground">
+            Fais ton premier Vibe Check pour voir ta progression ici.
+          </div>
+        )}
+      </div>
     </div>
   );
 }
