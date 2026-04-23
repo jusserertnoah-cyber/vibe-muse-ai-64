@@ -122,7 +122,7 @@ export default function Scan() {
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary">
               <Camera className="h-7 w-7 text-foreground" strokeWidth={1.5} />
             </div>
-            <p className="max-w-xs font-serif text-xl leading-snug text-foreground">
+            <p className="max-w-xs text-sm leading-snug text-muted-foreground">
               Prends-toi en photo (en pied, lumière naturelle) pour un scan honnête.
             </p>
           </div>
@@ -178,7 +178,7 @@ export default function Scan() {
                 +10 VIBERS
               </div>
             </div>
-            <p className="mt-3 font-serif text-xl leading-snug">{result.verdict}</p>
+            <p className="mt-3 font-serif text-lg leading-snug">{result.verdict}</p>
           </div>
 
           {/* Points forts / À améliorer */}
@@ -189,7 +189,7 @@ export default function Scan() {
 
           {/* Conseils */}
           <div className="rounded-3xl bg-secondary p-5">
-            <p className="mb-3 font-serif text-2xl leading-tight">
+            <p className="mb-3 font-serif text-lg leading-none">
               3 actions rapides
             </p>
             <ol className="space-y-3">
