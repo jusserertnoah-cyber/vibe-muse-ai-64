@@ -4,6 +4,7 @@ import { Camera, Upload, Sparkles, Loader2, Palette, Ruler, Layers, Crosshair } 
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { getProfile } from "@/lib/profile";
+import { awardVibers } from "@/lib/vibers";
 import { toast } from "sonner";
 import { StylistChat } from "@/components/vibe/StylistChat";
 
@@ -72,6 +73,7 @@ export default function Scan() {
         return;
       }
       setResult(data as ScanResult);
+      awardVibers("scan");
     } catch (e) {
       console.error(e);
       toast.error("Scan impossible. Réessaie.");
