@@ -52,8 +52,40 @@ serve(async (req) => {
       ? "Une photo de référence de la personne est fournie : projette la tenue sur CETTE personne en gardant son visage, sa pose et sa morphologie."
       : `Génère un mannequin photoréaliste correspondant FIDÈLEMENT au profil (genre: ${gender ?? "unisexe"}${age ? `, âge ${age} ans — visage et morphologie cohérents avec cet âge, pas plus jeune ni plus vieux` : ""}${heightCm ? `, ${heightCm}cm` : ""}${weightKg ? `, ${weightKg}kg` : ""}).`;
 
+    // === STYLE BIBLE ===
+    const isFemme = (gender ?? "").toLowerCase().startsWith("f");
+    const styleKey = String(style).toLowerCase();
+
+    const oldMoneyFemmeVariants = [
+      "Veste de tailleur en tweed blanc cassé à boutons dorés, pantalon large en crêpe de soie crème, ballerines en cuir noir lisse, sac structuré noir à fermoir doré, petites créoles dorées. Terrasse de café parisienne.",
+      "Pull en cachemire camel à col rond, jupe midi plissée en laine beige, mocassins en cuir bordeaux, sac seau en cuir cognac, foulard en soie noué au cou. Allée bordée de platanes.",
+      "Chemise blanche en coton peigné, gilet sans manches en maille marine boutons dorés, pantalon à pinces gris chiné, mocassins penny noirs, perles d'oreille discrètes. Bibliothèque boisée.",
+      "Trench beige ceinturé, col roulé écru en cachemire, jupe crayon olive en laine, ballerines noires bout pointu, sac structuré camel à anse courte. Quai parisien à l'automne.",
+      "Robe chemise en lin blanc cassé, ceinture fine en cuir marron, espadrilles plates beige, panier en osier, lunettes carrées écaille. Jardin méditerranéen.",
+    ];
+    const oldMoneyHommeVariants = [
+      "Polo maille de coton marine ajusté, pantalon à pinces lin beige, ceinture cuir marron lisse, mocassins daim marron, montre cuir discrète, lunettes Wayfarer. Rue pavée élégante.",
+      "Blazer croisé en laine bleu marine boutons dorés, chemise oxford blanche col boutonné, pantalon flanelle gris, mocassins penny noirs, pochette de costume blanche. Hall d'hôtel classique.",
+      "Pull col V camel en cachemire sur chemise blanche, chinos crème, mocassins horsebit cognac, ceinture cuir cognac, montre vintage cuir brun. Bord de mer normand.",
+      "Cardigan tweed olive boutons cornes, t-shirt blanc en coton peigné, pantalon chino beige, sneakers cuir blanches minimalistes, bracelet cuir marron. Campus universitaire.",
+      "Trench camel ceinturé, col roulé blanc cassé, pantalon laine grise, derbies cuir marron, écharpe cachemire crème. Promenade en ville.",
+    ];
+
+    let styleDirective = "";
+    if (styleKey.includes("old money")) {
+      const pool = isFemme ? oldMoneyFemmeVariants : oldMoneyHommeVariants;
+      const variant = pool[Math.floor(Math.random() * pool.length)];
+      styleDirective = `STYLE STRICT — OLD MONEY JEUNE (${isFemme ? "fille" : "garçon"}) :
+Philosophie : luxe discret, élégance intemporelle, AUCUN logo visible, silhouettes propres.
+Palette OBLIGATOIRE : crème, blanc cassé, gris chiné, marine, camel, beige, olive. INTERDIT : couleurs vives, néon, fluo.
+Textures OBLIGATOIRES : tweed, lin, cachemire, coton peigné, cuir lisse.
+Détails clés : boutons dorés (vestes/cardigans), bijoux dorés minimalistes, sacs structurés, chaussures plates élégantes (mocassins, ballerines, derbies cuir).
+Tenue à composer (varie cette base, n'invente pas un autre style) : ${variant}`;
+    }
+
     const imagePrompt = `Photographie mode éditoriale plein corps, ultra réaliste, lumière studio douce, fond neutre clair.
 Style: ${style}. Mood: ${mood}. Occasion: ${occasion}.
+${styleDirective}
 ${weatherLine}
 ${personLine}
 ${closetLine}
