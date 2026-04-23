@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Camera, Upload, Sparkles, Loader2, Palette, Ruler, Layers, Crosshair } from "lucide-react";
+import { Camera, Upload, Loader2, Check, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { getProfile } from "@/lib/profile";
@@ -13,10 +13,8 @@ import { StylistChat } from "@/components/vibe/StylistChat";
 interface ScanResult {
   score: number;
   verdict: string;
-  colorimetrie: string;
-  proportions: string;
-  matieres: string;
-  detailKiller: string;
+  strong: string;
+  weak: string;
   tips: string[];
 }
 
@@ -177,18 +175,16 @@ export default function Scan() {
             <p className="mt-3 text-sm leading-relaxed">{result.verdict}</p>
           </div>
 
-          {/* Analyse technique */}
+          {/* Points forts / À améliorer */}
           <div className="grid gap-3">
-            <AnalysisRow icon={<Palette className="h-4 w-4" />} label="Colorimétrie" text={result.colorimetrie} />
-            <AnalysisRow icon={<Ruler className="h-4 w-4" />} label="Proportions" text={result.proportions} />
-            <AnalysisRow icon={<Layers className="h-4 w-4" />} label="Matières" text={result.matieres} />
-            <AnalysisRow icon={<Crosshair className="h-4 w-4" />} label="Le détail qui tue" text={result.detailKiller} highlight />
+            <AnalysisRow icon={<Check className="h-4 w-4" />} label="Ce qui marche" text={result.strong} />
+            <AnalysisRow icon={<AlertCircle className="h-4 w-4" />} label="À améliorer" text={result.weak} highlight />
           </div>
 
           {/* Conseils */}
           <div className="rounded-3xl bg-secondary p-5">
             <p className="mb-3 text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
-              3 actions immédiates
+              3 actions rapides
             </p>
             <ol className="space-y-3">
               {result.tips.map((t, i) => (
