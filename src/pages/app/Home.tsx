@@ -2,14 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getProfile } from "@/lib/profile";
 import { Trophy, Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, Wind, MapPin } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { getCurrentWeather } from "@/lib/weather";
 import { MissionStory } from "@/components/vibe/MissionStory";
 
 export default function Home() {
   const { t } = useTranslation();
   const profile = getProfile();
-  const navigate = useNavigate();
   const [weather, setWeather] = useState<{ temp: number; city?: string; label?: string; code?: number; wind?: number } | null>(null);
 
   useEffect(() => {
