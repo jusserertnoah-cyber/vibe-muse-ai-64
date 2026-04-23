@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Crown, History, LogOut, Mic, Plus, Settings, Shirt, Trophy, X } from "lucide-react";
+import { ChevronRight, Crown, History, LogOut, Mic, Plus, Settings, Shirt, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getProfile, clearProfile, updateProfile } from "@/lib/profile";
 import { toast } from "sonner";
@@ -68,14 +68,19 @@ export default function Profil() {
         </Button>
       </div>
 
-      <Stat icon={<Trophy className="h-4 w-4" />} label="Vibers" value={profile?.vibers ?? 0} />
-
-      {/* Mon historique — visuel */}
+      {/* Mon historique — aperçu cliquable */}
       <section className="rounded-3xl border border-border bg-card p-5">
-        <div className="flex items-center gap-2">
+        <button
+          onClick={() => navigate("/app/history")}
+          className="flex w-full items-center gap-2 text-left"
+        >
           <History className="h-4 w-4 text-accent" />
           <span className="text-sm font-medium">Mon historique</span>
-        </div>
+          <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
+            {looks.length > 0 && <span className="font-mono-tech">{looks.length}</span>}
+            <ChevronRight className="h-4 w-4" />
+          </span>
+        </button>
         {looks.length === 0 ? (
           <p className="mt-2 text-xs text-muted-foreground">
             Tes tenues générées et tes scans apparaîtront ici.
@@ -83,7 +88,7 @@ export default function Profil() {
         ) : (
           <div className="-mx-5 mt-3 overflow-x-auto scrollbar-hide">
             <div className="flex gap-3 px-5">
-              {looks.slice(0, 12).map((item) => (
+              {looks.slice(0, 8).map((item) => (
                 <div
                   key={item.id}
                   className="relative h-32 w-24 shrink-0 overflow-hidden rounded-2xl border border-border bg-secondary"
@@ -107,6 +112,14 @@ export default function Profil() {
               ))}
             </div>
           </div>
+        )}
+        {looks.length > 0 && (
+          <button
+            onClick={() => navigate("/app/history")}
+            className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline"
+          >
+            Voir tout <ChevronRight className="h-3 w-3" />
+          </button>
         )}
       </section>
 
