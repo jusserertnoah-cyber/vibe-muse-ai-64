@@ -22,6 +22,7 @@ serve(async (req) => {
       mood,
       occasion,
       gender,
+      age,
       heightCm,
       weightKg,
       city,
@@ -49,7 +50,7 @@ serve(async (req) => {
 
     const personLine = referencePhoto
       ? "Une photo de référence de la personne est fournie : projette la tenue sur CETTE personne en gardant son visage, sa pose et sa morphologie."
-      : `Génère un mannequin photoréaliste correspondant au profil (genre: ${gender ?? "unisexe"}${heightCm ? `, ${heightCm}cm` : ""}${weightKg ? `, ${weightKg}kg` : ""}).`;
+      : `Génère un mannequin photoréaliste correspondant FIDÈLEMENT au profil (genre: ${gender ?? "unisexe"}${age ? `, âge ${age} ans — visage et morphologie cohérents avec cet âge, pas plus jeune ni plus vieux` : ""}${heightCm ? `, ${heightCm}cm` : ""}${weightKg ? `, ${weightKg}kg` : ""}).`;
 
     const imagePrompt = `Photographie mode éditoriale plein corps, ultra réaliste, lumière studio douce, fond neutre clair.
 Style: ${style}. Mood: ${mood}. Occasion: ${occasion}.
