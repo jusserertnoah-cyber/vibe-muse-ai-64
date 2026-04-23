@@ -161,6 +161,20 @@ export default function Dressing() {
               </div>
             </div>
           </div>
+
+          <StylistChat
+            mode="look"
+            context={{
+              look: { style, mood, occasion, bullets: look.bullets, advice: look.advice },
+              weather: weather ? { temp: weather.temp, label: weather.label } : null,
+            }}
+            intro="Tenue posée. Une question, un swap, un accessoire ? Je t'écoute."
+            suggestions={[
+              "Avec quelles chaussures ?",
+              "Plus chaud pour ce soir ?",
+              "Une alternative plus chic ?",
+            ]}
+          />
         </div>
       </div>
     );
