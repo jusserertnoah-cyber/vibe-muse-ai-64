@@ -5,6 +5,7 @@ import { Crown, History, LogOut, Mic, Plus, Settings, Shirt, Trophy, X } from "l
 import { Button } from "@/components/ui/button";
 import { getProfile, clearProfile, updateProfile } from "@/lib/profile";
 import { toast } from "sonner";
+import { getHistory } from "@/lib/history";
 
 export default function Profil() {
   const { t } = useTranslation();
@@ -12,6 +13,7 @@ export default function Profil() {
   const navigate = useNavigate();
   const [closet, setCloset] = useState<string[]>(profile?.closet ?? []);
   const [newPiece, setNewPiece] = useState("");
+  const looks = getHistory().filter((h) => h.imageUrl);
 
   const reset = () => {
     clearProfile();
@@ -68,8 +70,48 @@ export default function Profil() {
 
       <div className="grid grid-cols-2 gap-3">
         <Stat icon={<Trophy className="h-4 w-4" />} label="Vibers" value={profile?.vibers ?? 0} />
-        <Stat icon={<History className="h-4 w-4" />} label="Looks" value={0} />
+        <Stat icon={<History className="h-4 w-4" />} label="Looks" value={looks.length} />
       </div>
+
+      {/* Looks — historique visuel */}
+      <section className="rounded-3xl border border-border bg-card p-5">
+        <div className="flex items-center gap-2">
+          <History className="h-4 w-4 text-accent" />
+          <span className="text-sm font-medium">Mes looks</span>
+        </div>
+        {looks.length === 0 ? (
+          <p className="mt-2 text-xs text-muted-foreground">
+            Tes tenues générées et tes scans apparaîtront ici.
+          </p>
+        ) : (
+          <div className="-mx-5 mt-3 overflow-x-auto scrollbar-hide">
+            <div className="flex gap-3 px-5">
+              {looks.slice(0, 12).map((item) => (
+                <div
+                  key={item.id}
+                  className="relative h-32 w-24 shrink-0 overflow-hidden rounded-2xl border border-border bg-secondary"
+                >
+                  <img
+                    src={item.imageUrl!}
+                    alt={item.style ?? "look"}
+                    className="h-full w-full object-cover"
+                  />
+                  {typeof item.score === "number" && (
+                    <div className="absolute right-1.5 top-1.5 rounded-full bg-accent px-1.5 py-0.5 font-mono-tech text-[10px] font-bold text-accent-foreground">
+                      {item.score.toFixed(1)}
+                    </div>
+                  )}
+                  {item.type === "look" && item.style && (
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-2 py-1.5 text-[9px] font-medium uppercase tracking-wider text-white">
+                      {item.style}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
 
       {/* Vibe Closet */}
       <section className="rounded-3xl border border-border bg-card p-5">
