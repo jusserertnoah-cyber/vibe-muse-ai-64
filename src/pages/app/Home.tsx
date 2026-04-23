@@ -84,27 +84,6 @@ export default function Home() {
     return { Icon, gradient, phrase, textOnDark };
   }, [weather, featuredPiece]);
 
-  // Smart Closet : pièce "oubliée" (déterministe, basée sur le jour)
-  const forgottenPiece = useMemo(() => {
-    if (closetCount === 0) return null;
-    const idx = (new Date().getDate() + closetCount) % closetCount;
-    return profile!.closet[idx];
-  }, [closetCount]);
-
-  // Style Journey & stats
-  const scans = useMemo(() => getRecentScans(7).slice().reverse(), []);
-  const chartData = scans.map((s, i) => ({ i: i + 1, score: s.score ?? 0 }));
-  const lastScore = scans.length ? scans[scans.length - 1].score ?? 0 : null;
-  const firstScore = scans.length ? scans[0].score ?? 0 : null;
-  const trend = lastScore !== null && firstScore !== null ? lastScore - firstScore : 0;
-
-  const recentLooks = useMemo(
-    () => getHistory().filter((h) => h.imageUrl).slice(0, 5),
-    [],
-  );
-
-  const styleStats = useMemo(() => getStyleStats(), []);
-
   return (
     <div className="space-y-6 px-5 pt-8">
       {/* Header bonjour */}
