@@ -69,12 +69,12 @@ export default function Onboarding() {
       city: city || undefined,
       referencePhoto: photo ?? undefined,
       closet: [],
-      vibers: 0,
+      vibers: 20, // bonus de bienvenue
       deviceId,
       createdAt: new Date().toISOString(),
     };
     saveProfile(profile);
-    toast.success(`Bienvenue ${profile.firstName} ✨`);
+    toast.success(`Bienvenue ${profile.firstName} ✨ +20 Vibers offerts`);
     navigate("/app", { replace: true });
   };
 
