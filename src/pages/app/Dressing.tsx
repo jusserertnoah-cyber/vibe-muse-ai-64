@@ -78,6 +78,7 @@ export default function Dressing() {
           closet: profile?.closet ?? [],
           referencePhoto: profile?.referencePhoto ?? null,
           lang: i18n.language?.split("-")[0] ?? "fr",
+          tier: getTier(),
         },
       });
 
