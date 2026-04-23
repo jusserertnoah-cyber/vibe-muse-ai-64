@@ -122,7 +122,7 @@ Réponds via la fonction tool fournie.`;
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: tier === "premium" ? "google/gemini-3-pro-image-preview" : "google/gemini-2.5-flash-image",
+        model: "google/gemini-3-pro-image-preview",
         messages,
         modalities: ["image", "text"],
       }),
@@ -135,7 +135,7 @@ Réponds via la fonction tool fournie.`;
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: tier === "premium" ? "google/gemini-2.5-pro" : "google/gemini-2.5-flash-lite",
+        model: "google/gemini-2.5-pro",
           messages: [
             { role: "system", content: adviceSystem },
             { role: "user", content: adviceUserPrompt },
