@@ -8,57 +8,58 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* VIBE — Tech-Clean palette */
-    --background: 0 0% 100%;             /* #FFFFFF pure white */
-    --foreground: 0 0% 0%;                /* #000000 pure black */
+    /* VIBE — Dynamic Luxe palette */
+    --background: 0 0% 7%;                /* #121212 anthracite profond */
+    --foreground: 60 9% 96%;              /* #F5F5F0 blanc cassé */
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
+    --card: 0 0% 10%;                     /* #1A1A1A */
+    --card-foreground: 60 9% 96%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 60 9% 96%;
 
-    --primary: 0 0% 0%;                   /* black */
-    --primary-foreground: 0 0% 100%;
+    --primary: 71 100% 50%;               /* #DFFF00 lime électrique */
+    --primary-foreground: 0 0% 7%;
 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 0%;
+    --secondary: 0 0% 13%;                /* #212121 */
+    --secondary-foreground: 60 9% 96%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 0 0% 13%;
+    --muted-foreground: 0 0% 60%;
 
-    /* Accent = midpoint of the brand gradient (used only when a single color is needed) */
-    --accent: 230 100% 60%;               /* #007AFF blue */
-    --accent-foreground: 0 0% 100%;
+    --accent: 71 100% 50%;                /* lime */
+    --accent-foreground: 0 0% 7%;
 
     --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 92%;
-    --input: 0 0% 94%;
-    --ring: 271 76% 53%;                  /* violet */
+    --border: 0 0% 16%;
+    --input: 0 0% 14%;
+    --ring: 71 100% 50%;
 
-    --radius: 2rem;                       /* 32px */
+    --radius: 1.25rem;                    /* 20px — plus tech */
 
-    /* Brand gradient stops */
-    --brand-violet: 271 76% 53%;          /* #8A2BE2 */
-    --brand-blue:   211 100% 50%;         /* #007AFF */
-    --brand-pink:   349 100% 58%;         /* #FF2D55 */
+    /* Lime électrique signature */
+    --lime: 71 100% 50%;                  /* #DFFF00 */
+    --lime-foreground: 0 0% 7%;
 
-    /* Aliases (kept for legacy classnames) */
-    --cobalt: 271 76% 53%;
-    --cobalt-foreground: 0 0% 100%;
-    --neon: 349 100% 58%;
-    --neon-foreground: 0 0% 100%;
+    /* Aliases (legacy) — tous mappés sur lime */
+    --cobalt: 71 100% 50%;
+    --cobalt-foreground: 0 0% 7%;
+    --neon: 71 100% 50%;
+    --neon-foreground: 0 0% 7%;
+    --brand-violet: 71 100% 50%;
+    --brand-blue:   71 100% 50%;
+    --brand-pink:   71 100% 50%;
 
-    --gradient-brand: linear-gradient(135deg, hsl(var(--brand-violet)) 0%, hsl(var(--brand-blue)) 50%, hsl(var(--brand-pink)) 100%);
-    --gradient-brand-soft: linear-gradient(135deg, hsl(var(--brand-violet) / 0.12) 0%, hsl(var(--brand-blue) / 0.12) 50%, hsl(var(--brand-pink) / 0.12) 100%);
-    --gradient-luxe: linear-gradient(135deg, hsl(0 0% 99%), hsl(0 0% 96%));
+    --gradient-brand: linear-gradient(135deg, hsl(71 100% 55%) 0%, hsl(71 100% 50%) 50%, hsl(71 100% 45%) 100%);
+    --gradient-brand-soft: linear-gradient(135deg, hsl(71 100% 50% / 0.18) 0%, hsl(71 100% 50% / 0.08) 100%);
+    --gradient-luxe: linear-gradient(135deg, hsl(0 0% 10%), hsl(0 0% 7%));
     --gradient-cobalt: var(--gradient-brand);
-    --shadow-soft: 0 8px 30px -12px hsl(0 0% 0% / 0.10);
-    --shadow-card: 0 2px 20px -8px hsl(0 0% 0% / 0.06);
-    --shadow-cobalt: 0 12px 40px -12px hsl(var(--brand-violet) / 0.45);
-    --shadow-brand: 0 12px 40px -12px hsl(var(--brand-blue) / 0.45);
+    --shadow-soft: 0 8px 30px -12px hsl(0 0% 0% / 0.5);
+    --shadow-card: 0 2px 20px -8px hsl(0 0% 0% / 0.4);
+    --shadow-cobalt: 0 12px 40px -12px hsl(var(--lime) / 0.55);
+    --shadow-brand: 0 0 32px -4px hsl(var(--lime) / 0.55), 0 8px 24px -8px hsl(var(--lime) / 0.35);
     --transition-luxe: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
     --sidebar-background: 0 0% 98%;
@@ -126,30 +127,36 @@ All colors MUST be HSL.
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', system-ui, sans-serif;
     font-feature-settings: "ss01", "cv11";
+    font-weight: 400;
   }
 
   h1, h2, h3, h4 {
-    font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
-    letter-spacing: -0.02em;
-    font-weight: 600;
+    font-family: 'Inter', system-ui, sans-serif;
+    letter-spacing: -0.05em;
+    font-weight: 800;
+  }
+
+  button {
+    letter-spacing: -0.03em;
+    font-weight: 700;
   }
 }
 
 @layer utilities {
   .text-balance { text-wrap: balance; }
-  .text-gradient-brand {
-    background: var(--gradient-brand);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+  .font-mono-tech {
+    font-family: 'JetBrains Mono', 'Space Mono', ui-monospace, monospace;
+    font-feature-settings: "tnum", "zero";
   }
-  .bg-gradient-brand { background: var(--gradient-brand); }
-  .bg-gradient-brand-soft { background: var(--gradient-brand-soft); }
+  .text-lime { color: hsl(var(--lime)); }
+  .bg-lime { background-color: hsl(var(--lime)); color: hsl(var(--lime-foreground)); }
+  .text-gradient-brand {
+    color: hsl(var(--lime));
+  }
+  .bg-gradient-brand { background: hsl(var(--lime)); color: hsl(var(--lime-foreground)); }
+  .bg-gradient-brand-soft { background: hsl(var(--lime) / 0.12); }
   .border-gradient-brand {
-    border: 2px solid transparent;
-    background:
-      linear-gradient(hsl(var(--background)), hsl(var(--background))) padding-box,
-      var(--gradient-brand) border-box;
+    border: 2px solid hsl(var(--lime));
   }
   .glass-card {
     background: hsl(var(--card) / 0.7);
