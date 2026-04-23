@@ -84,6 +84,13 @@ export default function Home() {
     return { Icon, gradient, phrase, textOnDark };
   }, [weather, featuredPiece]);
 
+  // Évolution des notes (7 derniers scans)
+  const scans = useMemo(() => getRecentScans(7).slice().reverse(), []);
+  const chartData = scans.map((s, i) => ({ i: i + 1, score: s.score ?? 0 }));
+  const lastScore = scans.length ? scans[scans.length - 1].score ?? 0 : null;
+  const firstScore = scans.length ? scans[0].score ?? 0 : null;
+  const trend = lastScore !== null && firstScore !== null ? lastScore - firstScore : 0;
+
   return (
     <div className="space-y-6 px-5 pt-8">
       {/* Header bonjour */}
