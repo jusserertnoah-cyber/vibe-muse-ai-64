@@ -6,14 +6,27 @@ import { Input } from "@/components/ui/input";
 import { VibeLogo } from "@/components/vibe/VibeLogo";
 import { Phone, ShieldCheck, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import { COUNTRIES, findCountryByCode } from "@/lib/countries";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
+import { cn } from "@/lib/utils";
 
 type Step = "phone" | "otp";
 
-const normalizePhone = (raw: string): string | null => {
-  const cleaned = raw.replace(/[^\d+]/g, "");
-  if (!cleaned.startsWith("+")) return null;
-  if (cleaned.length < 8 || cleaned.length > 16) return null;
-  return cleaned;
+const normalizePhone = (local: string, countryCode: string): string | null => {
+  const country = findCountryByCode(countryCode);
+  const digits = local.replace(/\D/g, "").replace(/^0+/, "");
+  if (!digits) return null;
+  const candidate = `+${country.dial}${digits}`;
+  const parsed = parsePhoneNumberFromString(candidate, country.code as any);
+  if (!parsed || !parsed.isValid()) return null;
+  return parsed.number; // E.164
 };
 
 export default function Auth() {
