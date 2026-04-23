@@ -80,7 +80,6 @@ export default function Settings() {
   const [heightCm, setHeightCm] = useState(profile?.heightCm?.toString() ?? "");
   const [weightKg, setWeightKg] = useState(profile?.weightKg?.toString() ?? "");
   const [age, setAge] = useState(profile?.age?.toString() ?? "");
-  const [showLang, setShowLang] = useState(false);
   const [morningTip, setMorningTip] = useState(
     () => localStorage.getItem("vibe.morningTip") === "1",
   );
@@ -219,10 +218,8 @@ export default function Settings() {
       </Section>
 
       {/* Theme */}
-      <Section icon={<Palette className="h-4 w-4" />} title="Thème">
-        <p className="text-xs text-muted-foreground">
-          Choisis l'accent couleur de l'app. La base reste crème, blanc et noir.
-        </p>
+      <Section icon={<Palette className="h-4 w-4" />} title={t("settings.theme")}>
+        <p className="text-xs text-muted-foreground">{t("settings.themeHint")}</p>
         <div className="grid grid-cols-3 gap-2">
           {THEMES.map((th) => {
             const active = theme === th.id;
