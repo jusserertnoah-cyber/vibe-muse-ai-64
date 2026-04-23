@@ -122,7 +122,7 @@ export default function Scan() {
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary">
               <Camera className="h-7 w-7 text-foreground" strokeWidth={1.5} />
             </div>
-            <p className="max-w-xs text-sm text-muted-foreground">
+            <p className="max-w-xs font-serif text-xl leading-snug text-foreground">
               Prends-toi en photo (en pied, lumière naturelle) pour un scan honnête.
             </p>
           </div>
@@ -139,7 +139,7 @@ export default function Scan() {
           <Button
             onClick={() => fileRef.current?.click()}
             disabled={loading}
-            className="h-12 flex-1 rounded-3xl bg-gradient-brand text-white hover:opacity-90 shadow-brand border-0"
+            className="h-14 flex-1 rounded-3xl bg-gradient-brand font-serif text-lg text-white hover:opacity-90 shadow-brand border-0"
           >
             {loading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -178,7 +178,7 @@ export default function Scan() {
                 +10 VIBERS
               </div>
             </div>
-            <p className="mt-3 text-sm leading-relaxed">{result.verdict}</p>
+            <p className="mt-3 font-serif text-xl leading-snug">{result.verdict}</p>
           </div>
 
           {/* Points forts / À améliorer */}
@@ -189,7 +189,7 @@ export default function Scan() {
 
           {/* Conseils */}
           <div className="rounded-3xl bg-secondary p-5">
-            <p className="mb-3 text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
+            <p className="mb-3 font-serif text-2xl leading-tight">
               3 actions rapides
             </p>
             <ol className="space-y-3">

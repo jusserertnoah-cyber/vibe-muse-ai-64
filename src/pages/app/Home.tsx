@@ -109,9 +109,14 @@ export default function Home() {
     <div className="space-y-6 px-5 pt-8">
       {/* Header bonjour */}
       <header className="flex items-center justify-between">
-        <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-          {t("home.hello")} · {profile?.firstName}
-        </p>
+        <div>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+            {t("home.hello")}
+          </p>
+          <h1 className="mt-1 font-serif text-3xl leading-tight">
+            {profile?.firstName}
+          </h1>
+        </div>
       </header>
 
       {/* Carte météo visuelle */}
@@ -145,7 +150,7 @@ export default function Home() {
               <weatherVisual.Icon className="h-14 w-14 drop-shadow-lg" strokeWidth={1.4} />
             </div>
 
-            <p className="mt-4 text-sm leading-snug">
+            <p className="mt-4 font-serif text-xl leading-snug">
               {weatherVisual.phrase}
             </p>
           </div>
@@ -194,7 +199,7 @@ export default function Home() {
         </div>
         {closetCount === 0 ? (
           <>
-            <p className="mt-3 text-sm leading-snug text-foreground/90">
+            <p className="mt-3 font-serif text-xl leading-snug text-foreground">
               Ton dressing est vide. Ajoute tes pièces pour des suggestions sur-mesure.
             </p>
             <button
@@ -207,7 +212,7 @@ export default function Home() {
           </>
         ) : (
           <>
-            <p className="mt-3 text-sm leading-snug text-foreground/90">
+            <p className="mt-3 font-serif text-xl leading-snug text-foreground">
               Tu as <span className="font-mono-tech font-bold">{closetCount}</span> pièce{closetCount > 1 ? "s" : ""} enregistrée{closetCount > 1 ? "s" : ""}.
               {forgottenPiece && (
                 <> Tu n'as pas porté ton <span className="font-medium">{forgottenPiece}</span> depuis 2 semaines, on l'essaye aujourd'hui ?</>
