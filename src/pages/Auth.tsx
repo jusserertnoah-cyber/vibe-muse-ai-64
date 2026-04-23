@@ -192,7 +192,7 @@ export default function Auth() {
                 Entre le code reçu
               </h1>
               <p className="text-sm text-muted-foreground">
-                Code envoyé au <span className="font-medium text-foreground">{phone}</span>.
+                Code envoyé au <span className="font-medium text-foreground">{e164}</span>.
               </p>
               <Input
                 autoFocus
