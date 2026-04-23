@@ -1,19 +1,19 @@
 import { getProfile, updateProfile } from "./profile";
 import { toast } from "sonner";
 
-export type VibersReason = "scan" | "look" | "closet" | "onboarding";
+export type VibersReason = "scan" | "look" | "share" | "onboarding";
 
 export const VIBERS_REWARDS: Record<VibersReason, number> = {
-  scan: 10,
-  look: 15,
-  closet: 5,
+  scan: 5,
+  look: 5,
+  share: 30,
   onboarding: 20,
 };
 
 const LABELS: Record<VibersReason, string> = {
   scan: "Vibe Check analysé",
   look: "Tenue générée",
-  closet: "Pièce ajoutée au dressing",
+  share: "Story partagée",
   onboarding: "Bienvenue dans Vibe",
 };
 
@@ -49,9 +49,9 @@ const bumpDaily = (reason: VibersReason) => {
 
 // Cap quotidien anti-farm
 const DAILY_CAPS: Record<VibersReason, number> = {
-  scan: 5,
-  look: 5,
-  closet: 10,
+  scan: 10,
+  look: 10,
+  share: 1,
   onboarding: 1,
 };
 
