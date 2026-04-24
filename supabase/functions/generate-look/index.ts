@@ -31,11 +31,16 @@ serve(async (req) => {
       referencePhoto, // data URL or null
       lang = "fr",
       tier = "free",
+      userBrief, // free-form description from user (text or transcribed voice)
+      outfitPhoto, // optional data URL of an outfit/garment photo from the user
     } = body ?? {};
 
-    if (!style || !mood || !occasion) {
+    const hasBrief = typeof userBrief === "string" && userBrief.trim().length > 0;
+    const hasOutfitPhoto = typeof outfitPhoto === "string" && outfitPhoto.startsWith("data:");
+
+    if (!hasBrief && !hasOutfitPhoto && (!style || !mood || !occasion)) {
       return new Response(
-        JSON.stringify({ error: "style, mood, occasion required" }),
+        JSON.stringify({ error: "brief, photo or style/mood/occasion required" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
