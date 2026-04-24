@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { getProfile } from "@/lib/profile";
-import { Trophy, TrendingUp, Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, Wind, MapPin } from "lucide-react";
+import { Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, Wind, MapPin, Camera, Zap } from "lucide-react";
 import { getCurrentWeather } from "@/lib/weather";
 import { MissionStory } from "@/components/vibe/MissionStory";
-import { getRecentScans } from "@/lib/history";
-import { LineChart, Line, ResponsiveContainer, YAxis, Tooltip } from "recharts";
 
 export default function Home() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const profile = getProfile();
   const [weather, setWeather] = useState<{ temp: number; city?: string; label?: string; code?: number; wind?: number } | null>(null);
 
@@ -18,7 +18,7 @@ export default function Home() {
     });
   }, []);
 
-  const progress = Math.min(((profile?.vibers ?? 0) / 200) * 100, 100);
+  const credits = profile?.vibers ?? 0;
   const closetCount = profile?.closet?.length ?? 0;
   const featuredPiece = closetCount > 0 ? profile!.closet[0] : null;
 
@@ -81,20 +81,13 @@ export default function Home() {
     // Texte clair seulement sur fonds vraiment foncés (storm, rain, fog)
     const textOnDark = ["storm", "rain", "fog"].includes(kind);
 
-    return { Icon, gradient, phrase, textOnDark };
+    return { Icon, gradient, phrase, textOnDark, kind, isWindy };
   }, [weather, featuredPiece]);
-
-  // Évolution des notes (7 derniers scans)
-  const scans = useMemo(() => getRecentScans(7).slice().reverse(), []);
-  const chartData = scans.map((s, i) => ({ i: i + 1, score: s.score ?? 0 }));
-  const lastScore = scans.length ? scans[scans.length - 1].score ?? 0 : null;
-  const firstScore = scans.length ? scans[0].score ?? 0 : null;
-  const trend = lastScore !== null && firstScore !== null ? lastScore - firstScore : 0;
 
   return (
     <div className="space-y-6 px-5 pt-8">
-      {/* Header bonjour */}
-      <header className="flex items-center justify-between">
+      {/* Header bonjour + Capsule Crédits */}
+      <header className="flex items-start justify-between gap-3">
         <div>
           <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
             {t("home.hello")}
@@ -103,6 +96,13 @@ export default function Home() {
             {profile?.firstName}
           </h1>
         </div>
+        <div
+          className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-mono-tech text-sm font-bold text-black"
+          style={{ backgroundColor: "#CEFF00", boxShadow: "0 0 18px rgba(206,255,0,0.5)" }}
+        >
+          <Zap className="h-3.5 w-3.5" strokeWidth={2.5} />
+          Crédits&nbsp;: {credits}
+        </div>
       </header>
 
       {/* Carte météo visuelle */}
@@ -110,9 +110,8 @@ export default function Home() {
         <div
           className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${weatherVisual.gradient} p-5 shadow-card`}
         >
-          {/* Halo lumineux */}
-          <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/20 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-12 -left-12 h-40 w-40 rounded-full bg-black/20 blur-3xl" />
+          {/* Animations de fond selon la météo */}
+          <WeatherFx kind={weatherVisual.kind} isWindy={weatherVisual.isWindy} />
 
           <div className={`relative ${weatherVisual.textOnDark ? "text-white" : "text-slate-900"}`}>
             <div className="flex items-start justify-between">
@@ -143,103 +142,153 @@ export default function Home() {
         </div>
       )}
 
-      {/* Widget Vibers */}
-      <div className="rounded-3xl border border-border bg-card p-5">
-        <div className="flex items-end justify-between">
-          <div>
-            <div className="flex items-center gap-1.5">
-              <Trophy className="h-3.5 w-3.5 text-accent" strokeWidth={1.5} />
-              <span className="font-serif text-lg leading-none text-foreground">
-                {t("home.vibers")}
-              </span>
-            </div>
-            <div className="mt-1 flex items-baseline gap-1 font-mono-tech">
-              <span className="text-4xl font-bold tracking-tighter text-foreground">
-                {profile?.vibers ?? 0}
-              </span>
-              <span className="text-base text-muted-foreground">/200</span>
-            </div>
-          </div>
-          <span className="font-mono-tech text-xs text-muted-foreground">
-            {Math.round(progress)}%
-          </span>
+      {/* Action centrale : Scanner ma tenue */}
+      <button
+        onClick={() => navigate("/app/scan")}
+        className="group relative flex w-full flex-col items-center justify-center gap-3 overflow-hidden rounded-3xl bg-foreground px-6 py-10 text-background shadow-card transition-transform active:scale-[0.98]"
+      >
+        <div
+          className="pointer-events-none absolute inset-0 opacity-30"
+          style={{
+            background:
+              "radial-gradient(circle at 50% 30%, #CEFF00 0%, transparent 60%)",
+          }}
+        />
+        <div
+          className="relative flex h-20 w-20 items-center justify-center rounded-full"
+          style={{ backgroundColor: "#CEFF00", boxShadow: "0 0 30px rgba(206,255,0,0.6)" }}
+        >
+          <Camera className="h-10 w-10 text-black" strokeWidth={2} />
         </div>
-        <div className="mt-4 h-1 overflow-hidden rounded-full bg-secondary">
-          <div
-            className="h-full rounded-full bg-accent transition-all duration-700"
-            style={{ width: `${progress}%`, boxShadow: "0 0 12px hsl(var(--accent) / 0.6)" }}
-          />
-        </div>
-        <p className="mt-3 text-xs text-muted-foreground">
-          {t("home.vibersHint")}
-        </p>
-      </div>
+        <span className="relative font-serif text-2xl tracking-tight">
+          SCANNER MA TENUE
+        </span>
+        <span className="relative text-[10px] uppercase tracking-[0.25em] opacity-70">
+          Vibe Check instantané
+        </span>
+      </button>
 
-      {/* Mission Story — +30 Vibers */}
+      {/* Mission Story — Jauge récompense */}
       <MissionStory />
-
-      {/* Évolution des notes — toujours visible */}
-      <div className="rounded-3xl border border-border bg-card p-5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <TrendingUp className="h-3.5 w-3.5 text-accent" strokeWidth={1.5} />
-              <span className="font-serif text-lg leading-none text-foreground">
-                {t("home.evolution")}
-              </span>
-            </div>
-            {scans.length > 0 ? (
-              <div className="flex items-baseline gap-2 font-mono-tech">
-                <span className="text-2xl font-bold tracking-tighter">
-                  {lastScore?.toFixed(1)}
-                </span>
-                <span className={`text-xs ${trend >= 0 ? "text-accent" : "text-muted-foreground"}`}>
-                  {trend >= 0 ? "+" : ""}{trend.toFixed(1)}
-                </span>
-              </div>
-            ) : (
-              <span className="font-mono-tech text-xs text-muted-foreground">—</span>
-            )}
-          </div>
-        {scans.length > 0 ? (
-          <>
-          <div className="mt-3 h-24 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
-                <YAxis domain={[0, 10]} hide />
-                <Tooltip
-                  cursor={false}
-                  contentStyle={{
-                    background: "hsl(var(--background))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: 12,
-                    fontSize: 11,
-                    fontFamily: "JetBrains Mono, monospace",
-                  }}
-                  labelFormatter={() => ""}
-                  formatter={(v: number) => [`${v}/10`, "Note"]}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="score"
-                  stroke="hsl(var(--accent))"
-                  strokeWidth={2}
-                  dot={{ fill: "hsl(var(--accent))", r: 3, strokeWidth: 0 }}
-                  activeDot={{ r: 5 }}
-                  isAnimationActive
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-          <p className="mt-1 text-[10px] text-muted-foreground font-mono-tech">
-            {t("home.lastScans", { count: scans.length })}
-          </p>
-          </>
-        ) : (
-          <div className="mt-3 flex h-24 items-center justify-center rounded-2xl border border-dashed border-border text-center text-xs text-muted-foreground">
-            Fais ton premier Vibe Check pour voir ta progression ici.
-          </div>
-        )}
-      </div>
     </div>
   );
+}
+
+// ─── Effets météo en fond ───────────────────────────────────────────────
+function WeatherFx({ kind, isWindy }: { kind: string; isWindy: boolean }) {
+  if (kind === "sun") {
+    return (
+      <>
+        <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 animate-pulse rounded-full bg-yellow-300/60 blur-3xl" />
+        <div className="pointer-events-none absolute right-6 top-6 h-24 w-24 rounded-full bg-yellow-200/40 blur-2xl" />
+        <div className="pointer-events-none absolute inset-0 opacity-40">
+          {[...Array(8)].map((_, i) => (
+            <span
+              key={i}
+              className="absolute h-1 w-1 rounded-full bg-white"
+              style={{
+                top: `${10 + (i * 11) % 80}%`,
+                left: `${(i * 23) % 90}%`,
+                animation: `vibe-twinkle ${2 + (i % 3)}s ease-in-out ${i * 0.3}s infinite`,
+              }}
+            />
+          ))}
+        </div>
+      </>
+    );
+  }
+  if (kind === "cloud" || kind === "fog") {
+    return (
+      <>
+        <div
+          className="pointer-events-none absolute -left-10 top-4 h-20 w-40 rounded-full bg-white/40 blur-2xl"
+          style={{ animation: "vibe-drift 18s linear infinite" }}
+        />
+        <div
+          className="pointer-events-none absolute right-0 top-16 h-16 w-32 rounded-full bg-white/30 blur-2xl"
+          style={{ animation: "vibe-drift 24s linear infinite reverse" }}
+        />
+        <div className="pointer-events-none absolute -bottom-12 left-1/3 h-24 w-48 rounded-full bg-stone-500/30 blur-3xl" />
+      </>
+    );
+  }
+  if (kind === "rain") {
+    return (
+      <>
+        <div className="pointer-events-none absolute -left-6 top-2 h-16 w-32 rounded-full bg-white/20 blur-2xl" />
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          {[...Array(18)].map((_, i) => (
+            <span
+              key={i}
+              className="absolute h-6 w-px bg-white/50"
+              style={{
+                left: `${(i * 7) % 100}%`,
+                top: "-10%",
+                animation: `vibe-rain ${0.6 + (i % 4) * 0.15}s linear ${i * 0.07}s infinite`,
+              }}
+            />
+          ))}
+        </div>
+      </>
+    );
+  }
+  if (kind === "snow") {
+    return (
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        {[...Array(20)].map((_, i) => (
+          <span
+            key={i}
+            className="absolute h-1.5 w-1.5 rounded-full bg-white"
+            style={{
+              left: `${(i * 11) % 100}%`,
+              top: "-10%",
+              animation: `vibe-snow ${4 + (i % 5)}s linear ${i * 0.2}s infinite`,
+            }}
+          />
+        ))}
+      </div>
+    );
+  }
+  if (kind === "storm") {
+    return (
+      <>
+        <div
+          className="pointer-events-none absolute inset-0 bg-white/0"
+          style={{ animation: "vibe-flash 5s ease-in-out infinite" }}
+        />
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          {[...Array(14)].map((_, i) => (
+            <span
+              key={i}
+              className="absolute h-8 w-px bg-white/60"
+              style={{
+                left: `${(i * 9) % 100}%`,
+                top: "-10%",
+                animation: `vibe-rain ${0.5 + (i % 3) * 0.1}s linear ${i * 0.05}s infinite`,
+              }}
+            />
+          ))}
+        </div>
+      </>
+    );
+  }
+  if (isWindy) {
+    return (
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        {[...Array(6)].map((_, i) => (
+          <span
+            key={i}
+            className="absolute h-px bg-white/50"
+            style={{
+              top: `${15 + i * 12}%`,
+              left: "-20%",
+              width: `${40 + (i * 17) % 40}%`,
+              animation: `vibe-wind ${3 + (i % 3)}s linear ${i * 0.4}s infinite`,
+            }}
+          />
+        ))}
+      </div>
+    );
+  }
+  return null;
 }
