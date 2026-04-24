@@ -36,8 +36,10 @@ serve(async (req) => {
       });
     }
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY missing");
+    // ⚠️ Bascule vers OpenAI direct (clé personnelle de l'utilisateur).
+    // La clé doit être ajoutée dans les secrets Supabase sous le nom OPENAI_API_KEY.
+    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+    if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY missing — ajoute ta clé dans les secrets Lovable Cloud.");
 
     const body = await req.json();
     const {
@@ -96,15 +98,15 @@ ${profileLine ? `Profil : ${profileLine}.` : ""}`;
     const userText = `Analyse cette tenue. Va droit au but : note, verdict, ce qui marche, ce qui pèche, 3 actions concrètes.`;
 
     const aiRes = await fetch(
-      "https://ai.gateway.lovable.dev/v1/chat/completions",
+      "https://api.openai.com/v1/chat/completions",
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: tier === "premium" ? "google/gemini-2.5-pro" : "google/gemini-2.5-flash",
+          model: tier === "premium" ? "gpt-5" : "gpt-5-mini",
           messages: [
             { role: "system", content: systemPrompt },
             {
