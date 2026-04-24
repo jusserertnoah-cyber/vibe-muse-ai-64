@@ -296,8 +296,16 @@ export default function Settings() {
 
       {/* Legal */}
       <Section icon={<ShieldCheck className="h-4 w-4" />} title={t("settings.legal")}>
-        <Row icon={<FileText className="h-4 w-4" />} label={t("settings.privacy")} onClick={() => toast("Bientôt")} />
-        <Row icon={<FileText className="h-4 w-4" />} label={t("settings.terms")} onClick={() => toast("Bientôt")} />
+        <Row
+          icon={<FileText className="h-4 w-4" />}
+          label={t("settings.privacy")}
+          onClick={() => navigate("/legal/privacy")}
+        />
+        <Row
+          icon={<FileText className="h-4 w-4" />}
+          label={t("settings.terms")}
+          onClick={() => navigate("/legal/terms")}
+        />
       </Section>
 
       <button

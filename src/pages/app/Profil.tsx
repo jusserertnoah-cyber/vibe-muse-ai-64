@@ -1,10 +1,8 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ChevronRight, Crown, History, LogOut, Mic, Plus, Settings, Shirt, X } from "lucide-react";
+import { ChevronRight, Crown, History, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getProfile, clearProfile, updateProfile } from "@/lib/profile";
-import { toast } from "sonner";
+import { getProfile, clearProfile } from "@/lib/profile";
 import { getHistory } from "@/lib/history";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -12,9 +10,7 @@ export default function Profil() {
   const { t } = useTranslation();
   const profile = getProfile();
   const navigate = useNavigate();
-  const [closet, setCloset] = useState<string[]>(profile?.closet ?? []);
-  const [newPiece, setNewPiece] = useState("");
-  const looks = getHistory().filter((h) => h.imageUrl);
+  const looks = getHistory().filter((h) => h.type === "scan" && h.imageUrl);
 
   const reset = () => {
     clearProfile();
@@ -26,24 +22,6 @@ export default function Profil() {
     clearProfile();
     navigate("/auth", { replace: true });
   };
-
-  const addPiece = () => {
-    const v = newPiece.trim();
-    if (!v) return;
-    const next = [...closet, v];
-    setCloset(next);
-    updateProfile({ closet: next });
-    setNewPiece("");
-    toast.success(`Ajouté à ton Vibe Closet : ${v}`);
-  };
-
-  const removePiece = (idx: number) => {
-    const next = closet.filter((_, i) => i !== idx);
-    setCloset(next);
-    updateProfile({ closet: next });
-  };
-
-  const onMic = () => toast("Enregistrement vocal — branché à l'étape suivante");
 
   return (
     <div className="space-y-6 px-5 pt-8">
@@ -61,17 +39,17 @@ export default function Profil() {
       <div className="rounded-3xl bg-foreground p-5 text-background shadow-soft">
         <div className="flex items-center gap-2">
           <Crown className="h-4 w-4 text-accent" />
-          <span className="text-xs uppercase tracking-widest">{t("profile.premium")}</span>
+          <span className="text-xs uppercase tracking-widest">Crédits scans</span>
         </div>
-        <p className="mt-2 font-serif text-2xl">Essai 7 jours gratuit</p>
+        <p className="mt-2 font-serif text-2xl">Recharge tes crédits</p>
         <p className="mt-1 text-xs text-background/70">
-          1 scan + 1 génération par jour, sans carte bancaire.
+          Achète des packs de scans dès 2 €. Sans abonnement, sans expiration.
         </p>
         <Button
           onClick={() => navigate("/app/paywall")}
           className="mt-4 h-11 w-full rounded-2xl bg-accent text-accent-foreground hover:bg-accent/90"
         >
-          {t("profile.subscriptions")}
+          Voir les packs
         </Button>
       </div>
 
@@ -82,7 +60,7 @@ export default function Profil() {
           className="flex w-full items-center gap-2 text-left"
         >
           <History className="h-4 w-4 text-accent" />
-          <span className="text-sm font-medium">Mon historique</span>
+          <span className="text-sm font-medium">Mes scans</span>
           <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
             {looks.length > 0 && <span className="font-mono-tech">{looks.length}</span>}
             <ChevronRight className="h-4 w-4" />
@@ -90,7 +68,7 @@ export default function Profil() {
         </button>
         {looks.length === 0 ? (
           <p className="mt-2 text-xs text-muted-foreground">
-            Tes tenues générées et tes scans apparaîtront ici.
+            Tes scans apparaîtront ici.
           </p>
         ) : (
           <div className="-mx-5 mt-3 overflow-x-auto scrollbar-hide">
@@ -102,17 +80,12 @@ export default function Profil() {
                 >
                   <img
                     src={item.imageUrl!}
-                    alt={item.style ?? "look"}
+                    alt={item.style ?? "scan"}
                     className="h-full w-full object-cover"
                   />
                   {typeof item.score === "number" && (
                     <div className="absolute right-1.5 top-1.5 rounded-full bg-accent px-1.5 py-0.5 font-mono-tech text-[10px] font-bold text-accent-foreground">
                       {item.score.toFixed(1)}
-                    </div>
-                  )}
-                  {item.type === "look" && item.style && (
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-2 py-1.5 text-[9px] font-medium uppercase tracking-wider text-white">
-                      {item.style}
                     </div>
                   )}
                 </div>
@@ -130,55 +103,7 @@ export default function Profil() {
         )}
       </section>
 
-      {/* Vibe Closet */}
-      <section className="rounded-3xl border border-border bg-card p-5">
-        <div className="flex items-start justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <Shirt className="h-4 w-4 text-accent" />
-              <span className="text-sm font-medium">{t("profile.closet")}</span>
-            </div>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {closet.length === 0 ? t("profile.closetEmpty") : `${closet.length} pièces`}
-            </p>
-          </div>
-          <Button variant="outline" size="sm" onClick={onMic} className="rounded-full">
-            <Mic className="h-4 w-4" />
-          </Button>
-        </div>
-
-        {closet.length > 0 && (
-          <ul className="mt-4 flex flex-wrap gap-2">
-            {closet.map((p, i) => (
-              <li
-                key={`${p}-${i}`}
-                className="group flex items-center gap-1.5 rounded-full border border-border bg-secondary px-3 py-1.5 text-xs"
-              >
-                {p}
-                <button onClick={() => removePiece(i)} aria-label={`Retirer ${p}`}>
-                  <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-
-        <div className="mt-4 flex gap-2">
-          <input
-            value={newPiece}
-            onChange={(e) => setNewPiece(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && addPiece()}
-            placeholder="Ex : pull cachemire crème"
-            className="h-11 flex-1 rounded-2xl border border-border bg-background px-4 text-sm outline-none focus:border-accent"
-          />
-          <Button onClick={addPiece} size="icon" className="h-11 w-11 rounded-2xl bg-accent text-accent-foreground hover:bg-accent/90">
-            <Plus className="h-4 w-4" />
-          </Button>
-        </div>
-      </section>
-
       <ul className="space-y-2">
-        <Row icon={<History className="h-5 w-5" />} label="Historique des Vibers" />
         <Row
           icon={<Settings className="h-5 w-5" />}
           label={t("profile.settings", { defaultValue: "Paramètres" })}
