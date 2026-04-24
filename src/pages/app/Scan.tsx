@@ -52,7 +52,7 @@ export default function Scan() {
 
   const onFile = async (f: File) => {
     if (!hasCredits(1)) {
-      toast.error("Crédit requis", { description: "Il te faut au moins 1 crédit pour scanner ta tenue." });
+      toast.error(t("scan.creditRequired"), { description: t("scan.creditRequiredHint") });
       navigate("/app/paywall");
       return;
     }
@@ -63,14 +63,14 @@ export default function Scan() {
       setDataUrl(url);
       analyze(url);
     } catch {
-      toast.error("Impossible de lire la photo.");
+      toast.error(t("scan.readError"));
     }
   };
 
   const analyze = async (img: string) => {
     // Consomme 1 crédit à l'ouverture de l'analyse
     if (!consumeCredits(1)) {
-      toast.error("Crédit insuffisant", { description: "Recharge tes crédits pour continuer." });
+      toast.error(t("scan.creditInsufficient"), { description: t("scan.creditTopup") });
       navigate("/app/paywall");
       return;
     }
