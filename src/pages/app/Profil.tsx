@@ -39,17 +39,15 @@ export default function Profil() {
       <div className="rounded-3xl bg-foreground p-5 text-background shadow-soft">
         <div className="flex items-center gap-2">
           <Crown className="h-4 w-4 text-accent" />
-          <span className="text-xs uppercase tracking-widest">Crédits scans</span>
+          <span className="text-xs uppercase tracking-widest">{t("profile.creditsScans")}</span>
         </div>
-        <p className="mt-2 font-serif text-2xl">Recharge tes crédits</p>
-        <p className="mt-1 text-xs text-background/70">
-          Achète des packs de scans dès 2 €. Sans abonnement, sans expiration.
-        </p>
+        <p className="mt-2 font-serif text-2xl">{t("profile.rechargeTitle")}</p>
+        <p className="mt-1 text-xs text-background/70">{t("profile.rechargeHint")}</p>
         <Button
           onClick={() => navigate("/app/paywall")}
           className="mt-4 h-11 w-full rounded-2xl bg-accent text-accent-foreground hover:bg-accent/90"
         >
-          Voir les packs
+          {t("profile.viewPacks")}
         </Button>
       </div>
 
@@ -60,7 +58,7 @@ export default function Profil() {
           className="flex w-full items-center gap-2 text-left"
         >
           <History className="h-4 w-4 text-accent" />
-          <span className="text-sm font-medium">Mes scans</span>
+          <span className="text-sm font-medium">{t("profile.myScans")}</span>
           <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
             {looks.length > 0 && <span className="font-mono-tech">{looks.length}</span>}
             <ChevronRight className="h-4 w-4" />
@@ -68,7 +66,7 @@ export default function Profil() {
         </button>
         {looks.length === 0 ? (
           <p className="mt-2 text-xs text-muted-foreground">
-            Tes scans apparaîtront ici.
+            {t("profile.scansEmpty")}
           </p>
         ) : (
           <div className="-mx-5 mt-3 overflow-x-auto scrollbar-hide">
