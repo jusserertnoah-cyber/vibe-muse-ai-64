@@ -36,6 +36,28 @@ serve(async (req) => {
       });
     }
 
+    // ⚡ Vérification + consommation atomique d'1 crédit côté serveur.
+    // Utilise le RPC `consume_credit` qui décrémente vibers seulement si > 0.
+    const supabaseUser = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } } },
+    );
+    const { data: ok, error: rpcErr } = await supabaseUser.rpc("consume_credit");
+    if (rpcErr) {
+      console.error("consume_credit error", rpcErr);
+      return new Response(JSON.stringify({ error: "credit_check_failed" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (!ok) {
+      return new Response(JSON.stringify({ error: "no_credits" }), {
+        status: 402,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // ⚠️ Bascule vers OpenAI direct (clé personnelle de l'utilisateur).
     // La clé doit être ajoutée dans les secrets Supabase sous le nom OPENAI_API_KEY.
     const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
