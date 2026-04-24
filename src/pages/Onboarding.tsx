@@ -635,7 +635,7 @@ export default function Onboarding() {
 
         {step === 0 && (
           <button
-            onClick={() => navigate("/auth")}
+            onClick={() => { setLoginOnly(true); setStep(7); }}
             className="pb-2 text-center text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground"
           >
             J'ai déjà un compte → Se connecter
