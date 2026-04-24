@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { applyTheme } from "@/lib/theme";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -11,14 +11,16 @@ import Onboarding from "./pages/Onboarding.tsx";
 import Auth from "./pages/Auth.tsx";
 import { AppLayout } from "./components/vibe/AppLayout";
 import Home from "./pages/app/Home.tsx";
-import Inspirations from "./pages/app/Inspirations.tsx";
-import Scan from "./pages/app/Scan.tsx";
-import Profil from "./pages/app/Profil.tsx";
-import Paywall from "./pages/app/Paywall.tsx";
-import Settings from "./pages/app/Settings.tsx";
-import HistoryPage from "./pages/app/HistoryPage.tsx";
-import Privacy from "./pages/legal/Privacy.tsx";
-import Terms from "./pages/legal/Terms.tsx";
+// Route-level code splitting: keep the initial bundle small (better FCP/LCP).
+// Heavy deps like Stripe SDK are pulled in only when the user opens the Paywall.
+const Inspirations = lazy(() => import("./pages/app/Inspirations.tsx"));
+const Scan = lazy(() => import("./pages/app/Scan.tsx"));
+const Profil = lazy(() => import("./pages/app/Profil.tsx"));
+const Paywall = lazy(() => import("./pages/app/Paywall.tsx"));
+const Settings = lazy(() => import("./pages/app/Settings.tsx"));
+const HistoryPage = lazy(() => import("./pages/app/HistoryPage.tsx"));
+const Privacy = lazy(() => import("./pages/legal/Privacy.tsx"));
+const Terms = lazy(() => import("./pages/legal/Terms.tsx"));
 
 const queryClient = new QueryClient();
 
@@ -46,6 +48,7 @@ const App = () => {
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
@@ -64,6 +67,7 @@ const App = () => {
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        </Suspense>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
