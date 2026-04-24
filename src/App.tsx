@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound.tsx";
 import Onboarding from "./pages/Onboarding.tsx";
 import { AppLayout } from "./components/vibe/AppLayout";
 import Home from "./pages/app/Home.tsx";
+import ScrollToTop from "./components/ScrollToTop";
 // Route-level code splitting: keep the initial bundle small (better FCP/LCP).
 // Heavy deps like Stripe SDK are pulled in only when the user opens the Paywall.
 const Inspirations = lazy(() => import("./pages/app/Inspirations.tsx"));
@@ -47,7 +48,8 @@ const App = () => {
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Suspense fallback={null}>
+        <ScrollToTop />
+        <Suspense fallback={<div className="min-h-screen bg-background" />}>
         <Routes>
           <Route path="/" element={<Index />} />
           {/* /auth est un alias historique → on redirige vers l'onboarding
