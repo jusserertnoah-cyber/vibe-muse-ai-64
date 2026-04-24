@@ -1,13 +1,13 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Camera, Upload, Loader2, Check, AlertCircle, Ruler, Palette, Sparkles, ShoppingBag, ExternalLink, Lock } from "lucide-react";
+import { Camera, Upload, Loader2, Check, AlertCircle, Ruler, Palette, Sparkles, ShoppingBag, ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { getProfile } from "@/lib/profile";
 import { awardVibers } from "@/lib/vibers";
 import { getTier } from "@/lib/tier";
-import { hasCredits, consumeCredits, getCredits } from "@/lib/credits";
+import { hasCredits, consumeCredits } from "@/lib/credits";
 import { pushHistory } from "@/lib/history";
 import { toast } from "sonner";
 import { StylistChat } from "@/components/vibe/StylistChat";
