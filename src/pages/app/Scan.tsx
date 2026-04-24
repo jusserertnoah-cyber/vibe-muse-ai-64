@@ -229,6 +229,49 @@ export default function Scan() {
             </ol>
           </div>
 
+          {/* L'avis de VIBE — audit styliste */}
+          {(result.fit || result.colors || result.touch2026) && (
+            <section className="rounded-3xl bg-card p-5 shadow-card">
+              <header className="mb-4 flex items-center justify-between">
+                <p className="font-serif text-xl leading-none">L'avis de VIBE</p>
+                <span className="rounded-full bg-secondary px-2 py-1 text-[10px] uppercase tracking-widest text-muted-foreground">
+                  Audit styliste
+                </span>
+              </header>
+              <div className="space-y-4">
+                {result.fit && (
+                  <AuditBlock icon={<Ruler className="h-4 w-4" />} title="Analyse du Fit" text={result.fit} />
+                )}
+                {result.colors && (
+                  <AuditBlock icon={<Palette className="h-4 w-4" />} title="Harmonie des couleurs" text={result.colors} />
+                )}
+                {result.touch2026 && (
+                  <AuditBlock
+                    icon={<Sparkles className="h-4 w-4" />}
+                    title="La Touche 2026"
+                    text={result.touch2026}
+                    accent
+                  />
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* Shopping list affiliée */}
+          {result.shopping && result.shopping.length > 0 && (
+            <section>
+              <header className="mb-3 flex items-center gap-2 px-1">
+                <ShoppingBag className="h-4 w-4 text-foreground" strokeWidth={1.8} />
+                <p className="font-serif text-xl leading-none">Complète ta tenue</p>
+              </header>
+              <div className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2">
+                {result.shopping.map((item, i) => (
+                  <ShoppingCard key={i} item={item} />
+                ))}
+              </div>
+            </section>
+          )}
+
           <StylistChat
             mode="scan"
             context={{ scan: result }}
