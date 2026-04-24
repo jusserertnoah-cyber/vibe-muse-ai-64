@@ -1,18 +1,19 @@
 import { NavLink } from "react-router-dom";
 import { Home, Sparkles, ScanLine, User } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 
-const tabs = [
-  { to: "/app", label: "Accueil", icon: Home, end: true },
-  { to: "/app/inspirations", label: "Inspirations", icon: Sparkles },
-  { to: "/app/scan", label: "Scan", icon: ScanLine },
-  { to: "/app/profil", label: "Profil", icon: User },
-];
-
 export const BottomNav = () => {
+  const { t } = useTranslation();
+  const tabs = [
+    { to: "/app", label: t("nav.home"), icon: Home, end: true },
+    { to: "/app/inspirations", label: t("nav.inspirations"), icon: Sparkles },
+    { to: "/app/scan", label: t("nav.scan"), icon: ScanLine },
+    { to: "/app/profil", label: t("nav.profile"), icon: User },
+  ];
   return (
     <nav
-      aria-label="Navigation principale"
+      aria-label={t("nav.aria")}
       className="fixed bottom-0 left-0 right-0 z-40 border-t border-border/60 glass-card"
     >
       <ul className="mx-auto flex max-w-md items-center justify-around px-2 py-2 pb-[max(env(safe-area-inset-bottom),0.5rem)]">
