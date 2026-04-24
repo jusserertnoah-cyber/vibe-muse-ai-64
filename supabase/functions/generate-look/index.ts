@@ -132,8 +132,21 @@ Inspiration college américain : varsity/letterman jackets, sweats université, 
 Tenue à composer (varie cette base) : ${variant}`;
     }
 
+    const briefLine = hasBrief
+      ? `Brief utilisateur (PRIORITÉ ABSOLUE, respecte chaque détail) : "${userBrief.trim()}"`
+      : "";
+    const outfitPhotoLine = hasOutfitPhoto
+      ? "Une photo de vêtement/tenue est fournie par l'utilisateur : INSPIRE-toi directement de ces pièces (couleurs, coupes, matières) pour composer le look final."
+      : "";
+
+    const styleLine = style ? `Style: ${style}.` : "";
+    const moodLine = mood ? `Mood: ${mood}.` : "";
+    const occasionLine = occasion ? `Occasion: ${occasion}.` : "";
+
     const imagePrompt = `Photographie mode éditoriale plein corps, ultra réaliste, lumière studio douce, fond neutre clair.
-Style: ${style}. Mood: ${mood}. Occasion: ${occasion}.
+${briefLine}
+${outfitPhotoLine}
+${styleLine} ${moodLine} ${occasionLine}
 ${styleDirective}
 ${weatherLine}
 ${personLine}
@@ -143,12 +156,18 @@ Tenue cohérente, élégante, détails de matières visibles (texture, plis, omb
     const messages: any[] = [
       {
         role: "user",
-        content: referencePhoto
-          ? [
-              { type: "text", text: imagePrompt },
-              { type: "image_url", image_url: { url: referencePhoto } },
-            ]
-          : imagePrompt,
+        content:
+          referencePhoto || hasOutfitPhoto
+            ? [
+                { type: "text", text: imagePrompt },
+                ...(referencePhoto
+                  ? [{ type: "image_url", image_url: { url: referencePhoto } }]
+                  : []),
+                ...(hasOutfitPhoto
+                  ? [{ type: "image_url", image_url: { url: outfitPhoto } }]
+                  : []),
+              ]
+            : imagePrompt,
       },
     ];
 
@@ -161,7 +180,7 @@ Tenue cohérente, élégante, détails de matières visibles (texture, plis, omb
 2) "advice" : 2 phrases max. ${weather ? `Commence OBLIGATOIREMENT par : "Vu qu'il fait ${weather.temp}°C à ${city ?? "ta ville"}, j'ai adapté ton look".` : ""}
 Réponds via la fonction tool fournie.`;
 
-    const adviceUserPrompt = `Style: ${style}. Mood: ${mood}. Occasion: ${occasion}. ${weatherLine} ${closetLine}`;
+    const adviceUserPrompt = `${briefLine} ${outfitPhotoLine ? "(L'utilisateur a aussi fourni une photo de tenue d'inspiration.)" : ""} ${styleLine} ${moodLine} ${occasionLine} ${weatherLine} ${closetLine}`.trim();
 
     // Run image generation and stylist advice IN PARALLEL — wall time ≈ slowest of the two.
     const imgPromise = fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
