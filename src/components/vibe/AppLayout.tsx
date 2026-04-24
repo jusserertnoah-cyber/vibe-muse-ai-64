@@ -6,9 +6,11 @@ import { useSession } from "@/hooks/useSession";
 export const AppLayout = () => {
   const { session, loading } = useSession();
   if (loading) return null;
-  if (!session) return <Navigate to="/auth" replace />;
-
   const profile = getProfile();
+  // Mode démo : si aucun provider SMS n'est branché, l'utilisateur n'a pas de
+  // session Supabase mais a quand même rempli son profil local — on le laisse
+  // entrer dans l'app pour ne pas le forcer à re-saisir son numéro.
+  if (!session && !profile) return <Navigate to="/onboarding" replace />;
   if (!profile) return <Navigate to="/onboarding" replace />;
 
   return (
