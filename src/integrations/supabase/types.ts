@@ -56,6 +56,33 @@ export type Database = {
         }
         Relationships: []
       }
+      posts: {
+        Row: {
+          ai_score: number | null
+          caption: string | null
+          created_at: string
+          id: string
+          image_url: string
+          user_id: string
+        }
+        Insert: {
+          ai_score?: number | null
+          caption?: string | null
+          created_at?: string
+          id?: string
+          image_url: string
+          user_id: string
+        }
+        Update: {
+          ai_score?: number | null
+          caption?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           age: number | null
@@ -122,6 +149,7 @@ export type Database = {
         Args: { scans: number; target_user: string }
         Returns: undefined
       }
+      consume_credit: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
