@@ -17,6 +17,8 @@ import Profil from "./pages/app/Profil.tsx";
 import Paywall from "./pages/app/Paywall.tsx";
 import Settings from "./pages/app/Settings.tsx";
 import HistoryPage from "./pages/app/HistoryPage.tsx";
+import Privacy from "./pages/legal/Privacy.tsx";
+import Terms from "./pages/legal/Terms.tsx";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +50,8 @@ const App = () => {
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/onboarding" element={<Onboarding />} />
+          <Route path="/legal/privacy" element={<Privacy />} />
+          <Route path="/legal/terms" element={<Terms />} />
           <Route path="/app" element={<AppLayout />}>
             <Route index element={<Home />} />
             <Route path="inspirations" element={<Inspirations />} />
