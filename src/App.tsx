@@ -13,13 +13,12 @@ import Home from "./pages/app/Home.tsx";
 import ScrollToTop from "./components/ScrollToTop";
 // Route-level code splitting: keep the initial bundle small (better FCP/LCP).
 // Heavy deps like Stripe SDK are pulled in only when the user opens the Paywall.
-const Inspirations = lazy(() => import("./pages/app/Inspirations.tsx"));
 const Scan = lazy(() => import("./pages/app/Scan.tsx"));
 const Profil = lazy(() => import("./pages/app/Profil.tsx"));
 const Paywall = lazy(() => import("./pages/app/Paywall.tsx"));
 const Settings = lazy(() => import("./pages/app/Settings.tsx"));
 const HistoryPage = lazy(() => import("./pages/app/HistoryPage.tsx"));
-const Feed = lazy(() => import("./pages/app/Feed.tsx"));
+const TopVibes = lazy(() => import("./pages/app/TopVibes.tsx"));
 const Privacy = lazy(() => import("./pages/legal/Privacy.tsx"));
 const Terms = lazy(() => import("./pages/legal/Terms.tsx"));
 
@@ -61,13 +60,12 @@ const App = () => {
           <Route path="/legal/terms" element={<Terms />} />
           <Route path="/app" element={<AppLayout />}>
             <Route index element={<Home />} />
-            <Route path="inspirations" element={<Inspirations />} />
             <Route path="scan" element={<Scan />} />
             <Route path="profil" element={<Profil />} />
             <Route path="paywall" element={<Paywall />} />
             <Route path="settings" element={<Settings />} />
             <Route path="history" element={<HistoryPage />} />
-            <Route path="feed" element={<Feed />} />
+            <Route path="topvibes" element={<TopVibes />} />
           </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
