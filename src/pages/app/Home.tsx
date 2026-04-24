@@ -2,15 +2,17 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { getProfile } from "@/lib/profile";
-import { Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, Wind, MapPin, Camera, Zap } from "lucide-react";
+import { Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, Wind, MapPin, Camera, Zap, Flame } from "lucide-react";
 import { getCurrentWeather } from "@/lib/weather";
 import { MissionStory } from "@/components/vibe/MissionStory";
+import { getDailyChallenge } from "@/lib/challenges";
 
 export default function Home() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const profile = getProfile();
   const [weather, setWeather] = useState<{ temp: number; city?: string; label?: string; code?: number; wind?: number } | null>(null);
+  const challenge = getDailyChallenge();
 
   useEffect(() => {
     getCurrentWeather().then((w) => {
@@ -166,6 +168,22 @@ export default function Home() {
         <span className="relative text-[10px] uppercase tracking-[0.25em] opacity-70">
           Vibe Check instantané
         </span>
+      </button>
+
+      {/* Bandeau Défi du jour */}
+      <button
+        onClick={() => navigate("/app/scan")}
+        className="group relative flex w-full items-center gap-4 overflow-hidden rounded-3xl bg-gradient-brand p-5 text-left shadow-brand active:scale-[0.99]"
+      >
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-foreground/10">
+          <Flame className="h-7 w-7 text-foreground" strokeWidth={1.6} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-[10px] uppercase tracking-[0.25em] text-foreground/70">Défi du jour</p>
+          <p className="mt-0.5 truncate font-serif text-xl">{challenge.name}</p>
+          <p className="mt-0.5 truncate text-xs text-foreground/80">{challenge.hint}</p>
+        </div>
+        <span className="hidden text-[10px] font-semibold uppercase tracking-widest text-foreground/70 sm:block">10/10 = scan offert</span>
       </button>
 
       {/* Mission Story — Jauge récompense */}

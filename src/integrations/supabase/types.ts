@@ -56,36 +56,120 @@ export type Database = {
         }
         Relationships: []
       }
+      hall_of_fame: {
+        Row: {
+          archived_at: string
+          caption: string | null
+          challenge_name: string | null
+          id: string
+          image_url: string
+          pseudo: string | null
+          score: number | null
+          user_id: string
+          vibe_count: number
+          week_end: string
+          week_start: string
+        }
+        Insert: {
+          archived_at?: string
+          caption?: string | null
+          challenge_name?: string | null
+          id?: string
+          image_url: string
+          pseudo?: string | null
+          score?: number | null
+          user_id: string
+          vibe_count?: number
+          week_end: string
+          week_start: string
+        }
+        Update: {
+          archived_at?: string
+          caption?: string | null
+          challenge_name?: string | null
+          id?: string
+          image_url?: string
+          pseudo?: string | null
+          score?: number | null
+          user_id?: string
+          vibe_count?: number
+          week_end?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
+      post_votes: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_votes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       posts: {
         Row: {
           ai_score: number | null
           caption: string | null
+          challenge_met: boolean
+          challenge_name: string | null
           created_at: string
           id: string
           image_url: string
+          pseudo: string | null
           user_id: string
+          vibe_count: number
         }
         Insert: {
           ai_score?: number | null
           caption?: string | null
+          challenge_met?: boolean
+          challenge_name?: string | null
           created_at?: string
           id?: string
           image_url: string
+          pseudo?: string | null
           user_id: string
+          vibe_count?: number
         }
         Update: {
           ai_score?: number | null
           caption?: string | null
+          challenge_met?: boolean
+          challenge_name?: string | null
           created_at?: string
           id?: string
           image_url?: string
+          pseudo?: string | null
           user_id?: string
+          vibe_count?: number
         }
         Relationships: []
       }
       profiles: {
         Row: {
           age: number | null
+          challenges_completed: number
           closet: string[] | null
           created_at: string
           first_name: string | null
@@ -104,6 +188,7 @@ export type Database = {
         }
         Insert: {
           age?: number | null
+          challenges_completed?: number
           closet?: string[] | null
           created_at?: string
           first_name?: string | null
@@ -122,6 +207,7 @@ export type Database = {
         }
         Update: {
           age?: number | null
+          challenges_completed?: number
           closet?: string[] | null
           created_at?: string
           first_name?: string | null
@@ -150,6 +236,21 @@ export type Database = {
         Returns: undefined
       }
       consume_credit: { Args: never; Returns: boolean }
+      reward_challenge: {
+        Args: never
+        Returns: {
+          granted_credit: boolean
+          total_completed: number
+        }[]
+      }
+      toggle_vibe: {
+        Args: { target_post: string }
+        Returns: {
+          new_count: number
+          vibed: boolean
+        }[]
+      }
+      weekly_reset: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
