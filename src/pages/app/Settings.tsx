@@ -249,18 +249,18 @@ export default function Settings() {
         </div>
       </Section>
 
-      {/* Subscription (real) */}
-      <Section icon={<CreditCard className="h-4 w-4" />} title={t("settings.subscription")}>
+      {/* Crédits scans (packs à l'unité, pas d'abonnement) */}
+      <Section icon={<CreditCard className="h-4 w-4" />} title={t("settings.credits")}>
         <div className="flex items-center justify-between rounded-xl bg-secondary px-4 py-3 text-sm">
-          <span className="text-muted-foreground">Status</span>
-          <span className="font-medium">{t("settings.free")}</span>
+          <span className="text-muted-foreground">{t("settings.creditsBalance")}</span>
+          <span className="font-mono-tech font-bold">{profile?.vibers ?? 0}</span>
         </div>
+        <p className="text-xs text-muted-foreground">{t("settings.creditsHint")}</p>
         <Button
-          variant="outline"
-          onClick={() => toast(t("settings.stripeSoon"))}
-          className="h-11 w-full rounded-xl"
+          onClick={() => navigate("/app/paywall")}
+          className="h-11 w-full rounded-xl bg-accent text-accent-foreground hover:bg-accent/90"
         >
-          {t("settings.manage")}
+          {t("settings.buyCredits")}
         </Button>
       </Section>
 

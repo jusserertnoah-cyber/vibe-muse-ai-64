@@ -60,6 +60,9 @@ export default function Onboarding() {
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [busy, setBusy] = useState(false);
+  // Mode "j'ai déjà un compte" : on saute toutes les étapes profil et on
+  // utilise l'écran téléphone uniquement pour se reconnecter.
+  const [loginOnly, setLoginOnly] = useState(false);
 
   // Si l'utilisateur a déjà une session active et un profil, on file dans l'app
   useEffect(() => {
@@ -179,6 +182,11 @@ export default function Onboarding() {
       type: "sms",
     });
     if (error) {
+      if (loginOnly) {
+        setBusy(false);
+        toast.error("Code invalide", { description: "Vérifie le code reçu par SMS." });
+        return;
+      }
       // Mode démo : on finit quand même l'onboarding localement.
       const profile = await persistProfile(undefined);
       setBusy(false);
@@ -187,6 +195,21 @@ export default function Onboarding() {
       return;
     }
     const userId = data.user?.id;
+    // Connexion : si la BD a un profil onboardé, on file dans l'app.
+    if (loginOnly && userId) {
+      const p = await hydrateProfileFromDb(userId);
+      setBusy(false);
+      if (p) {
+        toast.success(`Bon retour ${p.firstName} ✨`);
+        navigate("/app", { replace: true });
+        return;
+      }
+      // Pas de profil onboardé en BD → on bascule sur l'onboarding complet.
+      toast("Termine ton profil pour continuer.");
+      setLoginOnly(false);
+      setStep(1);
+      return;
+    }
     const profile = await persistProfile(userId);
     setBusy(false);
     toast.success(`Bienvenue ${profile.firstName} ✨ +20 Vibers offerts`);
@@ -612,7 +635,7 @@ export default function Onboarding() {
 
         {step === 0 && (
           <button
-            onClick={() => navigate("/auth")}
+            onClick={() => { setLoginOnly(true); setStep(7); }}
             className="pb-2 text-center text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground"
           >
             J'ai déjà un compte → Se connecter

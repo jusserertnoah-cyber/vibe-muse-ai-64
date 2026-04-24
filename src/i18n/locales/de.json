@@ -1,97 +1,125 @@
 {
-  "nav": { "home": "Start", "dressing": "Dressing", "scan": "Scan", "profile": "Profil" },
+  "nav": {
+    "home": "Start",
+    "inspirations": "Inspirationen",
+    "scan": "Scan",
+    "profile": "Profil",
+    "dressing": "Kleider",
+    "aria": "Hauptnavigation"
+  },
+  "common": {
+    "continue": "Weiter",
+    "back": "Zurück",
+    "skip": "Überspringen",
+    "next": "Weiter",
+    "done": "Fertig",
+    "save": "Speichern",
+    "generate": "Outfit erstellen"
+  },
+  "missionStory": {
+    "title": "Story-Mission",
+    "subtitle": "Teile dein Outfit in einer Story (Instagram oder TikTok) und markiere @vibe. 5 bestätigte Storys = 1 gratis Scan.",
+    "progress": "Noch {{remaining}} bis zu deinem Gratis-Scan.",
+    "rule1": "Nur öffentliche Story (keine Enge Freunde)",
+    "rule2": "Sichtbarer @vibe-Tag",
+    "rule3": "Einmal pro 24 Std.",
+    "verifying": "Anti-Fraud-Prüfung läuft…",
+    "verifyingShort": "Prüfung…",
+    "uploading": "Bild wird vorbereitet…",
+    "scanGranted": "+1 Scan gutgeschrieben 🎉 Top, 5 Storys bestätigt!",
+    "storyValidated": "Story bestätigt. Komm morgen wieder!",
+    "rejected": "Story abgelehnt",
+    "errorHint": "Erneut mit einer echten öffentlichen Story mit @vibe versuchen.",
+    "uploadError": "Fehler beim Senden.",
+    "cooldownTitle": "Komm später wieder",
+    "cooldownDesc": "Nächste Mission in {{time}}.",
+    "nextIn": "Nächste in {{time}}",
+    "upload": "Story hochladen",
+    "tomorrow": "Komm morgen wieder",
+    "errors": {
+      "not_a_story": "Keine aktive Story. Sende einen Screenshot einer veröffentlichten Story.",
+      "no_outfit": "Kein Outfit in der Story erkannt.",
+      "missing_tag": "@vibe-Tag fehlt. Füge ihn zur Story hinzu.",
+      "close_friends": "„Enge Freunde“-Storys zählen nicht.",
+      "duplicate": "Diese Story ähnelt einer bereits eingereichten zu sehr.",
+      "rate_limited": "Zu viele Anfragen, in einer Minute erneut versuchen.",
+      "payment_required": "KI-Guthaben aufgebraucht.",
+      "ai_error": "Prüfung fehlgeschlagen. Erneut versuchen."
+    }
+  },
+  "profile": {
+    "title": "Profil",
+    "creditsScans": "Scan-Guthaben",
+    "rechargeTitle": "Guthaben aufladen",
+    "rechargeHint": "Scan-Pakete ab 2 €. Kein Abo, kein Ablaufdatum.",
+    "viewPacks": "Pakete anzeigen",
+    "myScans": "Meine Scans",
+    "scansEmpty": "Deine Scans erscheinen hier.",
+    "viewAll": "Alle anzeigen",
+    "settings": "Einstellungen",
+    "reset": "Profil zurücksetzen",
+    "signOut": "Abmelden",
+    "closet": "Vibe Closet",
+    "closetEmpty": "Füge Teile per Sprache hinzu für 100% individuelle Outfits.",
+    "addPiece": "Teil hinzufügen"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "account": "Konto",
+    "firstName": "Vorname",
+    "email": "E-Mail",
+    "height": "Größe (cm)",
+    "weight": "Gewicht (kg)",
+    "age": "Alter",
+    "language": "Sprache",
+    "theme": "Design",
+    "themeHint": "Wähle die Akzentfarbe der App. Die Basis bleibt Creme, Weiß und Schwarz.",
+    "credits": "Scan-Guthaben",
+    "creditsBalance": "Guthaben",
+    "creditsHint": "Kein Abo: Scans pro Paket kaufen, ohne Ablauf.",
+    "buyCredits": "Guthaben kaufen",
+    "preferences": "Einstellungen",
+    "morningTip": "Morgen-Wetter-Tipp",
+    "units": "Einheiten",
+    "metric": "Metrisch",
+    "imperial": "Imperial",
+    "legal": "Rechtliches & Support",
+    "privacy": "Datenschutzerklärung",
+    "terms": "AGB",
+    "delete": "Konto löschen",
+    "saved": "Änderungen gespeichert"
+  },
   "home": {
     "hello": "Hallo",
-    "styles": "Deine Stile",
     "vibers": "Vibers",
-    "vibersHint": "200 Vibers = 1 Monat Premium gratis",
     "smartCloset": "Smart Closet",
-    "closetEmpty": "Dein Kleiderschrank ist leer. Füge Stücke hinzu für maßgeschneiderte Vorschläge.",
-    "addPiece": "Stück hinzufügen",
-    "createLookWith": "Look erstellen mit",
-    "closetCount_one": "Du hast {{count}} Stück gespeichert.",
-    "closetCount_other": "Du hast {{count}} Stücke gespeichert.",
-    "forgotten": "Du hast dein {{piece}} seit 2 Wochen nicht getragen — heute ausprobieren?",
-    "evolution": "Entwicklung",
-    "lastScans": "Letzte {{count}} Scans",
+    "closetEmpty": "Dein Kleiderschrank ist leer. Füge Teile für maßgeschneiderte Tipps hinzu.",
+    "addPiece": "Teil hinzufügen",
     "history": "Verlauf",
     "myStats": "Meine Stats",
     "location": "Standort"
   },
-  "common": {
-    "continue": "Weiter", "back": "Zurück", "skip": "Überspringen",
-    "generate": "Outfit generieren", "next": "Weiter", "done": "Fertig", "save": "Speichern"
-  },
   "onboarding": {
     "language": "Wähle deine Sprache",
     "languageHint": "Du kannst sie später im Profil ändern.",
-    "welcome": "Willkommen.",
-    "yourName": "Wie heißt du?",
-    "namePlaceholder": "Dein Vorname",
-    "nameHint": "Dein Name hilft mir, dich wie eine Stylistin zu beraten."
+    "loginExisting": "Ich habe schon ein Konto → Anmelden",
+    "gender": {
+      "title": "Du identifizierst dich als?",
+      "femme": "Frau",
+      "homme": "Mann",
+      "unisex": "Non-binär / Unisex"
+    }
   },
   "dressing": {
     "title": "Stelle dein Outfit zusammen",
-    "step1": "Was ist heute dein Style?",
-    "step1Hint": "Wähle die Welt, die dich heute anspricht.",
-    "step2": "Welche Vibe?",
-    "step2Hint": "Die Energie, die du ausstrahlen willst.",
-    "step3": "Wohin gehst du?",
-    "step3Hint": "Der Kontext ändert alles.",
-    "generating": "Outfit wird erstellt…",
-    "generate": "Outfit generieren",
-    "newLook": "Neues Outfit",
-    "stylistAdvice": "Stylist-Tipp",
-    "noImage": "Bild nicht verfügbar",
-    "completeSteps": "Schließe die 3 Schritte ab",
-    "rateLimited": "Zu viele Anfragen. In einer Minute erneut versuchen.",
-    "paymentRequired": "KI-Guthaben aufgebraucht.",
-    "error": "Generierung fehlgeschlagen. Erneut versuchen.",
-    "closetUsed": "{{count}} Stücke aus deinem Vibe Closet werden verwendet."
+    "newLook": "Neues Outfit"
   },
   "scan": {
     "kicker": "Vibe Check",
-    "title": "Bewerte dein Look",
-    "subtitle": "Couture-Analyse — ehrlich und scharf.",
-    "hint": "Mach ein Ganzkörperfoto bei Tageslicht für einen ehrlichen Scan.",
-    "choose": "Foto wählen",
-    "change": "Foto ändern",
-    "loading": "Analysiere…",
-    "rescore": "Neu bewerten",
-    "strong": "Was funktioniert",
-    "weak": "Zu verbessern",
-    "tipsTitle": "3 schnelle Aktionen",
-    "errors": {
-      "rate": "Zu viele Scans. In einer Minute erneut versuchen.",
-      "credits": "KI-Guthaben aufgebraucht.",
-      "blur": "Analyse unmöglich. Mach ein schärferes Foto.",
-      "generic": "Scan fehlgeschlagen. Erneut versuchen."
-    }
-  },
-  "profile": {
-    "title": "Profil", "closet": "Vibe Closet",
-    "closetEmpty": "Füge deine Stücke per Sprache hinzu für 100% personalisierte Outfits.",
-    "addPiece": "Stück hinzufügen", "subscriptions": "Abos ansehen",
-    "premium": "Premium", "settings": "Einstellungen"
-  },
-  "settings": {
-    "title": "Einstellungen", "account": "Konto",
-    "firstName": "Vorname", "email": "E-Mail",
-    "height": "Größe (cm)", "weight": "Gewicht (kg)", "age": "Alter",
-    "language": "Sprache", "theme": "Theme",
-    "themeHint": "Wähle die Akzentfarbe. Basis bleibt creme, weiß und schwarz.",
-    "subscription": "Abo", "manage": "Abo verwalten",
-    "preferences": "Einstellungen", "morningTip": "Morgendlicher Wettertipp",
-    "units": "Einheiten", "metric": "Metrisch", "imperial": "Imperial",
-    "legal": "Rechtliches & Support", "privacy": "Datenschutz", "terms": "AGB",
-    "delete": "Konto löschen", "saved": "Änderungen gespeichert",
-    "free": "Kostenlos", "stripeSoon": "Stripe-Portal bald verfügbar"
+    "title": "Bewerte deinen Look"
   },
   "paywall": {
-    "title": "Werde zur Ikone",
-    "subtitle": "Unbegrenzte Generierungen und HD Virtual Try-On.",
-    "week": "Woche", "month": "Monat", "quarter": "Quartal",
-    "popular": "Am beliebtesten", "icon": "Ikone Angebot", "save": "Spare 33%",
-    "ideal": "Ideal zum Testen", "restore": "Käufe wiederherstellen", "subscribe": "Abonnieren"
+    "title": "Guthaben aufladen",
+    "subtitle": "Scan-Pakete einzeln kaufen."
   }
 }

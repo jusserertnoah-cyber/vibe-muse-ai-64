@@ -11,34 +11,40 @@ import {
   pushRecentStoryImage,
   formatRemaining,
 } from "@/lib/storyMission";
-import { awardVibers } from "@/lib/vibers";
+import { updateProfile, getProfile } from "@/lib/profile";
 
 type State = "idle" | "uploading" | "verifying" | "done" | "error";
 
-const ERROR_MSG: Record<string, string> = {
-  not_a_story: "Ce n'est pas une story active. Envoie un screenshot d'une story Instagram ou TikTok publiée.",
-  no_outfit: "Aucune tenue détectée sur la story.",
-  missing_tag: "Le tag/mention de Vibe est introuvable. Ajoute @vibe ou le tag de l'app.",
-  close_friends: "Les stories en Amis proches ne comptent pas. On veut de la visibilité publique.",
-  duplicate: "Cette story ressemble trop à une déjà soumise. Sors une nouvelle tenue !",
-  rate_limited: "Trop de demandes, réessaie dans une minute.",
-  payment_required: "Crédits IA épuisés.",
-  ai_error: "Vérification impossible. Réessaie.",
-};
+const ERROR_KEYS = [
+  "not_a_story", "no_outfit", "missing_tag", "close_friends",
+  "duplicate", "rate_limited", "payment_required", "ai_error",
+] as const;
 
 export const MissionStory = () => {
   const { t } = useTranslation();
   const [state, setState] = useState<State>("idle");
   const inputRef = useRef<HTMLInputElement>(null);
   const [cooldown, setCooldown] = useState(canSubmitStory());
+  // Progression locale 0..5. Le serveur garde la vérité, mais on l'affiche
+  // immédiatement après chaque soumission.
+  const [progress, setProgress] = useState<number>(() => {
+    const raw = localStorage.getItem("vibe.story.progress");
+    return raw ? Math.min(5, Number(raw) % 5) : 0;
+  });
+  const [justGrantedCredit, setJustGrantedCredit] = useState(false);
+
+  const errorMessage = (code?: string) =>
+    code && ERROR_KEYS.includes(code as any)
+      ? t(`missionStory.errors.${code}`)
+      : t("missionStory.errors.ai_error");
 
   const refreshCooldown = () => setCooldown(canSubmitStory());
 
   const onFile = async (file: File) => {
     const c = canSubmitStory();
     if (!c.ok) {
-      toast.error("Reviens plus tard", {
-        description: `Prochaine mission dans ${formatRemaining(c.remainingMs)}.`,
+      toast.error(t("missionStory.cooldownTitle"), {
+        description: t("missionStory.cooldownDesc", { time: formatRemaining(c.remainingMs) }),
       });
       return;
     }
@@ -54,20 +60,20 @@ export const MissionStory = () => {
 
       if (error || !data) {
         setState("error");
-        toast.error(ERROR_MSG[(data as any)?.error] ?? "Vérification impossible.");
+        toast.error(errorMessage((data as any)?.error));
         return;
       }
 
       if (data.error) {
         setState("error");
-        toast.error(ERROR_MSG[data.error] ?? "Vérification impossible.");
+        toast.error(errorMessage(data.error));
         return;
       }
 
       if (!data.valid) {
         setState("error");
-        toast.error("Story refusée", {
-          description: ERROR_MSG[data.code] ?? "Critères non remplis.",
+        toast.error(t("missionStory.rejected"), {
+          description: errorMessage(data.code),
         });
         return;
       }
@@ -75,17 +81,33 @@ export const MissionStory = () => {
       // Succès
       pushRecentStoryImage(dataUrl);
       markShareNow();
-      awardVibers("share");
+
+      // Mettre à jour la progression locale (0→5)
+      const nextProgress = ((progress + 1) % 5) || (data.creditsGranted ? 0 : (progress + 1));
+      setProgress(nextProgress);
+      localStorage.setItem("vibe.story.progress", String(nextProgress));
+
+      // Si le serveur a crédité 1 scan, le refléter dans le profil local
+      if (data.creditsGranted && data.creditsGranted > 0) {
+        const cur = getProfile();
+        if (cur) updateProfile({ vibers: (cur.vibers ?? 0) + data.creditsGranted });
+        setJustGrantedCredit(true);
+      } else {
+        setJustGrantedCredit(false);
+      }
+
       setState("done");
       refreshCooldown();
     } catch (e) {
       console.error(e);
       setState("error");
-      toast.error("Erreur lors de l'envoi.");
+      toast.error(t("missionStory.uploadError"));
     }
   };
 
   const disabled = !cooldown.ok || state === "uploading" || state === "verifying";
+  const filled = progress;
+  const remaining = 5 - filled;
 
   return (
     <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-5 shadow-card">
@@ -99,45 +121,63 @@ export const MissionStory = () => {
         <div className="flex items-center gap-1.5">
           <Share2 className="h-3.5 w-3.5 text-accent" strokeWidth={1.5} />
           <span className="font-serif text-lg leading-none text-foreground">
-            Mission Story
+            {t("missionStory.title")}
           </span>
           <span className="ml-auto rounded-full bg-accent px-2 py-0.5 font-mono-tech text-[10px] font-bold text-accent-foreground">
-            +30
+            {filled}/5
           </span>
         </div>
 
         <p className="mt-3 text-sm leading-snug text-foreground/90">
-          Partage ta tenue en story (Instagram ou TikTok) avec le tag <span className="font-bold">@vibe</span> et empoche <span className="font-bold">30 Vibers</span>.
+          {t("missionStory.subtitle")}
         </p>
+
+        {/* Progress dots 0..5 */}
+        <div className="mt-3 flex items-center gap-1.5">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <span
+              key={i}
+              className={`h-1.5 flex-1 rounded-full transition-colors ${
+                i < filled ? "bg-accent" : "bg-muted"
+              }`}
+            />
+          ))}
+        </div>
+        <p className="mt-2 text-[11px] text-muted-foreground">
+          {t("missionStory.progress", { remaining })}
+        </p>
+
         <ul className="mt-2 space-y-1 text-[11px] text-muted-foreground">
-          <li>• Story publique uniquement (pas Amis proches)</li>
-          <li>• Tag @vibe visible</li>
-          <li>• 1 fois par 24h</li>
+          <li>• {t("missionStory.rule1")}</li>
+          <li>• {t("missionStory.rule2")}</li>
+          <li>• {t("missionStory.rule3")}</li>
         </ul>
 
         <div className="mt-4">
           {state === "verifying" && (
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Sparkles className="h-3.5 w-3.5 animate-pulse text-accent" />
-              Analyse anti-fraude en cours…
+              {t("missionStory.verifying")}
             </div>
           )}
           {state === "uploading" && (
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Upload className="h-3.5 w-3.5 animate-pulse" />
-              Préparation de l'image…
+              {t("missionStory.uploading")}
             </div>
           )}
           {state === "done" && (
             <div className="flex items-center gap-2 text-xs font-medium text-accent">
               <Check className="h-3.5 w-3.5" />
-              +30 Vibers crédités. Reviens demain pour une nouvelle mission.
+              {justGrantedCredit
+                ? t("missionStory.scanGranted")
+                : t("missionStory.storyValidated")}
             </div>
           )}
           {state === "error" && (
             <div className="flex items-center gap-2 text-xs text-destructive">
               <AlertTriangle className="h-3.5 w-3.5" />
-              Réessaie avec une vraie story publique avec @vibe.
+              {t("missionStory.errorHint")}
             </div>
           )}
         </div>
@@ -157,7 +197,7 @@ export const MissionStory = () => {
         {!cooldown.ok ? (
           <div className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary px-4 py-2 text-xs text-muted-foreground">
             <Clock className="h-3.5 w-3.5" />
-            Prochaine dans {formatRemaining(cooldown.remainingMs)}
+            {t("missionStory.nextIn", { time: formatRemaining(cooldown.remainingMs) })}
           </div>
         ) : (
           <button
@@ -167,10 +207,10 @@ export const MissionStory = () => {
           >
             <Upload className="h-3.5 w-3.5" strokeWidth={2} />
             {state === "verifying" || state === "uploading"
-              ? "Vérification…"
+              ? t("missionStory.verifyingShort")
               : state === "done"
-              ? "Envoyer une autre demain"
-              : "Uploader ma story"}
+              ? t("missionStory.tomorrow")
+              : t("missionStory.upload")}
           </button>
         )}
       </div>

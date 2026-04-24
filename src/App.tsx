@@ -8,7 +8,6 @@ import { applyTheme } from "@/lib/theme";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Onboarding from "./pages/Onboarding.tsx";
-import Auth from "./pages/Auth.tsx";
 import { AppLayout } from "./components/vibe/AppLayout";
 import Home from "./pages/app/Home.tsx";
 // Route-level code splitting: keep the initial bundle small (better FCP/LCP).
@@ -51,7 +50,9 @@ const App = () => {
         <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/auth" element={<Auth />} />
+          {/* /auth est un alias historique → on redirige vers l'onboarding
+              qui contient désormais l'écran de connexion (téléphone). */}
+          <Route path="/auth" element={<Onboarding />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/legal/privacy" element={<Privacy />} />
           <Route path="/legal/terms" element={<Terms />} />

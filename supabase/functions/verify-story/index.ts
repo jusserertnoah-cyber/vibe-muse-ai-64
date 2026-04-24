@@ -176,8 +176,38 @@ serve(async (req) => {
       valid = false; code = "duplicate";
     }
 
+    // Si valid : on incrémente le compteur et on crédite 1 scan tous les 5.
+    let storyCount = 0;
+    let creditsGranted = 0;
+    if (valid) {
+      const admin = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      );
+      const userId = userData.user.id;
+      // Lire la valeur actuelle
+      const { data: prof } = await admin
+        .from("profiles")
+        .select("story_count")
+        .eq("id", userId)
+        .maybeSingle();
+      const before = prof?.story_count ?? 0;
+      storyCount = before + 1;
+      await admin.from("profiles")
+        .update({ story_count: storyCount })
+        .eq("id", userId);
+      // Tous les 5 stories validées → 1 scan (1 viber) gratuit
+      if (storyCount % 5 === 0) {
+        const { error: rpcErr } = await admin.rpc("add_credits", {
+          target_user: userId,
+          scans: 1,
+        });
+        if (!rpcErr) creditsGranted = 1;
+      }
+    }
+
     return new Response(
-      JSON.stringify({ valid, code, detail: args }),
+      JSON.stringify({ valid, code, detail: args, storyCount, creditsGranted }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e) {
