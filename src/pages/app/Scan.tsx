@@ -315,3 +315,63 @@ function AnalysisRow({
     </div>
   );
 }
+
+function AuditBlock({
+  icon,
+  title,
+  text,
+  accent,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  text: string;
+  accent?: boolean;
+}) {
+  return (
+    <div
+      className={`rounded-2xl p-4 ${
+        accent ? "bg-gradient-brand text-foreground shadow-brand" : "bg-secondary"
+      }`}
+    >
+      <div className="mb-1.5 flex items-center gap-2">
+        <span
+          className={`flex h-6 w-6 items-center justify-center rounded-full ${
+            accent ? "bg-foreground/10" : "bg-card"
+          }`}
+        >
+          {icon}
+        </span>
+        <p className="font-serif text-base leading-none">{title}</p>
+      </div>
+      <p className={`text-sm leading-relaxed ${accent ? "text-foreground/90" : "text-foreground"}`}>
+        {text}
+      </p>
+    </div>
+  );
+}
+
+function ShoppingCard({ item }: { item: { name: string; brand: string; price: string; why: string; query: string } }) {
+  const url = `https://www.google.com/search?tbm=shop&q=${encodeURIComponent(item.query)}`;
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex w-56 shrink-0 snap-start flex-col rounded-3xl bg-card p-3 shadow-card transition hover:shadow-brand"
+    >
+      <div className="mb-3 flex aspect-square items-center justify-center rounded-2xl bg-secondary">
+        <ShoppingBag className="h-10 w-10 text-muted-foreground" strokeWidth={1.2} />
+      </div>
+      <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{item.brand}</p>
+      <p className="mt-0.5 line-clamp-2 font-serif text-sm leading-snug">{item.name}</p>
+      <p className="mt-1 line-clamp-2 text-[11px] leading-snug text-muted-foreground">{item.why}</p>
+      <div className="mt-3 flex items-center justify-between">
+        <span className="font-mono-tech text-sm font-semibold">{item.price}</span>
+        <span className="flex items-center gap-1 rounded-full bg-gradient-brand px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-foreground shadow-brand">
+          Acheter
+          <ExternalLink className="h-3 w-3" />
+        </span>
+      </div>
+    </a>
+  );
+}
