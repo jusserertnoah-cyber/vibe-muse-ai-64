@@ -83,12 +83,9 @@ export default function Paywall() {
 
   const buy = async () => {
     const pack = PACKS.find((p) => p.id === selected)!;
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      toast.error("Connecte-toi pour acheter des crédits");
-      navigate("/auth");
-      return;
-    }
+    // L'achat est ouvert même sans session : l'edge function `create-checkout`
+    // gère le cas anonyme. Le checkout Stripe collecte un email et le webhook
+    // crédite ensuite l'utilisateur correspondant.
     setCheckoutPriceId(pack.priceId);
     setCheckoutOpen(true);
   };
