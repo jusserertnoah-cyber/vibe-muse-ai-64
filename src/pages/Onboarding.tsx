@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { VibeLogo } from "@/components/vibe/VibeLogo";
-import { saveProfile, getProfile } from "@/lib/profile";
+import { saveProfile, getProfile, hydrateProfileFromDb } from "@/lib/profile";
 import { getDeviceId } from "@/lib/device";
 import type { Gender, UserProfile } from "@/lib/types";
 import { ArrowRight, Camera, MapPin, Mic, Sparkles, Phone, ShieldCheck, Check, ChevronsUpDown, Globe } from "lucide-react";
@@ -63,9 +63,17 @@ export default function Onboarding() {
 
   // Si l'utilisateur a déjà une session active et un profil, on file dans l'app
   useEffect(() => {
-    if (!loading && session) {
-      const p = getProfile();
-      if (p) navigate("/app", { replace: true });
+    if (loading) return;
+    // 1) Local profile present → skip onboarding immediately.
+    if (getProfile()) {
+      navigate("/app", { replace: true });
+      return;
+    }
+    // 2) Logged-in but no local profile → try to rebuild from DB.
+    if (session?.user?.id) {
+      hydrateProfileFromDb(session.user.id).then((p) => {
+        if (p) navigate("/app", { replace: true });
+      });
     }
   }, [loading, session, navigate]);
 
@@ -100,6 +108,12 @@ export default function Onboarding() {
 
   const persistProfile = async (userId?: string) => {
     const deviceId = await getDeviceId().catch(() => undefined);
+    // Persist the chosen language so the whole app (and future sessions)
+    // keeps using it. i18n.changeLanguage already writes to `vibe.lang`.
+    if (lang && i18n.language?.split("-")[0] !== lang) {
+      try { await i18n.changeLanguage(lang); } catch {}
+    }
+    try { localStorage.setItem("vibe.lang", lang); } catch {}
     const profile: UserProfile = {
       firstName: firstName.trim() || "Vibe",
       gender: gender ?? "unisexe",
