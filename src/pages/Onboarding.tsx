@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { VibeLogo } from "@/components/vibe/VibeLogo";
 import { saveProfile, getProfile, hydrateProfileFromDb } from "@/lib/profile";
 import { getDeviceId } from "@/lib/device";
 import type { Gender, UserProfile } from "@/lib/types";
-import { ArrowRight, Camera, MapPin, Mic, Sparkles, Phone, ShieldCheck, Check, ChevronsUpDown, Globe } from "lucide-react";
+import { ArrowRight, MapPin, Sparkles, Phone, ShieldCheck, Check, ChevronsUpDown, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useSession } from "@/hooks/useSession";
@@ -24,7 +24,9 @@ const GENDERS: { id: Gender; labelKey: string; fallback: string }[] = [
   { id: "unisexe", labelKey: "onboarding.gender.unisex", fallback: "Non-binaire / Unisexe" },
 ];
 
-const TOTAL_STEPS = 8;
+// Steps: 0 langue, 1 prénom, 2 genre, 3 morpho, 4 localisation, 5 téléphone.
+const TOTAL_STEPS = 6;
+const PHONE_STEP = 5;
 
 const normalizePhone = (local: string, countryCode: string): string | null => {
   const country = findCountryByCode(countryCode);
@@ -49,8 +51,6 @@ export default function Onboarding() {
   const [weightKg, setWeightKg] = useState<string>("");
   const [age, setAge] = useState<string>("");
   const [city, setCity] = useState("");
-  const [photo, setPhoto] = useState<string | null>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
 
   // Phone / OTP
   const [countryCode, setCountryCode] = useState<string>("FR");
@@ -60,19 +60,14 @@ export default function Onboarding() {
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [busy, setBusy] = useState(false);
-  // Mode "j'ai déjà un compte" : on saute toutes les étapes profil et on
-  // utilise l'écran téléphone uniquement pour se reconnecter.
   const [loginOnly, setLoginOnly] = useState(false);
 
-  // Si l'utilisateur a déjà une session active et un profil, on file dans l'app
   useEffect(() => {
     if (loading) return;
-    // 1) Local profile present → skip onboarding immediately.
     if (getProfile()) {
       navigate("/app", { replace: true });
       return;
     }
-    // 2) Logged-in but no local profile → try to rebuild from DB.
     if (session?.user?.id) {
       hydrateProfileFromDb(session.user.id).then((p) => {
         if (p) navigate("/app", { replace: true });
@@ -83,26 +78,20 @@ export default function Onboarding() {
   const next = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
   const back = () => setStep((s) => Math.max(s - 1, 0));
 
-  const onPhoto = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = () => setPhoto(reader.result as string);
-    reader.readAsDataURL(file);
-  };
-
   const requestLocation = () => {
     if (!("geolocation" in navigator)) {
-      toast("Géolocalisation indisponible sur ce navigateur");
+      toast(t("onboarding.location.unavailable"));
       next();
       return;
     }
     navigator.geolocation.getCurrentPosition(
       () => {
-        setCity("Ta ville");
-        toast.success("Localisation activée");
+        setCity(t("onboarding.location.cityFallback"));
+        toast.success(t("onboarding.location.enabled"));
         next();
       },
       () => {
-        toast("Tu pourras l'activer plus tard depuis ton profil");
+        toast(t("onboarding.location.later"));
         next();
       },
       { timeout: 8000 }
@@ -111,8 +100,6 @@ export default function Onboarding() {
 
   const persistProfile = async (userId?: string) => {
     const deviceId = await getDeviceId().catch(() => undefined);
-    // Persist the chosen language so the whole app (and future sessions)
-    // keeps using it. i18n.changeLanguage already writes to `vibe.lang`.
     if (lang && i18n.language?.split("-")[0] !== lang) {
       try { await i18n.changeLanguage(lang); } catch {}
     }
@@ -125,9 +112,9 @@ export default function Onboarding() {
       age: age ? Number(age) : undefined,
       styles: [],
       city: city || undefined,
-      referencePhoto: photo ?? undefined,
+      referencePhoto: undefined,
       closet: [],
-      vibers: 20,
+      vibers: 0,
       deviceId,
       createdAt: new Date().toISOString(),
     };
@@ -150,7 +137,7 @@ export default function Onboarding() {
   const sendCode = async () => {
     const normalized = normalizePhone(phone, countryCode);
     if (!normalized) {
-      toast.error("Numéro invalide", { description: "Vérifie le pays et le numéro saisi." });
+      toast.error(t("onboarding.phone.invalidTitle"), { description: t("onboarding.phone.invalidDesc") });
       return;
     }
     setBusy(true);
@@ -160,16 +147,12 @@ export default function Onboarding() {
     });
     setBusy(false);
     if (error) {
-      // Mode démo : tant que le provider SMS n'est pas branché, on continue
-      // quand même vers l'écran de saisie du code pour permettre la démo.
-      toast("Mode démo activé", {
-        description: "Le SMS n'est pas encore branché — tu peux continuer.",
-      });
+      toast(t("onboarding.phone.demoTitle"), { description: t("onboarding.phone.demoDesc") });
       setE164(normalized);
       setOtpSent(true);
       return;
     }
-    toast.success("Code envoyé", { description: `Vérifie tes SMS sur ${normalized}` });
+    toast.success(t("onboarding.phone.sentTitle"), { description: t("onboarding.phone.sentDesc", { phone: normalized }) });
     setE164(normalized);
     setOtpSent(true);
   };
@@ -184,35 +167,32 @@ export default function Onboarding() {
     if (error) {
       if (loginOnly) {
         setBusy(false);
-        toast.error("Code invalide", { description: "Vérifie le code reçu par SMS." });
+        toast.error(t("onboarding.phone.codeInvalidTitle"), { description: t("onboarding.phone.codeInvalidDesc") });
         return;
       }
-      // Mode démo : on finit quand même l'onboarding localement.
       const profile = await persistProfile(undefined);
       setBusy(false);
-      toast.success(`Bienvenue ${profile.firstName} ✨ +20 Vibers offerts`);
+      toast.success(t("onboarding.welcome", { name: profile.firstName }));
       navigate("/app", { replace: true });
       return;
     }
     const userId = data.user?.id;
-    // Connexion : si la BD a un profil onboardé, on file dans l'app.
     if (loginOnly && userId) {
       const p = await hydrateProfileFromDb(userId);
       setBusy(false);
       if (p) {
-        toast.success(`Bon retour ${p.firstName} ✨`);
+        toast.success(t("onboarding.welcomeBack", { name: p.firstName }));
         navigate("/app", { replace: true });
         return;
       }
-      // Pas de profil onboardé en BD → on bascule sur l'onboarding complet.
-      toast("Termine ton profil pour continuer.");
+      toast(t("onboarding.finishProfile"));
       setLoginOnly(false);
       setStep(1);
       return;
     }
     const profile = await persistProfile(userId);
     setBusy(false);
-    toast.success(`Bienvenue ${profile.firstName} ✨ +20 Vibers offerts`);
+    toast.success(t("onboarding.welcome", { name: profile.firstName }));
     navigate("/app", { replace: true });
   };
 
@@ -241,7 +221,7 @@ export default function Onboarding() {
               onClick={back}
               className="text-xs uppercase tracking-widest text-muted-foreground"
             >
-              Retour
+              {t("common.back")}
             </button>
           )}
         </header>
@@ -266,10 +246,10 @@ export default function Onboarding() {
                 <Globe className="h-6 w-6 text-cobalt" strokeWidth={1.5} />
               </div>
               <h1 className="font-serif text-4xl leading-tight text-balance">
-                Choisis ta langue
+                {t("onboarding.language.title")}
               </h1>
               <p className="text-sm text-muted-foreground">
-                Tu pourras la changer à tout moment depuis tes réglages.
+                {t("onboarding.language.subtitle")}
               </p>
               <div className="space-y-3">
                 {SUPPORTED_LANGUAGES.map((l) => (
@@ -278,6 +258,7 @@ export default function Onboarding() {
                     onClick={() => {
                       setLang(l.code);
                       i18n.changeLanguage(l.code);
+                      try { localStorage.setItem("vibe.lang", l.code); } catch {}
                     }}
                     className={cn(
                       "flex w-full items-center gap-4 rounded-2xl border bg-card p-4 text-left text-lg font-medium transition-all",
@@ -299,16 +280,16 @@ export default function Onboarding() {
           {step === 1 && (
             <div className="space-y-6">
               <h1 className="font-serif text-4xl leading-tight text-balance">
-                Bienvenue.<br />Comment t'appelles-tu&nbsp;?
+                {t("onboarding.name.title")}
               </h1>
               <p className="text-sm text-muted-foreground">
-                Ton prénom me sert à te conseiller comme une amie styliste.
+                {t("onboarding.name.subtitle")}
               </p>
               <Input
                 autoFocus
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                placeholder="Ton prénom"
+                placeholder={t("onboarding.name.placeholder")}
                 className="h-14 rounded-2xl border-border bg-card text-lg"
               />
             </div>
@@ -318,7 +299,7 @@ export default function Onboarding() {
           {step === 2 && (
             <div className="space-y-6">
               <h1 className="font-serif text-4xl leading-tight text-balance">
-                Tu t'identifies comme&nbsp;?
+                {t("onboarding.gender.title")}
               </h1>
               <div className="space-y-3">
                 {GENDERS.map((g) => (
@@ -343,14 +324,14 @@ export default function Onboarding() {
           {step === 3 && (
             <div className="space-y-6">
               <h1 className="font-serif text-4xl leading-tight text-balance">
-                Ta morphologie&nbsp;?
+                {t("onboarding.morpho.title")}
               </h1>
               <p className="text-sm text-muted-foreground">
-                Ton poids nous aide simplement à mieux ajuster les coupes et les volumes des vêtements suggérés pour un rendu parfait.
+                {t("onboarding.morpho.subtitle")}
               </p>
               <div className="grid grid-cols-2 gap-3">
                 <label className="rounded-2xl border border-border bg-card p-4">
-                  <span className="text-xs uppercase tracking-widest text-muted-foreground">Taille (cm)</span>
+                  <span className="text-xs uppercase tracking-widest text-muted-foreground">{t("onboarding.morpho.height")}</span>
                   <input
                     type="number"
                     inputMode="numeric"
@@ -361,7 +342,7 @@ export default function Onboarding() {
                   />
                 </label>
                 <label className="rounded-2xl border border-border bg-card p-4">
-                  <span className="text-xs uppercase tracking-widest text-muted-foreground">Poids (kg)</span>
+                  <span className="text-xs uppercase tracking-widest text-muted-foreground">{t("onboarding.morpho.weight")}</span>
                   <input
                     type="number"
                     inputMode="numeric"
@@ -372,7 +353,7 @@ export default function Onboarding() {
                   />
                 </label>
                 <label className="col-span-2 rounded-2xl border border-border bg-card p-4">
-                  <span className="text-xs uppercase tracking-widest text-muted-foreground">Âge</span>
+                  <span className="text-xs uppercase tracking-widest text-muted-foreground">{t("onboarding.morpho.age")}</span>
                   <input
                     type="number"
                     inputMode="numeric"
@@ -390,12 +371,12 @@ export default function Onboarding() {
           {step === 4 && (
             <div className="space-y-6">
               <h1 className="font-serif text-4xl leading-tight text-balance">
-                Active la localisation
+                {t("onboarding.location.title")}
               </h1>
               <div className="rounded-2xl bg-secondary/60 p-5">
                 <MapPin className="mb-3 h-6 w-6 text-cobalt" strokeWidth={1.5} />
                 <p className="text-sm text-foreground">
-                  VIBE analyse le ciel de ta ville pour que ton look soit aussi pratique que stylé.
+                  {t("onboarding.location.subtitle")}
                 </p>
               </div>
               <div className="space-y-3 pt-2">
@@ -403,91 +384,20 @@ export default function Onboarding() {
                   onClick={requestLocation}
                   className="h-14 w-full rounded-2xl bg-gradient-brand text-foreground hover:opacity-90 text-base shadow-brand border-0"
                 >
-                  Activer la localisation
+                  {t("onboarding.location.enable")}
                 </Button>
                 <button
                   onClick={next}
                   className="w-full text-xs uppercase tracking-widest text-muted-foreground"
                 >
-                  Passer cette étape
+                  {t("common.skip")}
                 </button>
               </div>
             </div>
           )}
 
-          {/* Step 5 — PHOTO */}
-          {step === 5 && (
-            <div className="space-y-6">
-              <h1 className="font-serif text-4xl leading-tight text-balance">
-                Ta photo de référence
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Une photo neutre (debout, face caméra, fond clair) nous permet de projeter virtuellement les tenues sur toi.
-              </p>
-              <div className="rounded-3xl border border-dashed border-border bg-card p-5">
-                {photo ? (
-                  <img src={photo} alt="Ta photo de référence" className="mx-auto h-56 rounded-2xl object-cover" />
-                ) : (
-                  <div className="flex flex-col items-center gap-3 py-6 text-center">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary">
-                      <Camera className="h-7 w-7 text-cobalt" strokeWidth={1.5} />
-                    </div>
-                    <p className="max-w-xs text-xs text-muted-foreground">
-                      Format portrait recommandé. Tu pourras la modifier dans ton profil.
-                    </p>
-                  </div>
-                )}
-                <input
-                  ref={fileRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => e.target.files?.[0] && onPhoto(e.target.files[0])}
-                />
-                <Button
-                  variant="outline"
-                  onClick={() => fileRef.current?.click()}
-                  className="mt-4 h-12 w-full rounded-2xl"
-                >
-                  {photo ? "Changer la photo" : "Choisir une photo"}
-                </Button>
-              </div>
-              {!photo && (
-                <button
-                  onClick={next}
-                  className="w-full text-xs uppercase tracking-widest text-muted-foreground"
-                >
-                  Passer pour l'instant
-                </button>
-              )}
-            </div>
-          )}
-
-          {/* Step 6 — DRESSING info */}
-          {step === 6 && (
-            <div className="space-y-6">
-              <h1 className="font-serif text-4xl leading-tight text-balance">
-                Ton dressing
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Tu pourras dicter tes pièces à l'oral dans l'onglet Dressing. Sinon, je propose des tenues 100% inspirationnelles.
-              </p>
-              <div className="rounded-2xl border border-border bg-card p-5">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary">
-                    <Mic className="h-5 w-5 text-cobalt" strokeWidth={1.5} />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-sm font-medium">Vibe Closet vocal</div>
-                    <div className="text-xs text-muted-foreground">Disponible dans l'app</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Step 7 — TÉLÉPHONE + OTP (création de compte en dernier) */}
-          {step === 7 && (
+          {/* Step 5 — TÉLÉPHONE + OTP */}
+          {step === PHONE_STEP && (
             <div className="space-y-6">
               {!otpSent ? (
                 <>
@@ -495,10 +405,10 @@ export default function Onboarding() {
                     <Phone className="h-6 w-6 text-cobalt" strokeWidth={1.5} />
                   </div>
                   <h1 className="font-serif text-4xl leading-tight text-balance">
-                    Dernière étape&nbsp;: ton numéro
+                    {t("onboarding.phone.title")}
                   </h1>
                   <p className="text-sm text-muted-foreground">
-                    Tu recevras un code par SMS pour sécuriser ton compte. Aucun spam.
+                    {t("onboarding.phone.subtitle")}
                   </p>
                   <div className="flex gap-2">
                     <Popover open={countryOpen} onOpenChange={setCountryOpen}>
@@ -516,9 +426,9 @@ export default function Onboarding() {
                       </PopoverTrigger>
                       <PopoverContent className="w-[280px] p-0" align="start">
                         <Command>
-                          <CommandInput placeholder="Rechercher un pays…" />
+                          <CommandInput placeholder={t("onboarding.phone.searchCountry")} />
                           <CommandList>
-                            <CommandEmpty>Aucun pays.</CommandEmpty>
+                            <CommandEmpty>{t("onboarding.phone.noCountry")}</CommandEmpty>
                             <CommandGroup>
                               {COUNTRIES.map((c) => (
                                 <CommandItem
@@ -562,10 +472,10 @@ export default function Onboarding() {
                     className="h-14 w-full rounded-2xl bg-gradient-brand text-foreground hover:opacity-90 text-base shadow-brand border-0"
                   >
                     <Sparkles className="mr-2 h-4 w-4" />
-                    {busy ? "Envoi…" : "Recevoir le code"}
+                    {busy ? t("onboarding.phone.sending") : t("onboarding.phone.receive")}
                   </Button>
                   <p className="text-[10px] text-muted-foreground">
-                    En continuant, tu acceptes les CGU et la politique de confidentialité.
+                    {t("onboarding.phone.legal")}
                   </p>
                 </>
               ) : (
@@ -574,10 +484,10 @@ export default function Onboarding() {
                     <ShieldCheck className="h-6 w-6 text-cobalt" strokeWidth={1.5} />
                   </div>
                   <h1 className="font-serif text-4xl leading-tight text-balance">
-                    Entre le code reçu
+                    {t("onboarding.phone.codeTitle")}
                   </h1>
                   <p className="text-sm text-muted-foreground">
-                    Code envoyé au <span className="font-medium text-foreground">{e164}</span>.
+                    {t("onboarding.phone.codeSentTo")} <span className="font-medium text-foreground">{e164}</span>.
                   </p>
                   <Input
                     autoFocus
@@ -593,14 +503,14 @@ export default function Onboarding() {
                     className="h-14 w-full rounded-2xl bg-gradient-brand text-foreground hover:opacity-90 text-base shadow-brand border-0"
                   >
                     <Sparkles className="mr-2 h-4 w-4" />
-                    {busy ? "Vérification…" : "Entrer dans VIBE"}
+                    {busy ? t("onboarding.phone.verifying") : t("onboarding.phone.enter")}
                   </Button>
                   <button
                     onClick={sendCode}
                     disabled={busy}
                     className="w-full text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground"
                   >
-                    Renvoyer le code
+                    {t("onboarding.phone.resend")}
                   </button>
                 </>
               )}
@@ -608,26 +518,15 @@ export default function Onboarding() {
           )}
         </div>
 
-        {/* Bouton continuer pour étapes 0-6, et 4/5 ont leurs propres CTA mais on garde celui-ci pour cohérence */}
-        {step < 7 && step !== 4 && step !== 5 && (
+        {/* CTA Continuer pour étapes 0-3 (4 = location avec son CTA, 5 = phone) */}
+        {step < PHONE_STEP && step !== 4 && (
           <div className="pb-4 pt-6">
             <Button
               onClick={next}
               disabled={!canProceed()}
               className="h-14 w-full rounded-2xl bg-gradient-brand text-foreground hover:opacity-90 text-base shadow-brand disabled:bg-muted disabled:bg-none disabled:text-muted-foreground disabled:shadow-none border-0"
             >
-              Continuer
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        )}
-        {(step === 4 || step === 5) && (
-          <div className="pb-4 pt-6">
-            <Button
-              onClick={next}
-              className="h-14 w-full rounded-2xl bg-gradient-brand text-foreground hover:opacity-90 text-base shadow-brand border-0"
-            >
-              Continuer
+              {t("common.continue")}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
@@ -635,10 +534,10 @@ export default function Onboarding() {
 
         {step === 0 && (
           <button
-            onClick={() => { setLoginOnly(true); setStep(7); }}
+            onClick={() => { setLoginOnly(true); setStep(PHONE_STEP); }}
             className="pb-2 text-center text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground"
           >
-            J'ai déjà un compte → Se connecter
+            {t("onboarding.haveAccount")}
           </button>
         )}
       </div>
