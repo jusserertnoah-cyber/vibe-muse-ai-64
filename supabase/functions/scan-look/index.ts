@@ -9,234 +9,199 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    // Require authenticated user — these endpoints call paid AI providers.
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-    );
+    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!);
     const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userErr } =
-      await supabase.auth.getUser(token);
+    const { data: userData, error: userErr } = await supabase.auth.getUser(token);
     if (userErr || !userData?.user?.id) {
       return new Response(JSON.stringify({ error: "unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // ⚡ Vérification + consommation atomique d'1 crédit côté serveur.
-    // Utilise le RPC `consume_credit` qui décrémente vibers seulement si > 0.
+    // Consommation atomique d'1 crédit
     const supabaseUser = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
+      Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!,
       { global: { headers: { Authorization: authHeader } } },
     );
     const { data: ok, error: rpcErr } = await supabaseUser.rpc("consume_credit");
     if (rpcErr) {
       console.error("consume_credit error", rpcErr);
       return new Response(JSON.stringify({ error: "credit_check_failed" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
     if (!ok) {
       return new Response(JSON.stringify({ error: "no_credits" }), {
-        status: 402,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // ⚠️ Bascule vers OpenAI direct (clé personnelle de l'utilisateur).
-    // La clé doit être ajoutée dans les secrets Supabase sous le nom OPENAI_API_KEY.
     const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
-    if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY missing — ajoute ta clé dans les secrets Lovable Cloud.");
+    if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY missing");
 
     const body = await req.json();
     const {
-      imageDataUrl,
-      gender,
-      heightCm,
-      weightKg,
-      lang = "fr",
-      tier = "free",
+      imageDataUrl, gender, heightCm, weightKg,
+      lang = "fr", tier = "free",
+      challenge,         // { name, detect }  — défi du jour, optionnel
     } = body ?? {};
 
     if (!imageDataUrl) {
       return new Response(JSON.stringify({ error: "imageDataUrl required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     const langName =
-      ({ fr: "français", en: "anglais", es: "espagnol", de: "allemand", it: "italien" } as Record<string, string>)[lang] ??
-      "français";
+      ({ fr: "français", en: "anglais", es: "espagnol", de: "allemand", it: "italien" } as Record<string, string>)[lang] ?? "français";
 
     const profileLine = [
       gender ? `genre: ${gender}` : null,
       heightCm ? `taille: ${heightCm}cm` : null,
       weightKg ? `poids: ${weightKg}kg` : null,
-    ]
-      .filter(Boolean)
-      .join(", ");
+    ].filter(Boolean).join(", ");
 
-    const systemPrompt = `Tu es un STYLISTE HAUTE COUTURE (Vogue, Saint Laurent). Tu analyses une tenue en allant DROIT AU BUT.
+    const challengeBlock = challenge?.name
+      ? `\n\nDÉFI DU JOUR : "${challenge.name}".
+Critère STRICT de validation : ${challenge.detect}.
+Tu DOIS examiner la photo et décider :
+- challenge_met = true UNIQUEMENT si l'élément est CLAIREMENT visible sur la photo. Aucun bénéfice du doute.
+- Sinon challenge_met = false.
+- Renvoie aussi challenge_reason : 1 phrase courte expliquant ta décision.`
+      : "";
 
-RÈGLES ABSOLUES :
-1. ULTRA-COURT. Chaque champ = 1 phrase max, percutante, lisible en 2 secondes.
-2. Ton bienveillant mais expert : tu encourages d'abord, tu corrigeras ensuite. Jamais cassant, jamais condescendant.
-3. JAMAIS de conseils vagues ("essaie autre chose", "ajoute un accessoire"). Toujours CONCRET (couleur, coupe, cm, matière précise).
-4. NOTE /10 honnête, décimales OK :
-   - 9-10 = look parfait
-   - 7-8 = très bon, 1 détail à peaufiner
-   - 5-6 = correct, axes clairs d'amélioration
-   - <5 = à retravailler en profondeur
-5. Tu réponds STRICTEMENT en ${langName}, via la fonction tool fournie.
+    const systemPrompt = `Tu es un STYLISTE HAUTE COUTURE EXTRÊMEMENT SÉLECTIF (Vogue, Saint Laurent). Tu notes une tenue avec une rigueur compétitive.
 
-BIBLE STYLES (à utiliser pour identifier et valoriser) :
-• OLD MONEY JEUNE : luxe discret, AUCUN logo, silhouettes propres. Palette crème/blanc cassé/marine/camel/beige/olive/gris chiné. Textures tweed, lin, cachemire, coton peigné, cuir lisse. Détails : boutons dorés, bijoux dorés minimalistes, sacs structurés, mocassins/ballerines/derbies cuir. Si tu détectes la combinaison textures riches (tweed/lin/cachemire) + neutres + détails dorés → identifie "Old Money Jeune" et valorise-la dans "strong" (ex : "Old Money impeccable : tweed + détails dorés parfaitement dosés").
-• OVERSIZE : silhouettes XXL, hoodies/tees boxy, baggy/cargo, sneakers chunky, layering urbain.
-• AMÉRICAIN : varsity/letterman jacket, sweat college, casquette baseball, jean droit/skinny, sneakers blanches (Converse, Air Force), vibe US college/preppy/sport.
-• CLASSIQUE : coupes nettes, neutres, basiques bien coupés.
-• SOBRE/MINIMAL : monochrome, lignes pures, peu d'accessoires.
-• VINTAGE : pièces datées assumées, motifs rétro, cuirs patinés.
-• SPORT : technique, fonctionnel, color-blocking.
+ÉCHELLE DE NOTATION (sur 10, OBLIGATOIREMENT avec 1 décimale, ex 7.4, 8.6, 9.1) :
+• 1.0–4.9 : look raté, fautes majeures (couleurs criardes, coupes inadaptées, mismatch total).
+• 5.0–6.9 : correct mais oubliable, manque d'intention.
+• 7.0–8.4 : bon look, intention claire, 1 ou 2 détails à peaufiner.
+• 8.5–9.0 : très haut niveau, harmonie réelle des matières et des coupes.
+• 9.1–9.4 : excellent — très peu de gens atteignent cette zone.
+• 9.5–9.7 : exceptionnel. Pour passer ce cap il faut une cohérence PARFAITE : harmonie des textures, ajustement des coupes (longueur des manches, tombé du pantalon, break, épaules), accord PRÉCIS des accessoires (taille de la montre vs poignet, bijoux non redondants).
+• 9.8–9.9 : QUASI-PARFAIT. Plafond pour quelqu'un qui a appliqué tous les conseils. Garde toujours UN micro-détail à améliorer pour le pousser à chercher l'ultime.
+• 10.0 : RARISSIME (1 sur 10 000). Réservé à un look digne d'un éditorial Vogue cover. Tu ne dois pratiquement JAMAIS donner 10.0.
 
-IMPORTANT : tu DOIS toujours retourner un champ "style" qui correspond EXACTEMENT à l'un de ces labels (tels qu'écrits) : "Vintage", "Old Money", "Classique", "Sobre", "Sport", "Oversize", "Américain". Choisis celui qui colle le mieux à la tenue scannée.
-${profileLine ? `Profil : ${profileLine}.` : ""}`;
+COURBE DE DIFFICULTÉ : plus la note est haute, plus chaque dixième est difficile à gagner. Ne donne PAS 9.5+ si tu n'as pas analysé : matières (texture qui jure ?), coupes (manches trop longues, pantalon qui flotte/break ?), accessoires (montre proportionnée ? bijoux qui s'accordent ?).
 
-    const userText = `Analyse cette tenue. Va droit au but : note, verdict, ce qui marche, ce qui pèche, 3 actions concrètes.`;
+EXEMPLES de critiques chirurgicales que tu DOIS savoir formuler quand pertinent :
+- "Ta montre est trop massive pour ce poignet."
+- "Le tissu de ta chemise jure avec la texture de ton veston."
+- "Les manches dépassent de 2 cm — fais reprendre."
+- "Le pantalon casse trop bas, ça écrase la silhouette."
 
-    const aiRes = await fetch(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
+RÈGLES DE FORME :
+1. Ultra-court par champ (1 phrase percutante).
+2. Ton bienveillant mais expert. Jamais cassant gratuitement.
+3. JAMAIS de conseils vagues, toujours CONCRET (couleur, cm, matière nommée).
+4. Tu réponds STRICTEMENT en ${langName}, via la fonction tool fournie.
+
+BIBLE STYLES : "Vintage", "Old Money", "Classique", "Sobre", "Sport", "Oversize", "Américain". Tu DOIS choisir UN style exact dans cette liste pour le champ "style".${challengeBlock}
+${profileLine ? `\nProfil : ${profileLine}.` : ""}`;
+
+    const userText = `Analyse cette tenue avec rigueur. Donne une note décimale (ex 8.4, 9.2). Sois sélectif sur le 9.5+. Verdict, fort, faible, 3 actions concrètes, fit, couleurs, touche 2026, 3 produits shopping.${challenge?.name ? ` Évalue aussi le défi : "${challenge.name}".` : ""}`;
+
+    const properties: any = {
+      score: { type: "number", description: "Note /10 OBLIGATOIREMENT décimale (ex 7.4, 8.6, 9.1). 10.0 quasi interdit." },
+      style: { type: "string", enum: ["Vintage", "Old Money", "Classique", "Sobre", "Sport", "Oversize", "Américain"] },
+      verdict: { type: "string" },
+      strong: { type: "string" },
+      weak: { type: "string" },
+      tips: { type: "array", items: { type: "string" }, minItems: 3, maxItems: 3 },
+      fit: { type: "string" },
+      colors: { type: "string" },
+      touch2026: { type: "string" },
+      shopping: {
+        type: "array", minItems: 3, maxItems: 3,
+        items: {
+          type: "object",
+          properties: {
+            name: { type: "string" }, brand: { type: "string" }, price: { type: "string" },
+            why: { type: "string" }, query: { type: "string" },
+          },
+          required: ["name", "brand", "price", "why", "query"],
+          additionalProperties: false,
         },
-        body: JSON.stringify({
-          model: tier === "premium" ? "gpt-5" : "gpt-5-mini",
-          messages: [
-            { role: "system", content: systemPrompt },
-            {
-              role: "user",
-              content: [
-                { type: "text", text: userText },
-                { type: "image_url", image_url: { url: imageDataUrl } },
-              ],
-            },
-          ],
-          tools: [
-            {
-              type: "function",
-              function: {
-                name: "vibe_check",
-                description: "Analyse courte et actionnable d'une tenue.",
-                parameters: {
-                  type: "object",
-                  properties: {
-                    score: { type: "number", description: "Note /10, décimales OK." },
-                    style: {
-                      type: "string",
-                      enum: ["Vintage", "Old Money", "Classique", "Sobre", "Sport", "Oversize", "Américain"],
-                      description: "Style identifié sur la tenue (un seul, le plus dominant).",
-                    },
-                    verdict: { type: "string", description: "1 phrase courte (max 12 mots), bienveillante mais nette." },
-                    strong: { type: "string", description: "Le point fort principal en 1 phrase concrète (couleur/coupe/matière nommée)." },
-                    weak: { type: "string", description: "Le point à améliorer principal en 1 phrase concrète." },
-                    tips: {
-                      type: "array",
-                      items: { type: "string" },
-                      description: "Exactement 3 actions ultra-courtes (max 10 mots), concrètes et chiffrées.",
-                      minItems: 3,
-                      maxItems: 3,
-                    },
-                    fit: { type: "string", description: "Analyse du Fit : expertise sur la coupe (épaules, taille, longueur, volume). 1-2 phrases concrètes." },
-                  colors: { type: "string", description: "Harmonie des couleurs : palette, contrastes, ce qui marche ou casse. 1-2 phrases concrètes." },
-                  touch2026: { type: "string", description: "La Touche 2026 : LE conseil mode actuel pour moderniser la tenue (pièce, détail, accessoire tendance). 1-2 phrases." },
-                  shopping: {
-                    type: "array",
-                    description: "Exactement 3 produits concrets pour compléter la tenue (pièces réelles trouvables).",
-                    items: {
-                      type: "object",
-                      properties: {
-                        name: { type: "string", description: "Nom court du produit (ex: 'Mocassins cuir noir')." },
-                        brand: { type: "string", description: "Marque suggérée réaliste (ex: 'COS', 'Sandro', 'Uniqlo U')." },
-                        price: { type: "string", description: "Prix indicatif avec devise (ex: '89€')." },
-                        why: { type: "string", description: "Pourquoi ce produit complète la tenue. 1 phrase max." },
-                        query: { type: "string", description: "Requête de recherche Google Shopping (ex: 'mocassins cuir noir COS homme')." },
-                      },
-                      required: ["name", "brand", "price", "why", "query"],
-                      additionalProperties: false,
-                    },
-                    minItems: 3,
-                    maxItems: 3,
-                  },
-                  },
-                  required: ["score", "style", "verdict", "strong", "weak", "tips", "fit", "colors", "touch2026", "shopping"],
-                  additionalProperties: false,
-                },
-              },
-            },
-          ],
-          tool_choice: { type: "function", function: { name: "vibe_check" } },
-        }),
       },
-    );
+    };
+    const required = ["score", "style", "verdict", "strong", "weak", "tips", "fit", "colors", "touch2026", "shopping"];
+
+    if (challenge?.name) {
+      properties.challenge_met = { type: "boolean", description: "true UNIQUEMENT si l'élément du défi est clairement visible sur la photo." };
+      properties.challenge_reason = { type: "string", description: "1 phrase expliquant la décision." };
+      required.push("challenge_met", "challenge_reason");
+    }
+
+    const aiRes = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${OPENAI_API_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: tier === "premium" ? "gpt-5" : "gpt-5-mini",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: [
+            { type: "text", text: userText },
+            { type: "image_url", image_url: { url: imageDataUrl } },
+          ]},
+        ],
+        tools: [{
+          type: "function",
+          function: {
+            name: "vibe_check",
+            description: "Analyse stricte d'une tenue avec score décimal.",
+            parameters: { type: "object", properties, required, additionalProperties: false },
+          },
+        }],
+        tool_choice: { type: "function", function: { name: "vibe_check" } },
+      }),
+    });
 
     if (!aiRes.ok) {
       const t = await aiRes.text();
       console.error("scan-look ai fail", aiRes.status, t);
-      if (aiRes.status === 429) {
-        return new Response(JSON.stringify({ error: "rate_limited" }), {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      if (aiRes.status === 402) {
-        return new Response(JSON.stringify({ error: "payment_required" }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
+      if (aiRes.status === 429) return new Response(JSON.stringify({ error: "rate_limited" }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      if (aiRes.status === 402) return new Response(JSON.stringify({ error: "payment_required" }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       throw new Error(`ai ${aiRes.status}`);
     }
 
     const j = await aiRes.json();
-    const args =
-      j?.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments ?? "{}";
+    const args = j?.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments ?? "{}";
     let parsed: any = {};
-    try {
-      parsed = JSON.parse(args);
-    } catch (e) {
-      console.error("parse fail", e, args);
+    try { parsed = JSON.parse(args); } catch (e) { console.error("parse fail", e, args); }
+
+    // Plafond 9.9 hard côté serveur (rarissime 10.0)
+    if (typeof parsed.score === "number") {
+      if (parsed.score >= 10) {
+        // 1 chance sur 10 000 d'autoriser un vrai 10.0
+        if (Math.random() > 0.0001) parsed.score = 9.9;
+        else parsed.score = 10.0;
+      }
+      // Forcer 1 décimale
+      parsed.score = Math.round(parsed.score * 10) / 10;
+    }
+
+    // Si défi respecté → récompense (1 crédit gratuit tous les 10)
+    if (challenge?.name && parsed.challenge_met === true) {
+      const { data: rew } = await supabaseUser.rpc("reward_challenge");
+      parsed.challenge_reward = rew;
     }
 
     return new Response(JSON.stringify(parsed), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
+      headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200,
     });
   } catch (e) {
     console.error("scan-look error", e);
-    return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      },
-    );
+    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }), {
+      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });
