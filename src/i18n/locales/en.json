@@ -136,5 +136,64 @@
     "subtitle": "1 credit = 1 full AI scan (fit audit, colors, 2026 touch, shopping list).",
     "back": "Back",
     "paid": "Payment confirmed! Your credits are being added."
+  },
+  "onboarding": {
+    "haveAccount": "I already have an account → Sign in",
+    "welcome": "Welcome {{name}} ✨",
+    "welcomeBack": "Welcome back {{name}} ✨",
+    "finishProfile": "Finish your profile to continue.",
+    "language": {
+      "title": "Choose your language",
+      "subtitle": "You can change it anytime from your settings."
+    },
+    "name": {
+      "title": "Welcome. What's your name?",
+      "subtitle": "Your first name helps me advise you like a stylist friend.",
+      "placeholder": "Your first name"
+    },
+    "gender": {
+      "title": "You identify as?",
+      "femme": "Woman",
+      "homme": "Man",
+      "unisex": "Non-binary / Unisex"
+    },
+    "morpho": {
+      "title": "Your body shape?",
+      "subtitle": "Your measurements help us better adjust cuts and volumes for a perfect fit.",
+      "height": "Height (cm)",
+      "weight": "Weight (kg)",
+      "age": "Age"
+    },
+    "location": {
+      "title": "Enable location",
+      "subtitle": "VIBE checks your city's weather so your look is as practical as it is stylish.",
+      "enable": "Enable location",
+      "unavailable": "Geolocation unavailable on this browser",
+      "enabled": "Location enabled",
+      "later": "You can enable it later from your profile",
+      "cityFallback": "Your city"
+    },
+    "phone": {
+      "title": "Last step: your number",
+      "subtitle": "You'll get an SMS code to secure your account. No spam.",
+      "searchCountry": "Search a country…",
+      "noCountry": "No country.",
+      "receive": "Receive code",
+      "sending": "Sending…",
+      "legal": "By continuing, you accept the Terms and Privacy Policy.",
+      "codeTitle": "Enter the code",
+      "codeSentTo": "Code sent to",
+      "verifying": "Verifying…",
+      "enter": "Enter VIBE",
+      "resend": "Resend code",
+      "invalidTitle": "Invalid number",
+      "invalidDesc": "Check the country and the number entered.",
+      "demoTitle": "Demo mode",
+      "demoDesc": "SMS not connected yet — you can continue.",
+      "sentTitle": "Code sent",
+      "sentDesc": "Check your SMS on {{phone}}",
+      "codeInvalidTitle": "Invalid code",
+      "codeInvalidDesc": "Check the code received by SMS."
+    }
   }
 }

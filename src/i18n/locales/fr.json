@@ -136,5 +136,64 @@
     "subtitle": "1 crédit = 1 scan IA complet (audit fit, couleurs, touche 2026, shopping list).",
     "back": "Retour",
     "paid": "Paiement validé ! Tes crédits sont en cours d'ajout."
+  },
+  "onboarding": {
+    "haveAccount": "J'ai déjà un compte → Se connecter",
+    "welcome": "Bienvenue {{name}} ✨",
+    "welcomeBack": "Bon retour {{name}} ✨",
+    "finishProfile": "Termine ton profil pour continuer.",
+    "language": {
+      "title": "Choisis ta langue",
+      "subtitle": "Tu pourras la changer à tout moment depuis tes réglages."
+    },
+    "name": {
+      "title": "Bienvenue. Comment t'appelles-tu ?",
+      "subtitle": "Ton prénom me sert à te conseiller comme une amie styliste.",
+      "placeholder": "Ton prénom"
+    },
+    "gender": {
+      "title": "Tu t'identifies comme ?",
+      "femme": "Femme",
+      "homme": "Homme",
+      "unisex": "Non-binaire / Unisexe"
+    },
+    "morpho": {
+      "title": "Ta morphologie ?",
+      "subtitle": "Tes mensurations nous aident à mieux ajuster les coupes et les volumes pour un rendu parfait.",
+      "height": "Taille (cm)",
+      "weight": "Poids (kg)",
+      "age": "Âge"
+    },
+    "location": {
+      "title": "Active la localisation",
+      "subtitle": "VIBE analyse le ciel de ta ville pour que ton look soit aussi pratique que stylé.",
+      "enable": "Activer la localisation",
+      "unavailable": "Géolocalisation indisponible sur ce navigateur",
+      "enabled": "Localisation activée",
+      "later": "Tu pourras l'activer plus tard depuis ton profil",
+      "cityFallback": "Ta ville"
+    },
+    "phone": {
+      "title": "Dernière étape : ton numéro",
+      "subtitle": "Tu recevras un code par SMS pour sécuriser ton compte. Aucun spam.",
+      "searchCountry": "Rechercher un pays…",
+      "noCountry": "Aucun pays.",
+      "receive": "Recevoir le code",
+      "sending": "Envoi…",
+      "legal": "En continuant, tu acceptes les CGU et la politique de confidentialité.",
+      "codeTitle": "Entre le code reçu",
+      "codeSentTo": "Code envoyé au",
+      "verifying": "Vérification…",
+      "enter": "Entrer dans VIBE",
+      "resend": "Renvoyer le code",
+      "invalidTitle": "Numéro invalide",
+      "invalidDesc": "Vérifie le pays et le numéro saisi.",
+      "demoTitle": "Mode démo activé",
+      "demoDesc": "Le SMS n'est pas encore branché — tu peux continuer.",
+      "sentTitle": "Code envoyé",
+      "sentDesc": "Vérifie tes SMS sur {{phone}}",
+      "codeInvalidTitle": "Code invalide",
+      "codeInvalidDesc": "Vérifie le code reçu par SMS."
+    }
   }
 }
