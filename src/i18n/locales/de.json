@@ -16,6 +16,30 @@
     "save": "Speichern",
     "generate": "Outfit erstellen"
   },
+  "scan": {
+    "kicker": "Vibe Check",
+    "title": "Bewerte deinen Look",
+    "subtitle": "Couture-Analyse, streng aber fair.",
+    "hint": "Mach ein Ganzkörperfoto bei Tageslicht für einen ehrlichen Scan.",
+    "choose": "Foto auswählen",
+    "change": "Foto ändern",
+    "loading": "Analyse läuft…",
+    "rescore": "Neu bewerten",
+    "strong": "Was funktioniert",
+    "weak": "Verbesserungen",
+    "tipsTitle": "3 schnelle Aktionen",
+    "errors": {
+      "rate": "Zu viele Scans. In einer Minute erneut versuchen.",
+      "credits": "KI-Guthaben aufgebraucht.",
+      "blur": "Analyse fehlgeschlagen. Mach ein schärferes Foto.",
+      "generic": "Scan fehlgeschlagen. Erneut versuchen."
+    },
+    "creditRequired": "Guthaben erforderlich",
+    "creditRequiredHint": "Du brauchst mindestens 1 Guthaben für einen Scan.",
+    "creditInsufficient": "Zu wenig Guthaben",
+    "creditTopup": "Lade dein Guthaben auf, um fortzufahren.",
+    "readError": "Foto kann nicht gelesen werden."
+  },
   "missionStory": {
     "title": "Story-Mission",
     "subtitle": "Teile dein Outfit in einer Story (Instagram oder TikTok) und markiere @vibe. 5 bestätigte Storys = 1 gratis Scan.",
@@ -58,10 +82,7 @@
     "viewAll": "Alle anzeigen",
     "settings": "Einstellungen",
     "reset": "Profil zurücksetzen",
-    "signOut": "Abmelden",
-    "closet": "Vibe Closet",
-    "closetEmpty": "Füge Teile per Sprache hinzu für 100% individuelle Outfits.",
-    "addPiece": "Teil hinzufügen"
+    "signOut": "Abmelden"
   },
   "settings": {
     "title": "Einstellungen",
@@ -70,7 +91,6 @@
     "email": "E-Mail",
     "height": "Größe (cm)",
     "weight": "Gewicht (kg)",
-    "age": "Alter",
     "language": "Sprache",
     "theme": "Design",
     "themeHint": "Wähle die Akzentfarbe der App. Die Basis bleibt Creme, Weiß und Schwarz.",
@@ -99,27 +119,22 @@
     "myStats": "Meine Stats",
     "location": "Standort"
   },
-  "onboarding": {
-    "language": "Wähle deine Sprache",
-    "languageHint": "Du kannst sie später im Profil ändern.",
-    "loginExisting": "Ich habe schon ein Konto → Anmelden",
-    "gender": {
-      "title": "Du identifizierst dich als?",
-      "femme": "Frau",
-      "homme": "Mann",
-      "unisex": "Non-binär / Unisex"
-    }
-  },
   "dressing": {
     "title": "Stelle dein Outfit zusammen",
-    "newLook": "Neues Outfit"
-  },
-  "scan": {
-    "kicker": "Vibe Check",
-    "title": "Bewerte deinen Look"
+    "newLook": "Neues Outfit",
+    "stylistAdvice": "Stylist-Tipp",
+    "noImage": "Bild nicht verfügbar",
+    "generating": "Outfit wird erstellt…",
+    "generate": "Outfit erstellen",
+    "rateLimited": "Zu viele Anfragen. In einer Minute erneut versuchen.",
+    "paymentRequired": "KI-Guthaben aufgebraucht. Bitte aufladen.",
+    "error": "Erstellung fehlgeschlagen. Erneut versuchen.",
+    "closetUsed": "{{count}} Teile aus deinem Vibe Closet werden verwendet."
   },
   "paywall": {
     "title": "Guthaben aufladen",
-    "subtitle": "Scan-Pakete einzeln kaufen."
+    "subtitle": "1 Guthaben = 1 vollständiger KI-Scan (Fit, Farben, 2026, Shopping).",
+    "back": "Zurück",
+    "paid": "Zahlung bestätigt! Dein Guthaben wird gutgeschrieben."
   }
 }

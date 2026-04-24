@@ -16,6 +16,30 @@
     "save": "Save",
     "generate": "Generate my outfit"
   },
+  "scan": {
+    "kicker": "Vibe Check",
+    "title": "Rate your look",
+    "subtitle": "Couture-grade analysis, strict but fair.",
+    "hint": "Take a full-body photo in natural light for an honest scan.",
+    "choose": "Choose a photo",
+    "change": "Change photo",
+    "loading": "Analyzing…",
+    "rescore": "Re-score",
+    "strong": "What works",
+    "weak": "To improve",
+    "tipsTitle": "3 quick actions",
+    "errors": {
+      "rate": "Too many scans. Try again in a minute.",
+      "credits": "AI credits exhausted.",
+      "blur": "Analysis failed. Take a sharper photo.",
+      "generic": "Scan failed. Try again."
+    },
+    "creditRequired": "Credit required",
+    "creditRequiredHint": "You need at least 1 credit to scan your outfit.",
+    "creditInsufficient": "Not enough credits",
+    "creditTopup": "Top up your credits to continue.",
+    "readError": "Cannot read the photo."
+  },
   "missionStory": {
     "title": "Story Mission",
     "subtitle": "Share your outfit in a story (Instagram or TikTok) tagging @vibe. 5 validated stories = 1 free scan.",
@@ -58,10 +82,7 @@
     "viewAll": "View all",
     "settings": "Settings",
     "reset": "Reset profile",
-    "signOut": "Sign out",
-    "closet": "Vibe Closet",
-    "closetEmpty": "Add your pieces by voice for fully custom outfits.",
-    "addPiece": "Add a piece"
+    "signOut": "Sign out"
   },
   "settings": {
     "title": "Settings",
@@ -70,7 +91,6 @@
     "email": "Email",
     "height": "Height (cm)",
     "weight": "Weight (kg)",
-    "age": "Age",
     "language": "Language",
     "theme": "Theme",
     "themeHint": "Pick the app's color accent. The base stays cream, white and black.",
@@ -99,27 +119,22 @@
     "myStats": "My Stats",
     "location": "Location"
   },
-  "onboarding": {
-    "language": "Choose your language",
-    "languageHint": "You can change it later in your profile.",
-    "loginExisting": "I already have an account → Sign in",
-    "gender": {
-      "title": "You identify as?",
-      "femme": "Woman",
-      "homme": "Man",
-      "unisex": "Non-binary / Unisex"
-    }
-  },
   "dressing": {
     "title": "Build your outfit",
-    "newLook": "New outfit"
-  },
-  "scan": {
-    "kicker": "Vibe Check",
-    "title": "Rate your look"
+    "newLook": "New outfit",
+    "stylistAdvice": "Stylist advice",
+    "noImage": "Image unavailable",
+    "generating": "Building your outfit…",
+    "generate": "Generate my outfit",
+    "rateLimited": "Too many requests. Try again in a minute.",
+    "paymentRequired": "AI credits exhausted. Top up your credits.",
+    "error": "Generation failed. Try again.",
+    "closetUsed": "{{count}} pieces from your Vibe Closet will be used."
   },
   "paywall": {
     "title": "Top up your credits",
-    "subtitle": "Buy scan packs by the pack."
+    "subtitle": "1 credit = 1 full AI scan (fit audit, colors, 2026 touch, shopping list).",
+    "back": "Back",
+    "paid": "Payment confirmed! Your credits are being added."
   }
 }

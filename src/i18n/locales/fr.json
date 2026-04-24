@@ -16,6 +16,30 @@
     "save": "Enregistrer",
     "generate": "Générer ma tenue"
   },
+  "scan": {
+    "kicker": "Vibe Check",
+    "title": "Note ton look",
+    "subtitle": "Analyse couture, sévère mais juste.",
+    "hint": "Prends-toi en photo (en pied, lumière naturelle) pour un scan honnête.",
+    "choose": "Choisir une photo",
+    "change": "Changer de photo",
+    "loading": "Analyse en cours…",
+    "rescore": "Re-noter",
+    "strong": "Ce qui marche",
+    "weak": "À améliorer",
+    "tipsTitle": "3 actions rapides",
+    "errors": {
+      "rate": "Trop de scans. Réessaie dans une minute.",
+      "credits": "Crédits IA épuisés.",
+      "blur": "Analyse impossible. Reprends une photo plus nette.",
+      "generic": "Scan impossible. Réessaie."
+    },
+    "creditRequired": "Crédit requis",
+    "creditRequiredHint": "Il te faut au moins 1 crédit pour scanner ta tenue.",
+    "creditInsufficient": "Crédit insuffisant",
+    "creditTopup": "Recharge tes crédits pour continuer.",
+    "readError": "Impossible de lire la photo."
+  },
   "missionStory": {
     "title": "Mission Story",
     "subtitle": "Partage ta tenue en story (Instagram ou TikTok) avec le tag @vibe. 5 stories validées = 1 scan offert.",
@@ -58,10 +82,7 @@
     "viewAll": "Voir tout",
     "settings": "Paramètres",
     "reset": "Réinitialiser le profil",
-    "signOut": "Se déconnecter",
-    "closet": "Vibe Closet",
-    "closetEmpty": "Ajoute tes pièces à l'oral pour des tenues 100% personnalisées.",
-    "addPiece": "Ajouter une pièce"
+    "signOut": "Se déconnecter"
   },
   "settings": {
     "title": "Paramètres",
@@ -70,7 +91,6 @@
     "email": "Email",
     "height": "Taille (cm)",
     "weight": "Poids (kg)",
-    "age": "Âge",
     "language": "Langue",
     "theme": "Thème",
     "themeHint": "Choisis l'accent couleur de l'app. La base reste crème, blanc et noir.",
@@ -99,27 +119,22 @@
     "myStats": "Mes Stats",
     "location": "Localisation"
   },
-  "onboarding": {
-    "language": "Choisis ta langue",
-    "languageHint": "Tu pourras la changer dans ton profil.",
-    "loginExisting": "J'ai déjà un compte → Se connecter",
-    "gender": {
-      "title": "Tu t'identifies comme ?",
-      "femme": "Femme",
-      "homme": "Homme",
-      "unisex": "Non-binaire / Unisexe"
-    }
-  },
   "dressing": {
     "title": "Compose ta tenue",
-    "newLook": "Nouvelle tenue"
-  },
-  "scan": {
-    "kicker": "Vibe Check",
-    "title": "Note ton look"
+    "newLook": "Nouvelle tenue",
+    "stylistAdvice": "Avis du styliste",
+    "noImage": "Image indisponible",
+    "generating": "Composition de ta tenue en cours…",
+    "generate": "Générer ma tenue",
+    "rateLimited": "Trop de demandes. Réessaie dans une minute.",
+    "paymentRequired": "Crédits IA épuisés. Recharge tes crédits.",
+    "error": "Génération impossible. Réessaie.",
+    "closetUsed": "{{count}} pièces de ton Vibe Closet seront prises en compte."
   },
   "paywall": {
     "title": "Recharge tes crédits",
-    "subtitle": "Achète des packs de scans à l'unité."
+    "subtitle": "1 crédit = 1 scan IA complet (audit fit, couleurs, touche 2026, shopping list).",
+    "back": "Retour",
+    "paid": "Paiement validé ! Tes crédits sont en cours d'ajout."
   }
 }
