@@ -117,8 +117,7 @@ ${profileLine ? `Profil : ${profileLine}.` : ""}`;
                       minItems: 3,
                       maxItems: 3,
                     },
-                  },
-                  fit: { type: "string", description: "Analyse du Fit : expertise sur la coupe (épaules, taille, longueur, volume). 1-2 phrases concrètes." },
+                    fit: { type: "string", description: "Analyse du Fit : expertise sur la coupe (épaules, taille, longueur, volume). 1-2 phrases concrètes." },
                   colors: { type: "string", description: "Harmonie des couleurs : palette, contrastes, ce qui marche ou casse. 1-2 phrases concrètes." },
                   touch2026: { type: "string", description: "La Touche 2026 : LE conseil mode actuel pour moderniser la tenue (pièce, détail, accessoire tendance). 1-2 phrases." },
                   shopping: {
@@ -139,7 +138,7 @@ ${profileLine ? `Profil : ${profileLine}.` : ""}`;
                     minItems: 3,
                     maxItems: 3,
                   },
-                },
+                  },
                   required: ["score", "style", "verdict", "strong", "weak", "tips", "fit", "colors", "touch2026", "shopping"],
                   additionalProperties: false,
                 },
