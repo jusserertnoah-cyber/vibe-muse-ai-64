@@ -96,7 +96,7 @@ export default function Profil() {
             onClick={() => navigate("/app/history")}
             className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline"
           >
-            Voir tout <ChevronRight className="h-3 w-3" />
+            {t("profile.viewAll")} <ChevronRight className="h-3 w-3" />
           </button>
         )}
       </section>
@@ -104,7 +104,7 @@ export default function Profil() {
       <ul className="space-y-2">
         <Row
           icon={<Settings className="h-5 w-5" />}
-          label={t("profile.settings", { defaultValue: "Paramètres" })}
+          label={t("profile.settings")}
           onClick={() => navigate("/app/settings")}
         />
       </ul>
@@ -114,7 +114,7 @@ export default function Profil() {
         className="flex w-full items-center justify-center gap-2 rounded-2xl border border-border bg-card p-4 text-sm text-muted-foreground"
       >
         <LogOut className="h-4 w-4" />
-        Réinitialiser le profil
+        {t("profile.reset")}
       </button>
 
       <button
@@ -122,7 +122,7 @@ export default function Profil() {
         className="flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground p-4 text-sm font-medium text-background"
       >
         <LogOut className="h-4 w-4" />
-        Se déconnecter
+        {t("profile.signOut")}
       </button>
     </div>
   );
