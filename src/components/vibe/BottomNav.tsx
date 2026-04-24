@@ -1,10 +1,10 @@
 import { NavLink } from "react-router-dom";
-import { Home, Shirt, ScanLine, User } from "lucide-react";
+import { Home, Sparkles, ScanLine, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const tabs = [
   { to: "/app", label: "Accueil", icon: Home, end: true },
-  { to: "/app/dressing", label: "Dressing", icon: Shirt },
+  { to: "/app/inspirations", label: "Inspirations", icon: Sparkles },
   { to: "/app/scan", label: "Scan", icon: ScanLine },
   { to: "/app/profil", label: "Profil", icon: User },
 ];

@@ -11,7 +11,7 @@ import Onboarding from "./pages/Onboarding.tsx";
 import Auth from "./pages/Auth.tsx";
 import { AppLayout } from "./components/vibe/AppLayout";
 import Home from "./pages/app/Home.tsx";
-import Dressing from "./pages/app/Dressing.tsx";
+import Inspirations from "./pages/app/Inspirations.tsx";
 import Scan from "./pages/app/Scan.tsx";
 import Profil from "./pages/app/Profil.tsx";
 import Paywall from "./pages/app/Paywall.tsx";
@@ -50,7 +50,7 @@ const App = () => {
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/app" element={<AppLayout />}>
             <Route index element={<Home />} />
-            <Route path="dressing" element={<Dressing />} />
+            <Route path="inspirations" element={<Inspirations />} />
             <Route path="scan" element={<Scan />} />
             <Route path="profil" element={<Profil />} />
             <Route path="paywall" element={<Paywall />} />
