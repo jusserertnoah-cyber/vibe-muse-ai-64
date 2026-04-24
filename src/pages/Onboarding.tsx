@@ -143,7 +143,13 @@ export default function Onboarding() {
     });
     setBusy(false);
     if (error) {
-      toast.error("Envoi impossible", { description: error.message });
+      // Mode démo : tant que le provider SMS n'est pas branché, on continue
+      // quand même vers l'écran de saisie du code pour permettre la démo.
+      toast("Mode démo activé", {
+        description: "Le SMS n'est pas encore branché — tu peux continuer.",
+      });
+      setE164(normalized);
+      setOtpSent(true);
       return;
     }
     toast.success("Code envoyé", { description: `Vérifie tes SMS sur ${normalized}` });
@@ -152,10 +158,6 @@ export default function Onboarding() {
   };
 
   const verifyAndFinish = async () => {
-    if (otp.length < 4) {
-      toast.error("Entre le code reçu par SMS");
-      return;
-    }
     setBusy(true);
     const { data, error } = await supabase.auth.verifyOtp({
       phone: e164,
@@ -163,8 +165,11 @@ export default function Onboarding() {
       type: "sms",
     });
     if (error) {
+      // Mode démo : on finit quand même l'onboarding localement.
+      const profile = await persistProfile(undefined);
       setBusy(false);
-      toast.error("Code incorrect", { description: error.message });
+      toast.success(`Bienvenue ${profile.firstName} ✨ +20 Vibers offerts`);
+      navigate("/app", { replace: true });
       return;
     }
     const userId = data.user?.id;
