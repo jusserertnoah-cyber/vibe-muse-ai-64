@@ -1,86 +1,67 @@
 {
-  "nav": { "home": "Accueil", "dressing": "Dressing", "scan": "Scan", "profile": "Profil" },
-  "home": {
-    "hello": "Bonjour",
-    "styles": "Tes styles",
-    "vibers": "Vibers",
-    "vibersHint": "200 Vibers = 1 mois Premium offert",
-    "smartCloset": "Smart Closet",
-    "closetEmpty": "Ton dressing est vide. Ajoute tes pièces pour des suggestions sur-mesure.",
-    "addPiece": "Ajouter une pièce",
-    "createLookWith": "Créer un look avec",
-    "closetCount_one": "Tu as {{count}} pièce enregistrée.",
-    "closetCount_other": "Tu as {{count}} pièces enregistrées.",
-    "forgotten": "Tu n'as pas porté ton {{piece}} depuis 2 semaines, on l'essaye aujourd'hui ?",
-    "evolution": "Évolution",
-    "lastScans": "{{count}} derniers scans",
-    "history": "Historique",
-    "myStats": "My Stats",
-    "location": "Localisation"
+  "nav": {
+    "home": "Accueil",
+    "inspirations": "Inspirations",
+    "scan": "Scan",
+    "profile": "Profil",
+    "dressing": "Dressing",
+    "aria": "Navigation principale"
   },
   "common": {
     "continue": "Continuer",
     "back": "Retour",
     "skip": "Passer",
-    "generate": "Générer ma tenue",
     "next": "Suivant",
     "done": "Terminer",
-    "save": "Enregistrer"
+    "save": "Enregistrer",
+    "generate": "Générer ma tenue"
   },
-  "onboarding": {
-    "language": "Choisis ta langue",
-    "languageHint": "Tu pourras la changer dans ton profil.",
-    "welcome": "Bienvenue.",
-    "yourName": "Comment t'appelles-tu ?",
-    "namePlaceholder": "Ton prénom",
-    "nameHint": "Ton prénom me sert à te conseiller comme une amie styliste."
-  },
-  "dressing": {
-    "title": "Compose ta tenue",
-    "step1": "Quel est ton style aujourd'hui ?",
-    "step1Hint": "Choisis l'univers qui te parle aujourd'hui.",
-    "step2": "Quelle est la vibe ?",
-    "step2Hint": "L'émotion que tu veux dégager.",
-    "step3": "Où vas-tu ?",
-    "step3Hint": "Le contexte change tout.",
-    "generating": "Composition de ta tenue en cours…",
-    "generate": "Générer ma tenue",
-    "newLook": "Nouvelle tenue",
-    "stylistAdvice": "Avis du styliste",
-    "noImage": "Image indisponible",
-    "completeSteps": "Complète les 3 étapes",
-    "rateLimited": "Trop de demandes. Réessaie dans une minute.",
-    "paymentRequired": "Crédits IA épuisés. Ajoute des crédits dans Lovable.",
-    "error": "Génération impossible. Réessaie.",
-    "closetUsed": "{{count}} pièces de ton Vibe Closet seront prises en compte."
-  },
-  "scan": {
-    "kicker": "Vibe Check",
-    "title": "Note ton look",
-    "subtitle": "Analyse couture, sévère mais juste.",
-    "hint": "Prends-toi en photo (en pied, lumière naturelle) pour un scan honnête.",
-    "choose": "Choisir une photo",
-    "change": "Changer de photo",
-    "loading": "Analyse en cours…",
-    "rescore": "Re-noter",
-    "strong": "Ce qui marche",
-    "weak": "À améliorer",
-    "tipsTitle": "3 actions rapides",
+  "missionStory": {
+    "title": "Mission Story",
+    "subtitle": "Partage ta tenue en story (Instagram ou TikTok) avec le tag @vibe. 5 stories validées = 1 scan offert.",
+    "progress": "Plus que {{remaining}} pour ton scan offert.",
+    "rule1": "Story publique uniquement (pas Amis proches)",
+    "rule2": "Tag @vibe visible",
+    "rule3": "1 fois par 24h",
+    "verifying": "Analyse anti-fraude en cours…",
+    "verifyingShort": "Vérification…",
+    "uploading": "Préparation de l'image…",
+    "scanGranted": "+1 scan crédité 🎉 Bravo, 5 stories validées !",
+    "storyValidated": "Story validée. Reviens demain !",
+    "rejected": "Story refusée",
+    "errorHint": "Réessaie avec une vraie story publique avec @vibe.",
+    "uploadError": "Erreur lors de l'envoi.",
+    "cooldownTitle": "Reviens plus tard",
+    "cooldownDesc": "Prochaine mission dans {{time}}.",
+    "nextIn": "Prochaine dans {{time}}",
+    "upload": "Uploader ma story",
+    "tomorrow": "Reviens demain",
     "errors": {
-      "rate": "Trop de scans. Réessaie dans une minute.",
-      "credits": "Crédits IA épuisés.",
-      "blur": "Analyse impossible. Reprends une photo plus nette.",
-      "generic": "Scan impossible. Réessaie."
+      "not_a_story": "Ce n'est pas une story active. Envoie un screenshot d'une story Instagram ou TikTok publiée.",
+      "no_outfit": "Aucune tenue détectée sur la story.",
+      "missing_tag": "Le tag @vibe est introuvable. Ajoute-le sur ta story.",
+      "close_friends": "Les stories Amis proches ne comptent pas.",
+      "duplicate": "Cette story ressemble trop à une déjà soumise.",
+      "rate_limited": "Trop de demandes, réessaie dans une minute.",
+      "payment_required": "Crédits IA épuisés.",
+      "ai_error": "Vérification impossible. Réessaie."
     }
   },
   "profile": {
     "title": "Profil",
+    "creditsScans": "Crédits scans",
+    "rechargeTitle": "Recharge tes crédits",
+    "rechargeHint": "Achète des packs de scans dès 2 €. Sans abonnement, sans expiration.",
+    "viewPacks": "Voir les packs",
+    "myScans": "Mes scans",
+    "scansEmpty": "Tes scans apparaîtront ici.",
+    "viewAll": "Voir tout",
+    "settings": "Paramètres",
+    "reset": "Réinitialiser le profil",
+    "signOut": "Se déconnecter",
     "closet": "Vibe Closet",
     "closetEmpty": "Ajoute tes pièces à l'oral pour des tenues 100% personnalisées.",
-    "addPiece": "Ajouter une pièce",
-    "subscriptions": "Voir les abonnements",
-    "premium": "Premium",
-    "settings": "Paramètres"
+    "addPiece": "Ajouter une pièce"
   },
   "settings": {
     "title": "Paramètres",
@@ -93,8 +74,10 @@
     "language": "Langue",
     "theme": "Thème",
     "themeHint": "Choisis l'accent couleur de l'app. La base reste crème, blanc et noir.",
-    "subscription": "Abonnement",
-    "manage": "Gérer mon abonnement",
+    "credits": "Crédits scans",
+    "creditsBalance": "Solde",
+    "creditsHint": "Pas d'abonnement : tu achètes des scans à l'unité, ils n'expirent jamais.",
+    "buyCredits": "Acheter des crédits",
     "preferences": "Préférences",
     "morningTip": "Conseil météo du matin",
     "units": "Unités",
@@ -104,15 +87,39 @@
     "privacy": "Politique de confidentialité",
     "terms": "CGU",
     "delete": "Supprimer mon compte",
-    "saved": "Modifications enregistrées",
-    "free": "Gratuit",
-    "stripeSoon": "Portail Stripe bientôt disponible"
+    "saved": "Modifications enregistrées"
+  },
+  "home": {
+    "hello": "Bonjour",
+    "vibers": "Vibers",
+    "smartCloset": "Smart Closet",
+    "closetEmpty": "Ton dressing est vide. Ajoute tes pièces pour des suggestions sur-mesure.",
+    "addPiece": "Ajouter une pièce",
+    "history": "Historique",
+    "myStats": "Mes Stats",
+    "location": "Localisation"
+  },
+  "onboarding": {
+    "language": "Choisis ta langue",
+    "languageHint": "Tu pourras la changer dans ton profil.",
+    "loginExisting": "J'ai déjà un compte → Se connecter",
+    "gender": {
+      "title": "Tu t'identifies comme ?",
+      "femme": "Femme",
+      "homme": "Homme",
+      "unisex": "Non-binaire / Unisexe"
+    }
+  },
+  "dressing": {
+    "title": "Compose ta tenue",
+    "newLook": "Nouvelle tenue"
+  },
+  "scan": {
+    "kicker": "Vibe Check",
+    "title": "Note ton look"
   },
   "paywall": {
-    "title": "Passe au niveau Icône",
-    "subtitle": "Débloque des générations illimitées et l'essayage virtuel HD.",
-    "week": "Semaine", "month": "Mois", "quarter": "Trimestre",
-    "popular": "Le plus populaire", "icon": "L'offre Icône", "save": "Économise 33%",
-    "ideal": "Idéal pour tester", "restore": "Restaurer les achats", "subscribe": "S'abonner"
+    "title": "Recharge tes crédits",
+    "subtitle": "Achète des packs de scans à l'unité."
   }
 }
