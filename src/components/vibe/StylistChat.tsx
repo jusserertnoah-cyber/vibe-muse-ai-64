@@ -4,6 +4,7 @@ import { Send, Loader2, Sparkles } from "lucide-react";
 import { getProfile } from "@/lib/profile";
 import { getTier } from "@/lib/tier";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -54,11 +55,19 @@ export function StylistChat({ mode, context, intro, suggestions = [] }: Props) {
 
     try {
       const profile = getProfile();
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData.session?.access_token;
+      if (!accessToken) {
+        toast.error("Connecte-toi pour discuter avec le styliste.");
+        setLoading(false);
+        return;
+      }
       const resp = await fetch(CHAT_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${accessToken}`,
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
         body: JSON.stringify({
           mode,
