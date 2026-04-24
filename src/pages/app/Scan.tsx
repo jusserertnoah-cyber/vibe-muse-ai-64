@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Camera, Upload, Loader2, Check, AlertCircle, Ruler, Palette, Sparkles, ShoppingBag, ExternalLink, Share2 } from "lucide-react";
+import { Camera, Upload, Loader2, Check, AlertCircle, Ruler, Palette, Sparkles, ShoppingBag, ExternalLink, Share2, Flame } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +10,11 @@ import { getTier } from "@/lib/tier";
 import { pushHistory } from "@/lib/history";
 import { toast } from "sonner";
 import { StylistChat } from "@/components/vibe/StylistChat";
+import { getDailyChallenge } from "@/lib/challenges";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface ShoppingItem {
   name: string;
@@ -30,6 +35,9 @@ interface ScanResult {
   colors?: string;
   touch2026?: string;
   shopping?: ShoppingItem[];
+  challenge_met?: boolean;
+  challenge_reason?: string;
+  challenge_reward?: { total_completed: number; granted_credit: boolean };
 }
 
 const fileToDataUrl = (file: File) =>
@@ -50,6 +58,8 @@ export default function Scan() {
   const [loading, setLoading] = useState(false);
   const [sharing, setSharing] = useState(false);
   const [shared, setShared] = useState(false);
+  const [confirmShare, setConfirmShare] = useState(false);
+  const challenge = getDailyChallenge();
 
   const onFile = async (f: File) => {
     setResult(null);
@@ -76,6 +86,7 @@ export default function Scan() {
           weightKg: profile?.weightKg,
           lang: i18n.language?.split("-")[0] ?? "fr",
           tier: getTier(),
+          challenge: { name: challenge.name, detect: challenge.detect },
         },
       });
       if (error) {
@@ -106,10 +117,20 @@ export default function Scan() {
         return;
       }
       setResult(data as ScanResult);
+      const r = data as ScanResult;
+      if (r.challenge_met) {
+        if (r.challenge_reward?.granted_credit) {
+          toast.success("🎉 10 défis réussis !", { description: "1 scan gratuit ajouté à ton compte." });
+        } else {
+          toast.success(`✓ Défi "${challenge.name}" validé`, {
+            description: r.challenge_reward ? `${r.challenge_reward.total_completed % 10}/10 vers ton prochain scan offert` : undefined,
+          });
+        }
+      }
       pushHistory({
         type: "scan",
         imageUrl: img,
-        score: (data as any).score,
+        score: r.score,
         style: (data as any).style,
       });
     } catch (e) {
@@ -130,20 +151,28 @@ export default function Scan() {
         toast.error("Connecte-toi pour partager au feed.");
         return;
       }
+      const profile = getProfile();
+      // Règle "1 seul post actif" : on remplace l'ancien (compteur Vibes reset).
+      await supabase.from("posts").delete().eq("user_id", userId);
       const { error } = await supabase.from("posts").insert({
         user_id: userId,
         image_url: dataUrl,
-        ai_score: Math.round(result.score),
+        ai_score: result.score,
         caption: result.verdict,
+        pseudo: profile?.firstName ?? null,
+        challenge_name: challenge.name,
+        challenge_met: !!result.challenge_met,
       });
       if (error) throw error;
       setShared(true);
-      toast.success("Partagé sur le feed !");
+      toast.success("Posté dans Top Vibes !");
+      navigate("/app/topvibes");
     } catch (e) {
       console.error(e);
       toast.error("Impossible de partager pour l'instant.");
     } finally {
       setSharing(false);
+      setConfirmShare(false);
     }
   };
 
@@ -236,19 +265,29 @@ export default function Scan() {
               </div>
             </div>
             <p className="mt-3 font-serif text-lg leading-snug">{result.verdict}</p>
-            <Button
-              onClick={shareToFeed}
-              disabled={sharing || shared}
-              variant="outline"
-              className="mt-4 h-11 w-full rounded-2xl"
-            >
-              {sharing ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Share2 className="mr-2 h-4 w-4" />
-              )}
-              {shared ? "Partagé sur le feed" : "Partager sur le feed"}
-            </Button>
+            {result.challenge_met != null && (
+              <div className={`mt-3 flex items-start gap-2 rounded-2xl p-3 text-sm ${result.challenge_met ? "bg-emerald-500/10 text-emerald-700" : "bg-muted text-muted-foreground"}`}>
+                <Flame className="mt-0.5 h-4 w-4 shrink-0" />
+                <div>
+                  <p className="font-semibold">Défi : {challenge.name}</p>
+                  <p className="text-xs">{result.challenge_met ? "Validé" : "Non détecté sur la photo"}{result.challenge_reason ? ` — ${result.challenge_reason}` : ""}</p>
+                </div>
+              </div>
+            )}
+            {result.score >= 9 ? (
+              <Button
+                onClick={() => setConfirmShare(true)}
+                disabled={sharing || shared}
+                className="mt-4 h-11 w-full rounded-2xl bg-gradient-brand text-foreground shadow-brand"
+              >
+                {sharing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Share2 className="mr-2 h-4 w-4" />}
+                {shared ? "Posté dans Top Vibes" : "Partager mon look dans le Feed"}
+              </Button>
+            ) : (
+              <p className="mt-4 rounded-2xl bg-secondary p-3 text-center text-xs text-muted-foreground">
+                Score 9.0+ requis pour entrer dans Top Vibes (actuel : {result.score.toFixed(1)})
+              </p>
+            )}
           </div>
 
           {/* Points forts / À améliorer */}
@@ -329,6 +368,25 @@ export default function Scan() {
           />
         </div>
       )}
+      <AlertDialog open={confirmShare} onOpenChange={setConfirmShare}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Partager dans Top Vibes</AlertDialogTitle>
+            <AlertDialogDescription>
+              En partageant tu confirmes être l'auteur de la photo et autorises VIBE à l'afficher publiquement
+              dans le classement hebdomadaire. La photo sera supprimée au reset de la semaine
+              (sauf si tu finis n°1, dans ce cas elle rejoint le Hall of Fame).
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={sharing}>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={shareToFeed} disabled={sharing}>
+              {sharing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              J'accepte et je partage
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
