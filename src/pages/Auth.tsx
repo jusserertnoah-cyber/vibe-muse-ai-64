@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { hydrateProfileFromDb, getProfile } from "@/lib/profile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { VibeLogo } from "@/components/vibe/VibeLogo";
@@ -41,8 +42,12 @@ export default function Auth() {
 
   // Si déjà connecté, on file droit dans l'app
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate("/", { replace: true });
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (data.session?.user?.id) {
+        // Rehydrate local profile from DB so returning users skip onboarding.
+        if (!getProfile()) await hydrateProfileFromDb(data.session.user.id);
+        navigate("/", { replace: true });
+      }
     });
   }, [navigate]);
 
@@ -77,7 +82,7 @@ export default function Auth() {
 
   const verifyCode = async () => {
     setLoading(true);
-    const { error } = await supabase.auth.verifyOtp({
+    const { data, error } = await supabase.auth.verifyOtp({
       phone: e164,
       token: otp,
       type: "sms",
@@ -90,6 +95,10 @@ export default function Auth() {
       });
       navigate("/", { replace: true });
       return;
+    }
+    // Rehydrate local profile from DB so returning users skip onboarding.
+    if (data.user?.id && !getProfile()) {
+      await hydrateProfileFromDb(data.user.id);
     }
     toast.success("Bienvenue ✨");
     navigate("/", { replace: true });

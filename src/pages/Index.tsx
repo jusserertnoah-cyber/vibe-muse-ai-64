@@ -1,14 +1,46 @@
+import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useSession } from "@/hooks/useSession";
-import { getProfile } from "@/lib/profile";
+import { getProfile, hydrateProfileFromDb } from "@/lib/profile";
 
 const Index = () => {
   const { session, loading } = useSession();
-  if (loading) return null;
-  const profile = getProfile();
-  // Si l'utilisateur a déjà un profil (même sans session, en mode démo SMS),
-  // on le laisse entrer dans l'app sans repasser par l'onboarding.
-  if (profile) return <Navigate to="/app" replace />;
+  const [hydrating, setHydrating] = useState(true);
+  const [hasProfile, setHasProfile] = useState<boolean>(!!getProfile());
+
+  useEffect(() => {
+    let cancelled = false;
+    const run = async () => {
+      if (loading) return;
+      // Already have a local profile → no DB roundtrip needed.
+      if (getProfile()) {
+        if (!cancelled) {
+          setHasProfile(true);
+          setHydrating(false);
+        }
+        return;
+      }
+      // Logged-in user without local profile (new device / cleared cache):
+      // try to rebuild it from the DB so we don't force onboarding again.
+      if (session?.user?.id) {
+        const p = await hydrateProfileFromDb(session.user.id);
+        if (!cancelled) {
+          setHasProfile(!!p);
+          setHydrating(false);
+        }
+        return;
+      }
+      if (!cancelled) {
+        setHasProfile(false);
+        setHydrating(false);
+      }
+    };
+    run();
+    return () => { cancelled = true; };
+  }, [loading, session]);
+
+  if (loading || hydrating) return null;
+  if (hasProfile) return <Navigate to="/app" replace />;
   return <Navigate to="/onboarding" replace />;
 };
 

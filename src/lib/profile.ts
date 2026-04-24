@@ -1,4 +1,5 @@
 import { UserProfile } from "./types";
+import { supabase } from "@/integrations/supabase/client";
 
 const KEY = "vibe.profile.v1";
 
@@ -27,4 +28,40 @@ export const updateProfile = (patch: Partial<UserProfile>) => {
 export const clearProfile = () => {
   localStorage.removeItem(KEY);
   try { window.dispatchEvent(new CustomEvent("vibe:profile-changed")); } catch {}
+};
+
+/**
+ * Hydrate the local profile from the Supabase `profiles` row for the given user.
+ * Returns the local profile if the remote row is marked as onboarded, otherwise null.
+ * This lets a returning user (new device / cleared cache) skip the onboarding.
+ */
+export const hydrateProfileFromDb = async (userId: string): Promise<UserProfile | null> => {
+  try {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("first_name, gender, age, height, weight, styles, vibers, onboarded")
+      .eq("id", userId)
+      .maybeSingle();
+    if (error || !data || !data.onboarded) return null;
+    const existing = getProfile();
+    const profile: UserProfile = {
+      firstName: data.first_name || existing?.firstName || "Vibe",
+      gender: (data.gender as UserProfile["gender"]) || existing?.gender || "unisexe",
+      age: data.age ?? existing?.age,
+      heightCm: data.height ?? existing?.heightCm,
+      weightKg: data.weight ?? existing?.weightKg,
+      styles: (data.styles as UserProfile["styles"]) ?? existing?.styles ?? [],
+      city: existing?.city,
+      referencePhoto: existing?.referencePhoto,
+      closet: existing?.closet ?? [],
+      vibers: data.vibers ?? existing?.vibers ?? 0,
+      premiumUntil: existing?.premiumUntil,
+      deviceId: existing?.deviceId,
+      createdAt: existing?.createdAt || new Date().toISOString(),
+    };
+    saveProfile(profile);
+    return profile;
+  } catch {
+    return null;
+  }
 };
