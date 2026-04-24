@@ -236,6 +236,19 @@ export default function Scan() {
               </div>
             </div>
             <p className="mt-3 font-serif text-lg leading-snug">{result.verdict}</p>
+            <Button
+              onClick={shareToFeed}
+              disabled={sharing || shared}
+              variant="outline"
+              className="mt-4 h-11 w-full rounded-2xl"
+            >
+              {sharing ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Share2 className="mr-2 h-4 w-4" />
+              )}
+              {shared ? "Partagé sur le feed" : "Partager sur le feed"}
+            </Button>
           </div>
 
           {/* Points forts / À améliorer */}
