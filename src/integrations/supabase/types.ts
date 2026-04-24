@@ -68,6 +68,7 @@ export type Database = {
           onboarded: boolean
           places: string[] | null
           premium_until: string | null
+          story_count: number
           styles: string[] | null
           updated_at: string
           vibers: number
@@ -85,6 +86,7 @@ export type Database = {
           onboarded?: boolean
           places?: string[] | null
           premium_until?: string | null
+          story_count?: number
           styles?: string[] | null
           updated_at?: string
           vibers?: number
@@ -102,6 +104,7 @@ export type Database = {
           onboarded?: boolean
           places?: string[] | null
           premium_until?: string | null
+          story_count?: number
           styles?: string[] | null
           updated_at?: string
           vibers?: number
