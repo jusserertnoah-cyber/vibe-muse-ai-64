@@ -1,13 +1,12 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Camera, Upload, Loader2, Check, AlertCircle, Ruler, Palette, Sparkles, ShoppingBag, ExternalLink } from "lucide-react";
+import { Camera, Upload, Loader2, Check, AlertCircle, Ruler, Palette, Sparkles, ShoppingBag, ExternalLink, Share2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { getProfile } from "@/lib/profile";
 import { awardVibers } from "@/lib/vibers";
 import { getTier } from "@/lib/tier";
-import { hasCredits, consumeCredits } from "@/lib/credits";
 import { pushHistory } from "@/lib/history";
 import { toast } from "sonner";
 import { StylistChat } from "@/components/vibe/StylistChat";
@@ -49,14 +48,12 @@ export default function Scan() {
   const [dataUrl, setDataUrl] = useState<string | null>(null);
   const [result, setResult] = useState<ScanResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const [sharing, setSharing] = useState(false);
+  const [shared, setShared] = useState(false);
 
   const onFile = async (f: File) => {
-    if (!hasCredits(1)) {
-      toast.error(t("scan.creditRequired"), { description: t("scan.creditRequiredHint") });
-      navigate("/app/paywall");
-      return;
-    }
     setResult(null);
+    setShared(false);
     setPreview(URL.createObjectURL(f));
     try {
       const url = await fileToDataUrl(f);
@@ -68,12 +65,6 @@ export default function Scan() {
   };
 
   const analyze = async (img: string) => {
-    // Consomme 1 crédit à l'ouverture de l'analyse
-    if (!consumeCredits(1)) {
-      toast.error(t("scan.creditInsufficient"), { description: t("scan.creditTopup") });
-      navigate("/app/paywall");
-      return;
-    }
     const profile = getProfile();
     setLoading(true);
     try {
@@ -87,7 +78,21 @@ export default function Scan() {
           tier: getTier(),
         },
       });
-      if (error) throw error;
+      if (error) {
+        // Edge function renvoie 402 quand pas de crédit → message clair + paywall
+        const msg = String(error.message ?? "");
+        if (msg.includes("402") || msg.toLowerCase().includes("no_credits")) {
+          toast.error("Crédit insuffisant", { description: "Achète un pack pour continuer." });
+          navigate("/app/paywall");
+          return;
+        }
+        throw error;
+      }
+      if ((data as any)?.error === "no_credits") {
+        toast.error("Crédit insuffisant", { description: "Achète un pack pour continuer." });
+        navigate("/app/paywall");
+        return;
+      }
       if ((data as any)?.error === "rate_limited") {
         toast.error(t("scan.errors.rate"));
         return;
@@ -112,6 +117,33 @@ export default function Scan() {
       toast.error(t("scan.errors.generic"));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const shareToFeed = async () => {
+    if (!dataUrl || !result || sharing) return;
+    setSharing(true);
+    try {
+      const { data: sess } = await supabase.auth.getSession();
+      const userId = sess.session?.user?.id;
+      if (!userId) {
+        toast.error("Connecte-toi pour partager au feed.");
+        return;
+      }
+      const { error } = await supabase.from("posts").insert({
+        user_id: userId,
+        image_url: dataUrl,
+        ai_score: Math.round(result.score),
+        caption: result.verdict,
+      });
+      if (error) throw error;
+      setShared(true);
+      toast.success("Partagé sur le feed !");
+    } catch (e) {
+      console.error(e);
+      toast.error("Impossible de partager pour l'instant.");
+    } finally {
+      setSharing(false);
     }
   };
 
