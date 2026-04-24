@@ -1,14 +1,24 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Camera, Upload, Loader2, Check, AlertCircle } from "lucide-react";
+import { Camera, Upload, Loader2, Check, AlertCircle, Ruler, Palette, Sparkles, ShoppingBag, ExternalLink, Lock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { getProfile } from "@/lib/profile";
 import { awardVibers } from "@/lib/vibers";
 import { getTier } from "@/lib/tier";
+import { hasCredits, consumeCredits, getCredits } from "@/lib/credits";
 import { pushHistory } from "@/lib/history";
 import { toast } from "sonner";
 import { StylistChat } from "@/components/vibe/StylistChat";
+
+interface ShoppingItem {
+  name: string;
+  brand: string;
+  price: string;
+  why: string;
+  query: string;
+}
 
 interface ScanResult {
   score: number;
@@ -17,6 +27,10 @@ interface ScanResult {
   strong: string;
   weak: string;
   tips: string[];
+  fit?: string;
+  colors?: string;
+  touch2026?: string;
+  shopping?: ShoppingItem[];
 }
 
 const fileToDataUrl = (file: File) =>
@@ -29,6 +43,7 @@ const fileToDataUrl = (file: File) =>
 
 export default function Scan() {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const fileRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [dataUrl, setDataUrl] = useState<string | null>(null);
@@ -36,6 +51,11 @@ export default function Scan() {
   const [loading, setLoading] = useState(false);
 
   const onFile = async (f: File) => {
+    if (!hasCredits(1)) {
+      toast.error("Crédit requis", { description: "Il te faut au moins 1 crédit pour scanner ta tenue." });
+      navigate("/app/paywall");
+      return;
+    }
     setResult(null);
     setPreview(URL.createObjectURL(f));
     try {
@@ -48,6 +68,12 @@ export default function Scan() {
   };
 
   const analyze = async (img: string) => {
+    // Consomme 1 crédit à l'ouverture de l'analyse
+    if (!consumeCredits(1)) {
+      toast.error("Crédit insuffisant", { description: "Recharge tes crédits pour continuer." });
+      navigate("/app/paywall");
+      return;
+    }
     const profile = getProfile();
     setLoading(true);
     try {
@@ -75,7 +101,6 @@ export default function Scan() {
         return;
       }
       setResult(data as ScanResult);
-      awardVibers("scan");
       pushHistory({
         type: "scan",
         imageUrl: img,
