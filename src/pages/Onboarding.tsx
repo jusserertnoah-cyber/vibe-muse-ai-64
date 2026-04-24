@@ -60,6 +60,9 @@ export default function Onboarding() {
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [busy, setBusy] = useState(false);
+  // Mode "j'ai déjà un compte" : on saute toutes les étapes profil et on
+  // utilise l'écran téléphone uniquement pour se reconnecter.
+  const [loginOnly, setLoginOnly] = useState(false);
 
   // Si l'utilisateur a déjà une session active et un profil, on file dans l'app
   useEffect(() => {
