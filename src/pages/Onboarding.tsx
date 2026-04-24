@@ -182,6 +182,11 @@ export default function Onboarding() {
       type: "sms",
     });
     if (error) {
+      if (loginOnly) {
+        setBusy(false);
+        toast.error("Code invalide", { description: "Vérifie le code reçu par SMS." });
+        return;
+      }
       // Mode démo : on finit quand même l'onboarding localement.
       const profile = await persistProfile(undefined);
       setBusy(false);
@@ -190,6 +195,21 @@ export default function Onboarding() {
       return;
     }
     const userId = data.user?.id;
+    // Connexion : si la BD a un profil onboardé, on file dans l'app.
+    if (loginOnly && userId) {
+      const p = await hydrateProfileFromDb(userId);
+      setBusy(false);
+      if (p) {
+        toast.success(`Bon retour ${p.firstName} ✨`);
+        navigate("/app", { replace: true });
+        return;
+      }
+      // Pas de profil onboardé en BD → on bascule sur l'onboarding complet.
+      toast("Termine ton profil pour continuer.");
+      setLoginOnly(false);
+      setStep(1);
+      return;
+    }
     const profile = await persistProfile(userId);
     setBusy(false);
     toast.success(`Bienvenue ${profile.firstName} ✨ +20 Vibers offerts`);
