@@ -1,14 +1,24 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Camera, Upload, Loader2, Check, AlertCircle } from "lucide-react";
+import { Camera, Upload, Loader2, Check, AlertCircle, Ruler, Palette, Sparkles, ShoppingBag, ExternalLink } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { getProfile } from "@/lib/profile";
 import { awardVibers } from "@/lib/vibers";
 import { getTier } from "@/lib/tier";
+import { hasCredits, consumeCredits } from "@/lib/credits";
 import { pushHistory } from "@/lib/history";
 import { toast } from "sonner";
 import { StylistChat } from "@/components/vibe/StylistChat";
+
+interface ShoppingItem {
+  name: string;
+  brand: string;
+  price: string;
+  why: string;
+  query: string;
+}
 
 interface ScanResult {
   score: number;
@@ -17,6 +27,10 @@ interface ScanResult {
   strong: string;
   weak: string;
   tips: string[];
+  fit?: string;
+  colors?: string;
+  touch2026?: string;
+  shopping?: ShoppingItem[];
 }
 
 const fileToDataUrl = (file: File) =>
@@ -29,6 +43,7 @@ const fileToDataUrl = (file: File) =>
 
 export default function Scan() {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const fileRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [dataUrl, setDataUrl] = useState<string | null>(null);
@@ -36,6 +51,11 @@ export default function Scan() {
   const [loading, setLoading] = useState(false);
 
   const onFile = async (f: File) => {
+    if (!hasCredits(1)) {
+      toast.error("Crédit requis", { description: "Il te faut au moins 1 crédit pour scanner ta tenue." });
+      navigate("/app/paywall");
+      return;
+    }
     setResult(null);
     setPreview(URL.createObjectURL(f));
     try {
@@ -48,6 +68,12 @@ export default function Scan() {
   };
 
   const analyze = async (img: string) => {
+    // Consomme 1 crédit à l'ouverture de l'analyse
+    if (!consumeCredits(1)) {
+      toast.error("Crédit insuffisant", { description: "Recharge tes crédits pour continuer." });
+      navigate("/app/paywall");
+      return;
+    }
     const profile = getProfile();
     setLoading(true);
     try {
@@ -75,7 +101,6 @@ export default function Scan() {
         return;
       }
       setResult(data as ScanResult);
-      awardVibers("scan");
       pushHistory({
         type: "scan",
         imageUrl: img,
@@ -204,6 +229,49 @@ export default function Scan() {
             </ol>
           </div>
 
+          {/* L'avis de VIBE — audit styliste */}
+          {(result.fit || result.colors || result.touch2026) && (
+            <section className="rounded-3xl bg-card p-5 shadow-card">
+              <header className="mb-4 flex items-center justify-between">
+                <p className="font-serif text-xl leading-none">L'avis de VIBE</p>
+                <span className="rounded-full bg-secondary px-2 py-1 text-[10px] uppercase tracking-widest text-muted-foreground">
+                  Audit styliste
+                </span>
+              </header>
+              <div className="space-y-4">
+                {result.fit && (
+                  <AuditBlock icon={<Ruler className="h-4 w-4" />} title="Analyse du Fit" text={result.fit} />
+                )}
+                {result.colors && (
+                  <AuditBlock icon={<Palette className="h-4 w-4" />} title="Harmonie des couleurs" text={result.colors} />
+                )}
+                {result.touch2026 && (
+                  <AuditBlock
+                    icon={<Sparkles className="h-4 w-4" />}
+                    title="La Touche 2026"
+                    text={result.touch2026}
+                    accent
+                  />
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* Shopping list affiliée */}
+          {result.shopping && result.shopping.length > 0 && (
+            <section>
+              <header className="mb-3 flex items-center gap-2 px-1">
+                <ShoppingBag className="h-4 w-4 text-foreground" strokeWidth={1.8} />
+                <p className="font-serif text-xl leading-none">Complète ta tenue</p>
+              </header>
+              <div className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2">
+                {result.shopping.map((item, i) => (
+                  <ShoppingCard key={i} item={item} />
+                ))}
+              </div>
+            </section>
+          )}
+
           <StylistChat
             mode="scan"
             context={{ scan: result }}
@@ -245,5 +313,65 @@ function AnalysisRow({
       </div>
       <p className="mt-1.5 text-sm leading-relaxed">{text}</p>
     </div>
+  );
+}
+
+function AuditBlock({
+  icon,
+  title,
+  text,
+  accent,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  text: string;
+  accent?: boolean;
+}) {
+  return (
+    <div
+      className={`rounded-2xl p-4 ${
+        accent ? "bg-gradient-brand text-foreground shadow-brand" : "bg-secondary"
+      }`}
+    >
+      <div className="mb-1.5 flex items-center gap-2">
+        <span
+          className={`flex h-6 w-6 items-center justify-center rounded-full ${
+            accent ? "bg-foreground/10" : "bg-card"
+          }`}
+        >
+          {icon}
+        </span>
+        <p className="font-serif text-base leading-none">{title}</p>
+      </div>
+      <p className={`text-sm leading-relaxed ${accent ? "text-foreground/90" : "text-foreground"}`}>
+        {text}
+      </p>
+    </div>
+  );
+}
+
+function ShoppingCard({ item }: { item: { name: string; brand: string; price: string; why: string; query: string } }) {
+  const url = `https://www.google.com/search?tbm=shop&q=${encodeURIComponent(item.query)}`;
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex w-56 shrink-0 snap-start flex-col rounded-3xl bg-card p-3 shadow-card transition hover:shadow-brand"
+    >
+      <div className="mb-3 flex aspect-square items-center justify-center rounded-2xl bg-secondary">
+        <ShoppingBag className="h-10 w-10 text-muted-foreground" strokeWidth={1.2} />
+      </div>
+      <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{item.brand}</p>
+      <p className="mt-0.5 line-clamp-2 font-serif text-sm leading-snug">{item.name}</p>
+      <p className="mt-1 line-clamp-2 text-[11px] leading-snug text-muted-foreground">{item.why}</p>
+      <div className="mt-3 flex items-center justify-between">
+        <span className="font-mono-tech text-sm font-semibold">{item.price}</span>
+        <span className="flex items-center gap-1 rounded-full bg-gradient-brand px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-foreground shadow-brand">
+          Acheter
+          <ExternalLink className="h-3 w-3" />
+        </span>
+      </div>
+    </a>
   );
 }
