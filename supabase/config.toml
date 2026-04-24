@@ -2,3 +2,6 @@ project_id = "vibe"
 
 [functions.generate-look]
 verify_jwt = false
+
+[functions.inspiration-analysis]
+verify_jwt = false
