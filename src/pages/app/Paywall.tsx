@@ -1,9 +1,12 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Camera, Sparkles, Zap, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { StripeCheckoutModal } from "@/components/StripeCheckoutModal";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+import { supabase } from "@/integrations/supabase/client";
 
 type PackId = "starter" | "vibe" | "stylist" | "premium";
 
@@ -11,6 +14,7 @@ type Pack = {
   id: PackId;
   name: string;
   price: string;
+  priceId: string;
   scans: number;
   perScan: string;
   tag?: string;
@@ -23,6 +27,7 @@ const PACKS: Pack[] = [
     id: "starter",
     name: "Starter",
     price: "2 €",
+    priceId: "credits_starter_eur",
     scans: 5,
     perScan: "0,40 € / scan",
     icon: <Camera className="h-5 w-5" />,
@@ -31,6 +36,7 @@ const PACKS: Pack[] = [
     id: "vibe",
     name: "Vibe Pack",
     price: "5 €",
+    priceId: "credits_vibe_pack_eur",
     scans: 15,
     perScan: "0,33 € / scan",
     tag: "Populaire",
@@ -41,6 +47,7 @@ const PACKS: Pack[] = [
     id: "stylist",
     name: "Styliste",
     price: "10 €",
+    priceId: "credits_styliste_eur",
     scans: 40,
     perScan: "0,25 € / scan",
     icon: <Zap className="h-5 w-5" />,
@@ -49,6 +56,7 @@ const PACKS: Pack[] = [
     id: "premium",
     name: "Premium",
     price: "20 €",
+    priceId: "credits_premium_eur",
     scans: 100,
     perScan: "0,20 € / scan",
     tag: "Best value",
@@ -58,15 +66,36 @@ const PACKS: Pack[] = [
 
 export default function Paywall() {
   const navigate = useNavigate();
+  const [params, setParams] = useSearchParams();
   const [selected, setSelected] = useState<PackId>("vibe");
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [checkoutPriceId, setCheckoutPriceId] = useState<string | null>(null);
 
-  const buy = () => {
+  // Retour de paiement Stripe → ?checkout=success
+  useEffect(() => {
+    if (params.get("checkout") === "success") {
+      toast.success("Paiement validé ! Tes crédits sont en cours d'ajout.");
+      params.delete("checkout");
+      params.delete("session_id");
+      setParams(params, { replace: true });
+    }
+  }, [params, setParams]);
+
+  const buy = async () => {
     const pack = PACKS.find((p) => p.id === selected)!;
-    toast(`Stripe — achat ${pack.name} (${pack.price}) à brancher`);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast.error("Connecte-toi pour acheter des crédits");
+      navigate("/auth");
+      return;
+    }
+    setCheckoutPriceId(pack.priceId);
+    setCheckoutOpen(true);
   };
 
   return (
     <div className="min-h-screen bg-background pb-32">
+      <PaymentTestModeBanner />
       <header className="sticky top-0 z-10 flex items-center gap-3 bg-background/80 px-5 py-4 backdrop-blur">
         <button
           onClick={() => navigate(-1)}
@@ -149,6 +178,12 @@ export default function Paywall() {
           </div>
         </div>
       </div>
+
+      <StripeCheckoutModal
+        open={checkoutOpen}
+        priceId={checkoutPriceId}
+        onClose={() => setCheckoutOpen(false)}
+      />
     </div>
   );
 }

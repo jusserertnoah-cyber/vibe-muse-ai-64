@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      credit_purchases: {
+        Row: {
+          amount_cents: number
+          created_at: string | null
+          currency: string
+          environment: string
+          id: string
+          price_id: string
+          scans_granted: number
+          status: string
+          stripe_session_id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string | null
+          currency?: string
+          environment?: string
+          id?: string
+          price_id: string
+          scans_granted: number
+          status?: string
+          stripe_session_id: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string | null
+          currency?: string
+          environment?: string
+          id?: string
+          price_id?: string
+          scans_granted?: number
+          status?: string
+          stripe_session_id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           age: number | null
@@ -73,7 +115,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      add_credits: {
+        Args: { scans: number; target_user: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
