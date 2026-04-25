@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { SUPPORTED_LANGUAGES } from "@/i18n";
 
 const GENDERS: { id: Gender; labelKey: string; fallback: string }[] = [
@@ -288,6 +289,22 @@ export default function Onboarding() {
         email: cleaned,
       }),
     });
+  };
+
+  const signInWithGoogle = async () => {
+    setBusy(true);
+    if (!loginOnly) {
+      savePending({ lang, email: email.trim().toLowerCase(), firstName, gender, heightCm, weightKg, age, city });
+    }
+    const { error } = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: `${getAuthRedirectBaseUrl()}/onboarding`,
+    });
+    if (error) {
+      setBusy(false);
+      toast.error(t("onboarding.email.errorTitle", { defaultValue: "Connexion impossible" }), {
+        description: error.message,
+      });
+    }
   };
 
   if (loading) return null;
