@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import type { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { VibeLogo } from "@/components/vibe/VibeLogo";
@@ -12,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { SUPPORTED_LANGUAGES } from "@/i18n";
 
 const GENDERS: { id: Gender; labelKey: string; fallback: string }[] = [
@@ -28,6 +30,7 @@ const PENDING_KEY = "vibe.onboarding.pending.v1";
 
 type PendingOnboarding = {
   lang?: string;
+  email?: string;
   firstName?: string;
   gender?: Gender | null;
   heightCm?: string;
@@ -50,6 +53,56 @@ const clearPending = () => {
 };
 
 const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
+
+const encodePending = (pending: PendingOnboarding) => {
+  try {
+    return btoa(encodeURIComponent(JSON.stringify(pending)));
+  } catch {
+    return "";
+  }
+};
+
+const loadPendingFromUrl = (): PendingOnboarding | null => {
+  try {
+    const encoded = new URLSearchParams(window.location.search).get("pending");
+    if (!encoded) return null;
+    return JSON.parse(decodeURIComponent(atob(encoded))) as PendingOnboarding;
+  } catch {
+    return null;
+  }
+};
+
+const getAuthRedirectBaseUrl = () => {
+  const isProd = window.location.hostname.endsWith(".lovable.app") &&
+    !window.location.hostname.startsWith("id-preview--");
+  return isProd ? window.location.origin : "https://vibe-muse-ai-64.lovable.app";
+};
+
+const readPendingFromUser = (user: User): PendingOnboarding | null => {
+  const meta = user.user_metadata ?? {};
+  const raw = (meta.onboarding ?? meta.vibe_onboarding) as Partial<PendingOnboarding> | undefined;
+  const pending = raw && typeof raw === "object" ? raw : meta;
+  const firstName = typeof pending.firstName === "string"
+    ? pending.firstName
+    : typeof meta.first_name === "string"
+      ? meta.first_name
+      : undefined;
+
+  if (!firstName && !pending.gender) return null;
+
+  return {
+    lang: typeof pending.lang === "string" ? pending.lang : undefined,
+    email: user.email ?? undefined,
+    firstName,
+    gender: pending.gender === "femme" || pending.gender === "homme" || pending.gender === "unisexe"
+      ? pending.gender
+      : null,
+    heightCm: typeof pending.heightCm === "string" ? pending.heightCm : undefined,
+    weightKg: typeof pending.weightKg === "string" ? pending.weightKg : undefined,
+    age: typeof pending.age === "string" ? pending.age : undefined,
+    city: typeof pending.city === "string" ? pending.city : undefined,
+  };
+};
 
 export default function Onboarding() {
   const navigate = useNavigate();
@@ -88,7 +141,7 @@ export default function Onboarding() {
         // First-time user: récupère les réponses sauvegardées avant l'envoi
         // du magic link (le clic sur le lien ouvre souvent un nouvel onglet,
         // donc le state React est vide).
-        const pending = loadPending();
+        const pending = loadPending() ?? loadPendingFromUrl() ?? readPendingFromUser(session.user);
         if (pending) {
           if (pending.lang) setLang(pending.lang);
           if (pending.firstName) setFirstName(pending.firstName);
@@ -222,23 +275,23 @@ export default function Onboarding() {
       return;
     }
     setBusy(true);
+    const pendingData = { lang, email: cleaned, firstName, gender, heightCm, weightKg, age, city };
     // Sauvegarde les réponses pour qu'elles survivent à l'ouverture du
     // magic link dans un nouvel onglet / une nouvelle session.
     if (!loginOnly) {
-      savePending({ lang, firstName, gender, heightCm, weightKg, age, city });
+      savePending(pendingData);
     }
-    // En prod (mobile inclus), on force l'URL publiée stable plutôt que
-    // window.location.origin (qui pointerait vers un preview Lovable).
-    const isProd = window.location.hostname.endsWith(".lovable.app") &&
-      !window.location.hostname.startsWith("id-preview--");
-    const baseUrl = isProd
-      ? window.location.origin
-      : "https://vibe-muse-ai-64.lovable.app";
+    const baseUrl = getAuthRedirectBaseUrl();
+    const pendingParam = !loginOnly ? `?pending=${encodeURIComponent(encodePending(pendingData))}` : "";
     const { error } = await supabase.auth.signInWithOtp({
       email: cleaned,
       options: {
-        emailRedirectTo: `${baseUrl}/onboarding`,
+        emailRedirectTo: `${baseUrl}/onboarding${pendingParam}`,
         shouldCreateUser: !loginOnly,
+        data: loginOnly ? undefined : {
+          first_name: firstName.trim(),
+          onboarding: pendingData,
+        },
       },
     });
     setBusy(false);
@@ -255,6 +308,25 @@ export default function Onboarding() {
         email: cleaned,
       }),
     });
+  };
+
+  const signInWithGoogle = async () => {
+    setBusy(true);
+    if (!loginOnly) {
+      savePending({ lang, email: email.trim().toLowerCase(), firstName, gender, heightCm, weightKg, age, city });
+    }
+    const pendingParam = !loginOnly
+      ? `?pending=${encodeURIComponent(encodePending({ lang, email: email.trim().toLowerCase(), firstName, gender, heightCm, weightKg, age, city }))}`
+      : "";
+    const { error } = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: `${getAuthRedirectBaseUrl()}/onboarding${pendingParam}`,
+    });
+    if (error) {
+      setBusy(false);
+      toast.error(t("onboarding.email.errorTitle", { defaultValue: "Connexion impossible" }), {
+        description: error.message,
+      });
+    }
   };
 
   if (loading) return null;
@@ -493,6 +565,15 @@ export default function Onboarding() {
                     {busy
                       ? t("onboarding.email.sending", { defaultValue: "Envoi…" })
                       : t("onboarding.email.receive", { defaultValue: "Recevoir le lien" })}
+                  </Button>
+                  <Button
+                    onClick={signInWithGoogle}
+                    disabled={busy}
+                    variant="outline"
+                    className="h-14 w-full rounded-2xl text-base"
+                  >
+                    <span className="mr-2 font-semibold" aria-hidden="true">G</span>
+                    {t("onboarding.email.google", { defaultValue: "Continuer avec Google" })}
                   </Button>
                   <p className="text-[10px] text-muted-foreground">
                     {t("onboarding.email.legal", {
