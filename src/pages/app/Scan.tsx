@@ -528,6 +528,71 @@ export default function Scan() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Étape contexte : occasion / situation avant l'analyse */}
+      <AlertDialog open={contextOpen} onOpenChange={(o) => { if (!loading) setContextOpen(o); }}>
+        <AlertDialogContent className="max-h-[85vh] overflow-y-auto">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Pour quelle occasion ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Dis à VIBE où tu vas porter cette tenue. Plus de contexte = conseils plus précis.
+              <span className="mt-1 block text-xs text-muted-foreground">
+                La météo est récupérée automatiquement.
+              </span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <div className="space-y-4">
+            <div className="flex flex-wrap gap-2">
+              {OCCASION_PRESETS.map((p) => {
+                const active = occasion === p;
+                return (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => setOccasion(active ? "" : p)}
+                    className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
+                      active
+                        ? "bg-foreground text-background shadow-card"
+                        : "bg-secondary text-foreground hover:bg-secondary/80"
+                    }`}
+                  >
+                    {p}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-xs uppercase tracking-widest text-muted-foreground">
+                Détails (optionnel)
+              </label>
+              <Textarea
+                value={occasionNote}
+                onChange={(e) => setOccasionNote(e.target.value.slice(0, 200))}
+                placeholder="Ex : dîner chic en intérieur, je veux paraître élégant sans en faire trop."
+                className="min-h-[80px] rounded-2xl"
+              />
+              <p className="mt-1 text-[10px] text-muted-foreground">{occasionNote.length}/200</p>
+            </div>
+          </div>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={loading}>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={loading || !dataUrl}
+              onClick={() => {
+                if (!dataUrl) return;
+                setContextOpen(false);
+                analyze(dataUrl, { occasion: occasion || undefined, note: occasionNote || undefined });
+              }}
+            >
+              {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ArrowRight className="mr-2 h-4 w-4" />}
+              Lancer le Vibe Check
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
