@@ -300,7 +300,7 @@ export default function Scan() {
         <button
           onClick={() => !loading && setPickerOpen(true)}
           disabled={loading}
-          className="group relative mt-5 flex w-full flex-col items-center justify-center gap-3 overflow-hidden rounded-3xl bg-foreground px-6 py-8 text-background shadow-card transition-transform active:scale-[0.98] disabled:opacity-60"
+          className={`group relative ${preview ? "mt-5" : ""} flex w-full flex-col items-center justify-center gap-3 overflow-hidden rounded-3xl bg-foreground px-6 py-8 text-background shadow-card transition-transform active:scale-[0.98] disabled:opacity-60`}
         >
           <div
             className="pointer-events-none absolute inset-0 opacity-30"
