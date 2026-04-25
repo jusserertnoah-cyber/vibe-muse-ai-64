@@ -14,7 +14,9 @@
     "next": "Siguiente",
     "done": "Finalizar",
     "save": "Guardar",
-    "generate": "Generar mi look"
+    "generate": "Generar mi look",
+    "cancel": "Cancelar",
+    "loading": "Cargando…"
   },
   "scan": {
     "kicker": "Vibe Check",
@@ -38,7 +40,35 @@
     "creditRequiredHint": "Necesitas al menos 1 crédito para escanear tu look.",
     "creditInsufficient": "Crédito insuficiente",
     "creditTopup": "Recarga tus créditos para continuar.",
-    "readError": "No se puede leer la foto."
+    "readError": "No se puede leer la foto.",
+    "ctaScan": "ESCANEAR MI LOOK",
+    "instant": "Vibe Check instantáneo",
+    "specFit": "Corte",
+    "specColors": "Colores",
+    "spec2026": "Toque 2026",
+    "vibers": "+10 VIBERS",
+    "challengeLabel": "Reto",
+    "challengeValidated": "Validado",
+    "challengeNotDetected": "No detectado en la foto",
+    "shareCta": "Compartir mi look en el Feed",
+    "sharedDone": "Publicado en Top Vibes",
+    "scoreNeeded": "Se requiere 9.0+ para entrar en Top Vibes (actual: {{score}})",
+    "vibeAdvice": "La opinión de VIBE",
+    "stylistAudit": "Auditoría de estilista",
+    "auditFit": "Análisis del corte",
+    "auditColors": "Armonía de colores",
+    "auditTouch": "El toque 2026",
+    "completeOutfit": "Completa tu look",
+    "buy": "Comprar",
+    "challengeBonus": "🎉 ¡10 retos completados!",
+    "challengeBonusDesc": "1 escaneo gratis añadido a tu cuenta.",
+    "challengeOk": "✓ Reto \"{{name}}\" validado",
+    "challengeProgress": "{{n}}/10 hacia tu próximo escaneo gratis",
+    "shareLogin": "Inicia sesión para compartir en el feed.",
+    "shareDone": "¡Publicado en Top Vibes!",
+    "shareError": "No se puede compartir ahora.",
+    "launchVibe": "Lanzar el Vibe Check",
+    "previewAlt": "Tu look"
   },
   "missionStory": {
     "title": "Misión Story",
@@ -50,10 +80,10 @@
     "verifying": "Verificación antifraude en curso…",
     "verifyingShort": "Verificando…",
     "uploading": "Preparando la imagen…",
-    "scanGranted": "+1 escaneo acreditado 🎉 ¡Bravo, 5 stories validadas!",
+    "scanGranted": "+1 escaneo acreditado 🎉 ¡Bien hecho, 5 stories validadas!",
     "storyValidated": "Story validada. ¡Vuelve mañana!",
     "rejected": "Story rechazada",
-    "errorHint": "Inténtalo con una story pública real con @vibe.",
+    "errorHint": "Inténtalo con una story pública real etiquetando @vibe.",
     "uploadError": "Error al enviar.",
     "cooldownTitle": "Vuelve más tarde",
     "cooldownDesc": "Próxima misión en {{time}}.",
@@ -61,11 +91,12 @@
     "upload": "Subir mi story",
     "tomorrow": "Vuelve mañana",
     "errors": {
-      "not_a_story": "No es una story activa. Envía una captura de una story publicada en Instagram/TikTok.",
-      "no_outfit": "No se detecta look en la story.",
-      "missing_tag": "No se encuentra la etiqueta @vibe. Añádela a tu story.",
+      "not_a_story": "No es una story activa. Envía una captura de una story de Instagram o TikTok publicada.",
+      "no_outfit": "No se detectó ningún look en la story.",
+      "missing_tag": "No se encontró la etiqueta @vibe. Añádela en tu story.",
       "close_friends": "Las stories de Mejores amigos no cuentan.",
-      "duplicate": "Esta story es demasiado parecida a una anterior.",
+      "not_public": "Story no pública: deben verse las visualizaciones (no un borrador).",
+      "duplicate": "Esta story se parece demasiado a una anterior.",
       "rate_limited": "Demasiadas solicitudes, inténtalo en un minuto.",
       "payment_required": "Créditos de IA agotados.",
       "ai_error": "Verificación imposible. Inténtalo de nuevo."
@@ -75,13 +106,13 @@
     "title": "Perfil",
     "creditsScans": "Créditos de escaneo",
     "rechargeTitle": "Recarga tus créditos",
-    "rechargeHint": "Compra packs de escaneos desde 2 €. Sin suscripción, sin caducidad.",
+    "rechargeHint": "Compra packs desde 2 €. Sin suscripción, sin caducidad.",
     "viewPacks": "Ver packs",
     "myScans": "Mis escaneos",
     "scansEmpty": "Tus escaneos aparecerán aquí.",
     "viewAll": "Ver todo",
     "settings": "Ajustes",
-    "reset": "Reiniciar perfil",
+    "reset": "Restablecer perfil",
     "signOut": "Cerrar sesión"
   },
   "settings": {
@@ -96,7 +127,7 @@
     "themeHint": "Elige el color de acento. La base sigue siendo crema, blanco y negro.",
     "credits": "Créditos de escaneo",
     "creditsBalance": "Saldo",
-    "creditsHint": "Sin suscripción: compras escaneos por pack, no caducan.",
+    "creditsHint": "Sin suscripción: compras escaneos por unidad, no caducan.",
     "buyCredits": "Comprar créditos",
     "preferences": "Preferencias",
     "morningTip": "Consejo del tiempo por la mañana",
@@ -105,7 +136,7 @@
     "imperial": "Imperial",
     "legal": "Legal y soporte",
     "privacy": "Política de privacidad",
-    "terms": "Términos",
+    "terms": "Condiciones",
     "delete": "Eliminar mi cuenta",
     "saved": "Cambios guardados"
   },
@@ -114,10 +145,26 @@
     "vibers": "Vibers",
     "smartCloset": "Smart Closet",
     "closetEmpty": "Tu vestidor está vacío. Añade prendas para sugerencias a medida.",
-    "addPiece": "Añadir una prenda",
+    "addPiece": "Añadir prenda",
     "history": "Historial",
     "myStats": "Mis estadísticas",
-    "location": "Ubicación"
+    "location": "Ubicación",
+    "credits": "Créditos",
+    "dailyChallenge": "Reto del día",
+    "scanReward": "10/10 = escaneo gratis",
+    "weather": {
+      "storm": "Tormenta a la vista. Quédate a cubierto o saca el trench impermeable.",
+      "snow": "Está nevando. Abrigo cálido, bufanda de punto y botas — modo cocoon.",
+      "rain": "Lluvia en el menú. Trench largo, botines de cuero y un paraguas elegante.",
+      "fog": "Niebla densa. Capas oscuras, bufanda XXL y silueta misteriosa.",
+      "windy": "Viento a {{wind}} km/h. Evita las prendas voladoras, apuesta por cortes ajustados.",
+      "coldCloud": "Frío y nublado. Jersey grueso + abrigo largo, ambiente sobrio.",
+      "cold": "Hace frío. Capas inteligentes: camiseta fina, jersey, abrigo estructurado.",
+      "hot": "Hace calor. Lino, algodón ligero, tonos claros — respira con estilo.",
+      "cloud": "Cielo nublado. Perfecto para tonos neutros y un blazer bien cortado.",
+      "sun": "Buen tiempo. Saca la prenda que te haga sentir bien, la luz natural está al máximo.",
+      "featuredAddon": "¿Y si te pones tu {{piece}} hoy?"
+    }
   },
   "dressing": {
     "title": "Compón tu look",
@@ -127,46 +174,46 @@
     "generating": "Componiendo tu look…",
     "generate": "Generar mi look",
     "rateLimited": "Demasiadas solicitudes. Inténtalo en un minuto.",
-    "paymentRequired": "Créditos de IA agotados. Recarga.",
+    "paymentRequired": "Créditos de IA agotados. Recarga tus créditos.",
     "error": "Generación imposible. Inténtalo de nuevo.",
     "closetUsed": "Se usarán {{count}} prendas de tu Vibe Closet."
   },
   "paywall": {
     "title": "Recarga tus créditos",
-    "subtitle": "1 crédito = 1 escaneo IA completo (fit, colores, toque 2026, shopping).",
+    "subtitle": "1 crédito = 1 escaneo IA completo (corte, colores, toque 2026, lista de compras).",
     "back": "Atrás",
     "paid": "¡Pago confirmado! Tus créditos se están añadiendo."
   },
   "onboarding": {
-    "haveAccount": "Ya tengo cuenta → Iniciar sesión",
-    "welcome": "Bienvenido {{name}} ✨",
-    "welcomeBack": "Bienvenido de nuevo {{name}} ✨",
-    "finishProfile": "Completa tu perfil para continuar.",
+    "haveAccount": "Ya tengo una cuenta → Iniciar sesión",
+    "welcome": "Bienvenida {{name}} ✨",
+    "welcomeBack": "Bienvenida de nuevo {{name}} ✨",
+    "finishProfile": "Termina tu perfil para continuar.",
     "language": {
       "title": "Elige tu idioma",
-      "subtitle": "Podrás cambiarlo en cualquier momento desde los ajustes."
+      "subtitle": "Puedes cambiarlo en cualquier momento desde los ajustes."
     },
     "name": {
-      "title": "Bienvenido. ¿Cómo te llamas?",
+      "title": "Bienvenida. ¿Cómo te llamas?",
       "subtitle": "Tu nombre me ayuda a aconsejarte como una amiga estilista.",
       "placeholder": "Tu nombre"
     },
     "gender": {
-      "title": "Te identificas como?",
+      "title": "¿Cómo te identificas?",
       "femme": "Mujer",
       "homme": "Hombre",
-      "unisex": "No binario / Unisex"
+      "unisex": "No binarie / Unisex"
     },
     "morpho": {
-      "title": "Tu morfología?",
-      "subtitle": "Tus medidas nos ayudan a ajustar mejor cortes y volúmenes para un look perfecto.",
+      "title": "¿Tu morfología?",
+      "subtitle": "Tus medidas nos ayudan a ajustar mejor cortes y volúmenes.",
       "height": "Altura (cm)",
       "weight": "Peso (kg)",
       "age": "Edad"
     },
     "location": {
       "title": "Activa la ubicación",
-      "subtitle": "VIBE analiza el clima de tu ciudad para que tu look sea práctico y con estilo.",
+      "subtitle": "VIBE consulta el clima de tu ciudad para que tu look sea práctico y con estilo.",
       "enable": "Activar ubicación",
       "unavailable": "Geolocalización no disponible en este navegador",
       "enabled": "Ubicación activada",
@@ -180,20 +227,315 @@
       "noCountry": "Ningún país.",
       "receive": "Recibir el código",
       "sending": "Enviando…",
-      "legal": "Al continuar, aceptas las Condiciones y la Política de Privacidad.",
+      "legal": "Al continuar, aceptas las Condiciones y la Política de privacidad.",
       "codeTitle": "Introduce el código",
       "codeSentTo": "Código enviado a",
       "verifying": "Verificando…",
-      "enter": "Entrar a VIBE",
-      "resend": "Reenviar código",
+      "enter": "Entrar en VIBE",
+      "resend": "Reenviar el código",
       "invalidTitle": "Número inválido",
-      "invalidDesc": "Comprueba el país y el número introducido.",
-      "demoTitle": "Modo demo",
-      "demoDesc": "SMS no conectado todavía — puedes continuar.",
+      "invalidDesc": "Comprueba el país y el número.",
+      "demoTitle": "Modo demo activado",
+      "demoDesc": "El SMS aún no está conectado — puedes continuar.",
       "sentTitle": "Código enviado",
       "sentDesc": "Revisa tus SMS en {{phone}}",
       "codeInvalidTitle": "Código inválido",
       "codeInvalidDesc": "Comprueba el código recibido por SMS."
+    }
+  },
+  "legal": {
+    "kicker": "Legal",
+    "back": "Atrás",
+    "lastUpdated": "Última actualización: {{date}}",
+    "privacy": {
+      "title": "Política de privacidad",
+      "updated": "24 de abril de 2026",
+      "intro": "En Vibe, tu privacidad es esencial. Esta política explica qué datos recopilamos, por qué y cómo mantienes el control.",
+      "h1": "1. Datos recopilados",
+      "l1a": "Cuenta: nombre, correo, contraseña (cifrada).",
+      "l1b": "Perfil de estilo: edad, altura, peso, estilos preferidos, vibes, lugares frecuentados.",
+      "l1c": "Fotos del escaneo: enviadas temporalmente a nuestra IA para análisis.",
+      "l1d": "Datos técnicos: dispositivo, idioma, registros de errores anonimizados.",
+      "l1e": "Pagos: gestionados por Stripe, no guardamos datos bancarios.",
+      "h2": "2. Uso",
+      "l2a": "Proporcionar el análisis estilístico IA y personalizar tus recomendaciones.",
+      "l2b": "Gestionar tu cuenta, créditos e historial de escaneos.",
+      "l2c": "Mejorar la calidad de los modelos (de forma agregada y anonimizada).",
+      "l2d": "Seguridad, prevención del fraude, obligaciones legales.",
+      "h3": "3. Fotos e IA",
+      "p3": "Tus fotos se envían a nuestros proveedores de IA (Google Gemini, OpenAI) solo para generar el análisis solicitado. No se utilizan para entrenar sus modelos y se eliminan tras el procesamiento.",
+      "h4": "4. Compartición",
+      "p4": "Nunca vendemos tus datos. Solo se comparten con: proveedores de hosting, Stripe, proveedores de IA y autoridades si la ley lo exige.",
+      "h5": "5. Conservación",
+      "p5": "Tus datos se conservan mientras tu cuenta esté activa. Puedes eliminarla en Ajustes → Eliminar mi cuenta. Los datos se borran en 30 días, salvo obligación legal.",
+      "h6": "6. Tus derechos (RGPD)",
+      "l6a": "Acceso, rectificación, eliminación, portabilidad.",
+      "l6b": "Oposición al tratamiento, limitación.",
+      "l6c": "Reclamación ante tu autoridad de protección de datos.",
+      "h7": "7. Seguridad",
+      "p7": "Conexión HTTPS, contraseñas con hash, acceso a datos restringido por reglas Row-Level Security.",
+      "h8": "8. Menores",
+      "p8": "Vibe no está destinada a menores de 13 años.",
+      "h9": "9. Contacto",
+      "p9": "Para cualquier pregunta: "
+    },
+    "terms": {
+      "title": "Condiciones generales de uso",
+      "updated": "24 de abril de 2026",
+      "intro": "Bienvenida a Vibe. Al usar la app, aceptas estas Condiciones. Léelas con atención.",
+      "h1": "1. Servicio",
+      "p1": "Vibe es una app móvil de coaching de estilo basada en IA. Ofrece: análisis de looks (escaneo), inspiraciones, consejos personalizados y compra de créditos.",
+      "h2": "2. Cuenta",
+      "l2a": "Debes tener al menos 13 años para crear una cuenta.",
+      "l2b": "Proporcionas información exacta y proteges tu acceso.",
+      "l2c": "Eres responsable de cualquier actividad desde tu cuenta.",
+      "h3": "3. Créditos y pagos",
+      "l3a": "1 crédito = 1 escaneo IA completo.",
+      "l3b": "Los créditos se compran en packs (Starter, Vibe Pack, Estilista, Premium) vía Stripe.",
+      "l3c": "Los créditos están vinculados a tu cuenta y no caducan.",
+      "l3d": "Los créditos no son reembolsables ni convertibles en dinero, salvo obligación legal.",
+      "h4": "4. Derecho de desistimiento",
+      "p4": "Conforme a la legislación aplicable, la compra de créditos es contenido digital ejecutado de inmediato con tu consentimiento expreso. Renuncias al derecho de desistimiento al usar el primer crédito.",
+      "h5": "5. Uso aceptable",
+      "l5a": "Sin contenido ilegal, odioso, sexualmente explícito o que dañe a otros.",
+      "l5b": "Sin escanear personas sin su consentimiento.",
+      "l5c": "Sin intentos de elusión, scraping o ingeniería inversa.",
+      "h6": "6. Propiedad intelectual",
+      "p6": "Vibe, su logo, diseño y código están protegidos. Conservas los derechos sobre tus fotos pero nos otorgas una licencia para procesarlas en el servicio.",
+      "h7": "7. IA y advertencia",
+      "p7": "Los análisis los generan modelos de IA. Son indicativos y subjetivos, sin garantía de exactitud. No constituyen consejo profesional.",
+      "h8": "8. Afiliación",
+      "p8": "Los enlaces de compra pueden ser de afiliación. El precio que pagas no se ve afectado.",
+      "h9": "9. Suspensión y rescisión",
+      "p9": "Podemos suspender tu cuenta en caso de incumplimiento. Puedes eliminarla en cualquier momento desde Ajustes.",
+      "h10": "10. Responsabilidad",
+      "p10": "El servicio se ofrece «tal cual». No somos responsables de daños indirectos, dentro de los límites legales.",
+      "h11": "11. Ley aplicable",
+      "p11": "Ley francesa. Tribunales competentes: los del domicilio del editor.",
+      "h12": "12. Contacto",
+      "p12": "Para cualquier pregunta: "
+    }
+  },
+  "scanDialog": {
+    "shareTitle": "Compartir en Top Vibes",
+    "shareDesc": "Al compartir confirmas ser autora de la foto y autorizas a Vibe a mostrarla públicamente en el ranking semanal. La foto se eliminará en el reset semanal (salvo si terminas n.º 1, en cuyo caso pasa al Hall of Fame).",
+    "shareConfirm": "Acepto y comparto",
+    "pickerTitle": "Escanear mi look",
+    "pickerDesc": "Hazte una foto de cuerpo entero (luz natural) o importa una existente.",
+    "pickerCamera": "Cámara",
+    "pickerImport": "Importar foto",
+    "occasionTitle": "¿Para qué ocasión?",
+    "occasionDesc": "Dile a Vibe dónde llevarás este look. Más contexto = consejos más precisos.",
+    "occasionWeather": "El tiempo se obtiene automáticamente.",
+    "occasionDetails": "Detalles (opcional)",
+    "occasionPlaceholder": "Ej.: cena chic en interior, quiero parecer elegante sin pasarme.",
+    "occasionRun": "Iniciar el análisis"
+  },
+  "stylistChat": {
+    "scanIntro": "Veredicto dado. Hazme tus preguntas — color, corte, accesorio, alternativa para comprar.",
+    "scanSug1": "¿Qué color de zapato poner?",
+    "scanSug2": "¿Cómo llevarlo en invierno?",
+    "scanSug3": "¿Una alternativa más chic?",
+    "title": "Chat de estilista",
+    "loginRequired": "Inicia sesión para hablar con la estilista.",
+    "rateLimited": "Demasiados mensajes. Espera un minuto.",
+    "creditsExhausted": "Créditos de IA agotados.",
+    "error": "La estilista no responde. Inténtalo de nuevo.",
+    "typing": "escribiendo…",
+    "placeholder": "Haz tu pregunta…",
+    "send": "Enviar"
+  },
+  "challenge": {
+    "step1": "Antes de hacerte la foto, integra el elemento del reto en tu look.",
+    "step2": "El objeto debe ser claramente visible en la foto (la IA lo verifica).",
+    "step3": "Lanza tu escaneo: si se valida, el reto cuenta para el contador.",
+    "howItWorks": "Cómo funciona",
+    "whatAILooksFor": "Lo que busca la IA",
+    "kicker": "Reto del día",
+    "reward": "Recompensa",
+    "rewardLine": "10 retos completados = 1 escaneo gratis",
+    "progress_one": "{{n}}/10 — falta {{r}} reto para tu próximo escaneo gratis.",
+    "progress_other": "{{n}}/10 — faltan {{r}} retos para tu próximo escaneo gratis.",
+    "scanCta": "Escanear mi look"
+  },
+  "weatherLabel": {
+    "0": "cielo despejado",
+    "1": "cielo claro",
+    "2": "parcialmente nublado",
+    "3": "cubierto",
+    "45": "niebla",
+    "48": "niebla helada",
+    "51": "llovizna ligera",
+    "53": "llovizna",
+    "55": "llovizna densa",
+    "61": "lluvia ligera",
+    "63": "lluvia",
+    "65": "lluvia fuerte",
+    "66": "lluvia helada",
+    "67": "lluvia helada fuerte",
+    "71": "nieve ligera",
+    "73": "nieve",
+    "75": "nieve fuerte",
+    "80": "chubascos",
+    "81": "chubascos",
+    "82": "chubascos fuertes",
+    "95": "tormenta",
+    "96": "tormenta con granizo",
+    "99": "tormenta violenta",
+    "fallback": "tiempo variable"
+  },
+  "occasion": {
+    "date": "Cita",
+    "evening": "Noche",
+    "work": "Trabajo / Oficina",
+    "brunch": "Brunch / Café",
+    "wedding": "Boda",
+    "friends": "Salida con amigos",
+    "romantic": "Cita romántica",
+    "school": "Clase / Universidad",
+    "sport": "Deporte",
+    "travel": "Viaje"
+  },
+  "challenges": {
+    "red-touch": {
+      "name": "Un toque de rojo",
+      "hint": "Un detalle rojo visible (bolso, bufanda, calcetines, top…)",
+      "detect": "un elemento claramente rojo (prenda o accesorio) visible en la foto"
+    },
+    "silver-acc": {
+      "name": "Joya plateada",
+      "hint": "Joya, cadena o pulsera plateada bien visible",
+      "detect": "al menos una joya o accesorio plateado visible"
+    },
+    "gold-acc": {
+      "name": "Joya dorada",
+      "hint": "Joya, cadena o pulsera dorada bien visible",
+      "detect": "al menos una joya o accesorio dorado visible"
+    },
+    "watch": {
+      "name": "Un buen reloj",
+      "hint": "Reloj visible en la muñeca",
+      "detect": "un reloj visible en la muñeca"
+    },
+    "color-belt": {
+      "name": "Cinturón de color",
+      "hint": "Cinturón rojo, amarillo, azul o verde bien visible",
+      "detect": "un cinturón de color vivo (rojo, amarillo, azul, verde) claramente visible"
+    },
+    "white-sneaker": {
+      "name": "Zapatillas blancas",
+      "hint": "Un par de zapatillas blancas en los pies",
+      "detect": "zapatillas blancas en los pies"
+    },
+    "white-shirt": {
+      "name": "Camisa blanca",
+      "hint": "Una camisa blanca bien visible",
+      "detect": "una camisa blanca claramente visible"
+    },
+    "denim": {
+      "name": "Prenda vaquera",
+      "hint": "Pantalón, falda o chaqueta vaquera",
+      "detect": "una prenda vaquera (denim) claramente visible"
+    },
+    "bag": {
+      "name": "Bolso",
+      "hint": "Bolso de mano o bandolera",
+      "detect": "un bolso de mano o bandolera claramente visible"
+    },
+    "sunglasses": {
+      "name": "Gafas de sol",
+      "hint": "Gafas de sol puestas",
+      "detect": "gafas de sol puestas en la cara o en la cabeza"
+    },
+    "shorts": {
+      "name": "Pantalón corto",
+      "hint": "Bermudas o pantalón pirata",
+      "detect": "pantalones cortos, bermudas o pirata visibles"
+    },
+    "cap": {
+      "name": "Gorra o sombrero",
+      "hint": "Gorra de béisbol, gorro pescador o sombrero de paja",
+      "detect": "una gorra, gorro pescador o sombrero visible en la cabeza"
+    },
+    "linen": {
+      "name": "Prenda de lino",
+      "hint": "Camisa o pantalón de lino",
+      "detect": "una prenda claramente de lino (camisa, pantalón, vestido)"
+    },
+    "sandals": {
+      "name": "Sandalias",
+      "hint": "Sandalias o chanclas en los pies",
+      "detect": "sandalias o chanclas visibles en los pies"
+    },
+    "tee-white": {
+      "name": "Camiseta blanca",
+      "hint": "Camiseta blanca lisa",
+      "detect": "una camiseta blanca lisa claramente visible"
+    },
+    "denim-jacket": {
+      "name": "Chaqueta vaquera",
+      "hint": "Una chaqueta vaquera puesta",
+      "detect": "una chaqueta vaquera (trucker) claramente visible"
+    },
+    "blazer": {
+      "name": "Blazer",
+      "hint": "Blazer o americana",
+      "detect": "un blazer o chaqueta de traje claramente visible"
+    },
+    "leather-jacket": {
+      "name": "Chaqueta de cuero",
+      "hint": "Chaqueta de cuero negra o marrón",
+      "detect": "una chaqueta de cuero claramente visible"
+    },
+    "hoodie": {
+      "name": "Sudadera con capucha",
+      "hint": "Sudadera con capucha bien visible",
+      "detect": "una sudadera con capucha (hoodie) claramente visible"
+    },
+    "cargo": {
+      "name": "Pantalón cargo",
+      "hint": "Pantalón con bolsillos cargo",
+      "detect": "un pantalón cargo (con bolsillos laterales visibles)"
+    },
+    "loafers": {
+      "name": "Mocasines",
+      "hint": "Mocasines o derbies de cuero",
+      "detect": "mocasines o derbies de cuero visibles"
+    },
+    "long-coat": {
+      "name": "Abrigo largo",
+      "hint": "Abrigo largo hasta las rodillas",
+      "detect": "un abrigo largo (que llega al menos a las rodillas) claramente visible"
+    },
+    "trench": {
+      "name": "Trench",
+      "hint": "Trench beige o caqui",
+      "detect": "un trench claramente visible"
+    },
+    "scarf": {
+      "name": "Bufanda",
+      "hint": "Bufanda visible alrededor del cuello",
+      "detect": "una bufanda claramente visible alrededor del cuello"
+    },
+    "knit-sweater": {
+      "name": "Jersey de punto grueso",
+      "hint": "Jersey de punto grueso",
+      "detect": "un jersey de punto grueso claramente visible"
+    },
+    "boots": {
+      "name": "Botines",
+      "hint": "Botines de cuero en los pies",
+      "detect": "botines (Chelsea) claramente visibles"
+    },
+    "beanie": {
+      "name": "Gorro",
+      "hint": "Gorro en la cabeza",
+      "detect": "un gorro claramente visible en la cabeza"
+    },
+    "turtleneck": {
+      "name": "Cuello alto",
+      "hint": "Cuello alto visible en el cuello",
+      "detect": "un cuello alto claramente visible en el cuello"
     }
   }
 }
