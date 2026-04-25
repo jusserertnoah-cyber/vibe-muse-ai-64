@@ -32,53 +32,62 @@ export const VibeLogo = ({
         aria-label="VIBE"
         role="img"
       >
-        <VIcon accent={accent} />
+        <VIcon accent={accent} idSuffix="i" />
       </svg>
     );
   }
 
   return (
     <svg
-      viewBox="0 0 100 130"
+      viewBox="0 0 100 132"
       xmlns="http://www.w3.org/2000/svg"
       className={cn("h-12 w-auto text-foreground", className)}
       aria-label="VIBE"
       role="img"
     >
-      <VIcon accent={accent} />
-      {/* Wordmark "VIBE" — typo géométrique massive, tracking serré */}
-      <g transform="translate(50 118)" textAnchor="middle">
-        <text
-          fill="currentColor"
-          fontFamily="Inter, system-ui, sans-serif"
-          fontWeight={900}
-          fontSize={18}
-          letterSpacing="0.18em"
-          style={{ fontStretch: "condensed" }}
-        >
-          VIBE
-        </text>
-      </g>
+      <VIcon accent={accent} idSuffix="f" />
+      {/* Wordmark "VIBE" — typo géométrique, tracking large façon couture */}
+      <text
+        x="50"
+        y="124"
+        textAnchor="middle"
+        fill="currentColor"
+        fontFamily="Inter, system-ui, sans-serif"
+        fontWeight={800}
+        fontSize={14}
+        letterSpacing="3"
+      >
+        VIBE
+      </text>
     </svg>
   );
 };
 
 /**
- * "V" sculpté : deux diagonales épaisses qui se rejoignent en pointe,
- * avec une encoche diagonale nette (accent éditorial signature).
- * Tracé en path unique (fill currentColor) pour rester lisible à 16px.
+ * "V" sculpté streetwear bold : deux trapèzes massifs qui se rejoignent
+ * en pointe, avec une coupe diagonale signature dans la pointe (mask).
+ * Couleur via currentColor → s'adapte au thème (text-foreground).
  */
-const VIcon = ({ accent }: { accent: boolean }) => (
-  <>
-    {/* Le V principal — forme pleine, ultra-grasse, coupe asymétrique en bas */}
-    <path
-      d="M8 14 H30 L50 78 L70 14 H92 L60 100 L58 96 L78 22 H72 L52 86 H48 L28 22 H22 L42 76 L40 80 Z"
-      fill="currentColor"
-    />
-    {/* Encoche diagonale signature dans la pointe du V */}
-    <path
-      d="M44 88 L56 88 L52 100 L48 100 Z"
-      fill={accent ? "hsl(var(--accent))" : "currentColor"}
-    />
-  </>
-);
+const VIcon = ({ accent, idSuffix }: { accent: boolean; idSuffix: string }) => {
+  const maskId = `vibe-cut-${idSuffix}`;
+  return (
+    <>
+      <defs>
+        <mask id={maskId}>
+          <rect width="100" height="100" fill="white" />
+          <polygon points="38,82 62,76 64,82 40,88" fill="black" />
+        </mask>
+      </defs>
+      <g mask={`url(#${maskId})`} fill="currentColor">
+        <polygon points="10,12 34,12 56,92 46,92" />
+        <polygon points="66,12 90,12 54,92 44,92" />
+      </g>
+      {accent && (
+        <polygon
+          points="38,82 62,76 64,82 40,88"
+          fill="hsl(var(--accent))"
+        />
+      )}
+    </>
+  );
+};
