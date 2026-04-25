@@ -140,7 +140,7 @@ RÈGLES DE FORME :
 4. Tu réponds STRICTEMENT en ${langName}, via la fonction tool fournie.
 
 BIBLE STYLES : "Vintage", "Old Money", "Classique", "Sobre", "Sport", "Oversize", "Américain". Tu DOIS choisir UN style exact dans cette liste pour le champ "style".${contextBlock}${challengeBlock}
-${profileLine ? `\nProfil : ${profileLine}.` : ""}`;
+${profileLine ? `\nProfil : ${profileLine}.` : ""}
 
 ${outputRule}`;
 
