@@ -56,6 +56,33 @@ export type Database = {
         }
         Relationships: []
       }
+      device_claims: {
+        Row: {
+          created_at: string
+          device_id: string
+          email: string | null
+          id: string
+          scans_granted: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_id: string
+          email?: string | null
+          id?: string
+          scans_granted?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_id?: string
+          email?: string | null
+          id?: string
+          scans_granted?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       hall_of_fame: {
         Row: {
           archived_at: string
@@ -234,6 +261,14 @@ export type Database = {
       add_credits: {
         Args: { scans: number; target_user: string }
         Returns: undefined
+      }
+      claim_welcome_pack: {
+        Args: { p_device_id: string; p_email: string; p_user_id: string }
+        Returns: {
+          granted: boolean
+          reason: string
+          scans: number
+        }[]
       }
       consume_credit: { Args: never; Returns: boolean }
       reward_challenge: {
