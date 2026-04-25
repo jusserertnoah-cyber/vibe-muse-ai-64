@@ -272,22 +272,21 @@ export default function Scan() {
           />
         ) : (
           <div className="flex flex-col items-center gap-4 py-4 text-center">
-            {/* Mirror selfie hero — illustre la pose attendue */}
-            <div className="relative">
-              <img
-                src={scanMirrorSelfie}
-                alt="Selfie miroir tenue dressing"
-                width={1024}
-                height={1024}
-                loading="lazy"
-                className="h-72 w-56 rounded-2xl object-cover shadow-card"
-              />
+            {/* Placeholder neutre — pas de personne illustrée */}
+            <div
+              className="relative flex h-56 w-56 items-center justify-center rounded-3xl"
+              style={{
+                background:
+                  "radial-gradient(circle at 50% 35%, rgba(206,255,0,0.15) 0%, transparent 65%), hsl(var(--secondary))",
+              }}
+            >
               <div
-                className="absolute -right-3 -top-3 flex h-10 w-10 items-center justify-center rounded-full text-black shadow-brand"
-                style={{ backgroundColor: "#CEFF00" }}
+                className="flex h-20 w-20 items-center justify-center rounded-full"
+                style={{ backgroundColor: "#CEFF00", boxShadow: "0 0 30px rgba(206,255,0,0.45)" }}
               >
-                <Sparkles className="h-5 w-5" strokeWidth={2} />
+                <Camera className="h-9 w-9 text-black" strokeWidth={1.8} />
               </div>
+              <div className="pointer-events-none absolute inset-3 rounded-2xl border border-dashed border-foreground/15" />
             </div>
             <p className="max-w-xs text-sm leading-snug text-muted-foreground">
               {t("scan.hint")}
