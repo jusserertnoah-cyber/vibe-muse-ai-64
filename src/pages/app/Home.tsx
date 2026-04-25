@@ -5,14 +5,15 @@ import { getProfile } from "@/lib/profile";
 import { Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, Wind, MapPin, Camera, Zap, Flame } from "lucide-react";
 import { getCurrentWeather } from "@/lib/weather";
 import { MissionStory } from "@/components/vibe/MissionStory";
-import { getDailyChallenge } from "@/lib/challenges";
+import { audienceFromGender, getDailyChallenge } from "@/lib/challenges";
+import { DailyNotifCta } from "@/components/vibe/DailyNotifCta";
 
 export default function Home() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const profile = getProfile();
   const [weather, setWeather] = useState<{ temp: number; city?: string; label?: string; code?: number; wind?: number } | null>(null);
-  const challenge = getDailyChallenge();
+  const challenge = getDailyChallenge(audienceFromGender(profile?.gender));
 
   useEffect(() => {
     getCurrentWeather().then((w) => {
@@ -188,6 +189,8 @@ export default function Home() {
 
       {/* Mission Story — Jauge récompense */}
       <MissionStory />
+      {/* CTA notification 7h (s'auto-masque une fois activée) */}
+      <DailyNotifCta />
     </div>
   );
 }
