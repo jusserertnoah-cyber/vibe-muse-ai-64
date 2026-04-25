@@ -10,7 +10,7 @@ import { getTier } from "@/lib/tier";
 import { pushHistory } from "@/lib/history";
 import { toast } from "sonner";
 import { StylistChat } from "@/components/vibe/StylistChat";
-import { getDailyChallenge } from "@/lib/challenges";
+import { audienceFromGender, getDailyChallenge } from "@/lib/challenges";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -59,7 +59,10 @@ export default function Scan() {
   const [sharing, setSharing] = useState(false);
   const [shared, setShared] = useState(false);
   const [confirmShare, setConfirmShare] = useState(false);
-  const challenge = getDailyChallenge();
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const galleryRef = useRef<HTMLInputElement>(null);
+  const profileForChallenge = getProfile();
+  const challenge = getDailyChallenge(audienceFromGender(profileForChallenge?.gender));
 
   const onFile = async (f: File) => {
     setResult(null);
@@ -204,46 +207,75 @@ export default function Scan() {
             className="mx-auto h-72 rounded-2xl object-cover"
           />
         ) : (
-          <div className="flex flex-col items-center gap-4 py-10 text-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary">
-              <Camera className="h-7 w-7 text-foreground" strokeWidth={1.5} />
-            </div>
+          <div className="flex flex-col items-center gap-4 py-6 text-center">
             <p className="max-w-xs text-sm leading-snug text-muted-foreground">
               {t("scan.hint")}
             </p>
           </div>
         )}
+
+        {/* Inputs cachés : caméra (capture) + galerie */}
         <input
           ref={fileRef}
           type="file"
           accept="image/*"
           capture="environment"
           className="hidden"
-          onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            e.target.value = "";
+            if (f) onFile(f);
+          }}
         />
-        <div className="mt-5 flex gap-2">
-          <Button
-            onClick={() => fileRef.current?.click()}
-            disabled={loading}
-            className="h-14 flex-1 rounded-3xl bg-gradient-brand font-serif text-lg text-foreground hover:opacity-90 shadow-brand border-0"
+        <input
+          ref={galleryRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            e.target.value = "";
+            if (f) onFile(f);
+          }}
+        />
+
+        {/* Bouton noir façon Home : "SCANNER MA TENUE" */}
+        <button
+          onClick={() => !loading && setPickerOpen(true)}
+          disabled={loading}
+          className="group relative mt-5 flex w-full flex-col items-center justify-center gap-3 overflow-hidden rounded-3xl bg-foreground px-6 py-8 text-background shadow-card transition-transform active:scale-[0.98] disabled:opacity-60"
+        >
+          <div
+            className="pointer-events-none absolute inset-0 opacity-30"
+            style={{ background: "radial-gradient(circle at 50% 30%, #CEFF00 0%, transparent 60%)" }}
+          />
+          <div
+            className="relative flex h-16 w-16 items-center justify-center rounded-full"
+            style={{ backgroundColor: "#CEFF00", boxShadow: "0 0 30px rgba(206,255,0,0.6)" }}
           >
             {loading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="h-8 w-8 animate-spin text-black" />
             ) : (
-              <Upload className="mr-2 h-4 w-4" />
+              <Camera className="h-8 w-8 text-black" strokeWidth={2} />
             )}
-            {loading ? t("scan.loading") : preview ? t("scan.change") : t("scan.choose")}
+          </div>
+          <span className="relative font-serif text-2xl tracking-tight">
+            {loading ? t("scan.loading") : preview ? t("scan.change").toUpperCase() : "SCANNER MA TENUE"}
+          </span>
+          <span className="relative text-[10px] uppercase tracking-[0.25em] opacity-70">
+            Vibe Check instantané
+          </span>
+        </button>
+
+        {preview && !loading && result && (
+          <Button
+            variant="outline"
+            onClick={() => dataUrl && analyze(dataUrl)}
+            className="mt-3 h-12 w-full rounded-3xl"
+          >
+            {t("scan.rescore")}
           </Button>
-          {preview && !loading && result && (
-            <Button
-              variant="outline"
-              onClick={() => dataUrl && analyze(dataUrl)}
-              className="h-12 rounded-3xl"
-            >
-              {t("scan.rescore")}
-            </Button>
-          )}
-        </div>
+        )}
       </div>
 
       {result && (
@@ -384,6 +416,36 @@ export default function Scan() {
               {sharing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               J'accepte et je partage
             </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={pickerOpen} onOpenChange={setPickerOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Scanner ma tenue</AlertDialogTitle>
+            <AlertDialogDescription>
+              Prends-toi en photo en pied (lumière naturelle) ou importe une photo existante.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={() => { setPickerOpen(false); fileRef.current?.click(); }}
+              className="flex flex-col items-center gap-2 rounded-2xl bg-foreground p-4 text-background transition active:scale-[0.97]"
+            >
+              <Camera className="h-7 w-7" strokeWidth={1.6} />
+              <span className="font-serif text-sm">Appareil photo</span>
+            </button>
+            <button
+              onClick={() => { setPickerOpen(false); galleryRef.current?.click(); }}
+              className="flex flex-col items-center gap-2 rounded-2xl bg-secondary p-4 text-foreground transition active:scale-[0.97]"
+            >
+              <Upload className="h-7 w-7" strokeWidth={1.6} />
+              <span className="font-serif text-sm">Importer une photo</span>
+            </button>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

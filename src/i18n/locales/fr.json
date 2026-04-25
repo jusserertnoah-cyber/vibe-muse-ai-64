@@ -65,6 +65,7 @@
       "no_outfit": "Aucune tenue détectée sur la story.",
       "missing_tag": "Le tag @vibe est introuvable. Ajoute-le sur ta story.",
       "close_friends": "Les stories Amis proches ne comptent pas.",
+      "not_public": "Story non publique : on doit voir les vues / viewers (pas un brouillon ou la pellicule).",
       "duplicate": "Cette story ressemble trop à une déjà soumise.",
       "rate_limited": "Trop de demandes, réessaie dans une minute.",
       "payment_required": "Crédits IA épuisés.",

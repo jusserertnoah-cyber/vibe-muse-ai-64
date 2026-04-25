@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { lazy, Suspense, useEffect } from "react";
 import { applyTheme } from "@/lib/theme";
+import { initDailyChallengeNotif } from "@/lib/dailyNotif";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Onboarding from "./pages/Onboarding.tsx";
@@ -27,6 +28,8 @@ const queryClient = new QueryClient();
 const App = () => {
   useEffect(() => {
     applyTheme();
+    // Démarre la planif de la notif quotidienne 7h (no-op si pas opt-in).
+    initDailyChallengeNotif();
     const onStorage = (e: StorageEvent) => {
       if (!e.key || e.key === "vibe.profile.v1" || e.key === "vibe.theme.v1") applyTheme();
     };

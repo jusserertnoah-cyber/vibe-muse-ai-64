@@ -57,15 +57,28 @@ serve(async (req) => {
       {
         type: "text",
         text:
-          `Analyse cette capture d'écran. Réponds UNIQUEMENT via l'outil verify_story.\n` +
-          `Critères :\n` +
-          `1. is_story : true seulement si on voit clairement une UI de story Instagram OU TikTok ` +
-          `(barre de progression en haut, icônes vues/réponses, avatar+pseudo en haut).\n` +
-          `2. has_app_tag : true si tu détectes par OCR le mot "Vibe" ou "@vibe" ou un tag/mention de l'app de stylisme Vibe.\n` +
-          `3. is_close_friends : true SEULEMENT si tu vois l'icône cercle vert "Amis proches" Instagram.\n` +
-          `4. shows_outfit : true si une tenue/personne est visible.\n` +
-          `5. duplicate_index : si une des images de référence (recentImages) montre LA MÊME tenue ET LE MÊME décor à >90%, renvoie son index (0..n-1). Sinon -1.\n` +
-          `Sois strict mais juste.`,
+          `Analyse cette capture d'écran d'une story. Réponds UNIQUEMENT via l'outil verify_story.\n` +
+          `Sois TRÈS strict — c'est un système anti-fraude pour valider une vraie diffusion publique.\n\n` +
+          `1. is_story : true UNIQUEMENT si tu vois clairement l'UI native d'une story :\n` +
+          `   • Instagram : barres de progression fines en haut, avatar rond + pseudo + "il y a Xh" en haut, icônes (cœur/avion) en bas, "Activité"/"Vu par X" en bas à gauche.\n` +
+          `   • TikTok Story : barre du haut, pseudo + temps, indicateur "Story", icônes côté droit.\n` +
+          `   Une simple photo dans la pellicule = false. Un post feed = false.\n\n` +
+          `2. has_app_tag : true UNIQUEMENT si tu détectes par OCR un hashtag ou mention textuelle ` +
+          `clairement visible parmi : "#vibe", "#vibeapp", "@vibe", "@vibe.app", "vibe.app". ` +
+          `Le mot "vibe" tout seul (sans # ni @) ne suffit PAS. Si tu n'arrives pas à lire le tag, mets false.\n\n` +
+          `3. is_close_friends : true si l'un de ces indices est présent :\n` +
+          `   • Cercle vert "★ Amis proches" autour de l'avatar.\n` +
+          `   • Étoile verte ou label "Close Friends" / "Amis proches" visible.\n` +
+          `   • Bordure verte caractéristique de la story Close Friends.\n` +
+          `   Sinon false.\n\n` +
+          `4. has_public_views : true si tu vois un indicateur que la story est publique et vue par d'autres :\n` +
+          `   • Mention "Vu par N" / "Viewed by N" / "N vues" en bas.\n` +
+          `   • Liste de viewers (avatars empilés) en bas à gauche.\n` +
+          `   • Compteur de vues TikTok visible (œil + nombre).\n` +
+          `   Si rien de tout ça → false (probablement story brouillon, pellicule, ou screenshot avant publication).\n\n` +
+          `5. shows_outfit : true si une tenue/silhouette habillée est visible (pas juste un visage ou un objet).\n\n` +
+          `6. duplicate_index : si une des images de référence (recentImages) montre LA MÊME tenue ET le MÊME décor à >90%, renvoie son index (0..n-1). Sinon -1.\n\n` +
+          `Mets une raison courte et factuelle dans "reason".`,
       },
       { type: "image_url", image_url: { url: dataUrl } },
     ];
@@ -109,6 +122,7 @@ serve(async (req) => {
                     is_story: { type: "boolean" },
                     has_app_tag: { type: "boolean" },
                     is_close_friends: { type: "boolean" },
+                    has_public_views: { type: "boolean" },
                     shows_outfit: { type: "boolean" },
                     duplicate_index: { type: "integer" },
                     reason: { type: "string" },
@@ -117,6 +131,7 @@ serve(async (req) => {
                     "is_story",
                     "has_app_tag",
                     "is_close_friends",
+                    "has_public_views",
                     "shows_outfit",
                     "duplicate_index",
                     "reason",
@@ -172,6 +187,7 @@ serve(async (req) => {
     else if (!args.shows_outfit) { valid = false; code = "no_outfit"; }
     else if (!args.has_app_tag) { valid = false; code = "missing_tag"; }
     else if (args.is_close_friends) { valid = false; code = "close_friends"; }
+    else if (!args.has_public_views) { valid = false; code = "not_public"; }
     else if (typeof args.duplicate_index === "number" && args.duplicate_index >= 0) {
       valid = false; code = "duplicate";
     }
