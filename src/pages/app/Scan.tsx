@@ -419,6 +419,36 @@ export default function Scan() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <AlertDialog open={pickerOpen} onOpenChange={setPickerOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Scanner ma tenue</AlertDialogTitle>
+            <AlertDialogDescription>
+              Prends-toi en photo en pied (lumière naturelle) ou importe une photo existante.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={() => { setPickerOpen(false); fileRef.current?.click(); }}
+              className="flex flex-col items-center gap-2 rounded-2xl bg-foreground p-4 text-background transition active:scale-[0.97]"
+            >
+              <Camera className="h-7 w-7" strokeWidth={1.6} />
+              <span className="font-serif text-sm">Appareil photo</span>
+            </button>
+            <button
+              onClick={() => { setPickerOpen(false); galleryRef.current?.click(); }}
+              className="flex flex-col items-center gap-2 rounded-2xl bg-secondary p-4 text-foreground transition active:scale-[0.97]"
+            >
+              <Upload className="h-7 w-7" strokeWidth={1.6} />
+              <span className="font-serif text-sm">Importer une photo</span>
+            </button>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
