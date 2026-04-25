@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Heart, Loader2, Sparkles, Trophy, Medal, Timer, Flame } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/useSession";
-import { getDailyChallenge, nextResetMs } from "@/lib/challenges";
+import { audienceFromGender, getDailyChallenge, nextResetMs } from "@/lib/challenges";
+import { getProfile } from "@/lib/profile";
 import { toast } from "sonner";
 
 interface Post {
@@ -25,7 +26,10 @@ export default function TopVibes() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [myVotes, setMyVotes] = useState<Set<string>>(new Set());
-  const challenge = useMemo(() => getDailyChallenge(), []);
+  const challenge = useMemo(() => {
+    const p = getProfile();
+    return getDailyChallenge(audienceFromGender(p?.gender));
+  }, []);
   const [resetIn, setResetIn] = useState(nextResetMs());
 
   useEffect(() => {
@@ -97,11 +101,49 @@ export default function TopVibes() {
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>
       ) : posts.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-border bg-card p-10 text-center">
-          <Sparkles className="mx-auto mb-3 h-8 w-8 text-muted-foreground" strokeWidth={1.4} />
-          <p className="font-serif text-lg">Le classement est vide</p>
-          <p className="mt-1 text-sm text-muted-foreground">Score ≥ 9.0 pour participer.</p>
-        </div>
+        <>
+          {/* État vide engageant : on affiche quand même les sections */}
+          <section>
+            <h2 className="mb-2 flex items-center gap-2 font-serif text-xl">
+              <Trophy className="h-5 w-5 text-amber-500" /> Vibe of the Week
+            </h2>
+            <div className="rounded-3xl border border-dashed border-border bg-card p-10 text-center">
+              <Trophy className="mx-auto mb-3 h-10 w-10 text-amber-500/60" strokeWidth={1.2} />
+              <p className="font-serif text-lg">Le trône est vacant</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Sois le/la premier·e à atteindre 9.0+ pour décrocher la couronne de la semaine.
+              </p>
+              <button
+                onClick={() => navigate("/app/scan")}
+                className="mt-4 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background transition active:scale-95"
+              >
+                <Sparkles className="h-4 w-4" />
+                Scanner ma tenue
+              </button>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="mb-2 font-serif text-lg">Top 10 de la semaine</h2>
+            <ul className="space-y-3">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <li
+                  key={i}
+                  className="flex items-center gap-3 rounded-2xl border border-dashed border-border bg-card/50 p-3"
+                >
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-secondary text-xs font-bold text-muted-foreground">
+                    #{i + 1}
+                  </div>
+                  <div className="h-12 w-12 shrink-0 rounded-xl bg-muted" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm text-muted-foreground">Place libre</p>
+                    <p className="text-xs text-muted-foreground/70">Score 9.0+ requis</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        </>
       ) : (
         <>
           {/* Vibe of the Week */}
