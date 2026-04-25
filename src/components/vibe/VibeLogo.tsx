@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { forwardRef } from "react";
 
 /**
  * VIBE — Monogramme "V" streetwear bold.
@@ -18,14 +19,15 @@ export type VibeLogoProps = {
   accent?: boolean;
 };
 
-export const VibeLogo = ({
+export const VibeLogo = forwardRef<SVGSVGElement, VibeLogoProps>(({
   className,
   variant = "full",
   accent = true,
-}: VibeLogoProps) => {
+}, ref) => {
   if (variant === "icon") {
     return (
       <svg
+        ref={ref}
         viewBox="0 0 100 100"
         xmlns="http://www.w3.org/2000/svg"
         className={cn("h-8 w-8 text-foreground", className)}
@@ -39,6 +41,7 @@ export const VibeLogo = ({
 
   return (
     <svg
+      ref={ref}
       viewBox="0 0 100 132"
       xmlns="http://www.w3.org/2000/svg"
       className={cn("h-12 w-auto text-foreground", className)}
@@ -61,7 +64,8 @@ export const VibeLogo = ({
       </text>
     </svg>
   );
-};
+});
+VibeLogo.displayName = "VibeLogo";
 
 /**
  * "V" sculpté streetwear bold : deux trapèzes massifs qui se rejoignent

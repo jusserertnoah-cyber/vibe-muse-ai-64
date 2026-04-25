@@ -35,10 +35,13 @@ export const clearThemeOverride = () => {
 
 export const applyTheme = () => {
   const root = document.documentElement;
-  root.classList.remove("theme-mauve", "theme-mono");
   const t = resolveTheme();
-  if (t === "mauve") root.classList.add("theme-mauve");
-  else if (t === "mono") root.classList.add("theme-mono");
-  // 'lime' = no class (default)
+  const wantMauve = t === "mauve";
+  const wantMono = t === "mono";
+  const hadMauve = root.classList.contains("theme-mauve");
+  const hadMono = root.classList.contains("theme-mono");
+  if (wantMauve === hadMauve && wantMono === hadMono) return; // no change → no event
+  root.classList.toggle("theme-mauve", wantMauve);
+  root.classList.toggle("theme-mono", wantMono);
   try { window.dispatchEvent(new CustomEvent("vibe:theme-changed", { detail: t })); } catch {}
 };

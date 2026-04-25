@@ -36,12 +36,9 @@ const App = () => {
     const onProfileChange = () => applyTheme();
     window.addEventListener("storage", onStorage);
     window.addEventListener("vibe:profile-changed", onProfileChange);
-    // Re-check on each navigation in case profile was just saved
-    const interval = window.setInterval(applyTheme, 1500);
     return () => {
       window.removeEventListener("storage", onStorage);
       window.removeEventListener("vibe:profile-changed", onProfileChange);
-      window.clearInterval(interval);
     };
   }, []);
 

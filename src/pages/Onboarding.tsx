@@ -123,6 +123,7 @@ export default function Onboarding() {
   const [linkSent, setLinkSent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [loginOnly, setLoginOnly] = useState(false);
+  const [returning, setReturning] = useState(false);
 
   useEffect(() => {
     if (loading) return;
@@ -133,6 +134,7 @@ export default function Onboarding() {
     if (session?.user?.id) {
       // User just clicked the magic link. Hydrate, claim welcome pack, persist.
       (async () => {
+        setReturning(true);
         const p = await hydrateProfileFromDb(session.user.id);
         if (p) {
           navigate("/app", { replace: true });
@@ -151,20 +153,15 @@ export default function Onboarding() {
           if (pending.age) setAge(pending.age);
           if (pending.city) setCity(pending.city);
         }
-        const hasAnswers =
-          (pending?.firstName?.trim()?.length ?? 0) >= 2 ||
-          firstName.trim().length >= 2 ||
-          !!pending?.gender || !!gender;
-        if (hasAnswers) {
-          await persistAndClaim(
-            session.user.id,
-            session.user.email ?? undefined,
-            pending ?? undefined,
-          );
-        } else {
-          // Pas de réponses : on laisse l'utilisateur faire l'onboarding,
-          // puis on persistera à la fin via le même flux.
-        }
+        // On persiste TOUJOURS un profil minimal pour entrer dans l'app, même
+        // si on n'a aucune réponse (cas où la session a survécu mais que les
+        // réponses locales ont disparu — sinon l'utilisateur retomberait à
+        // l'infini sur l'onboarding).
+        await persistAndClaim(
+          session.user.id,
+          session.user.email ?? undefined,
+          pending ?? undefined,
+        );
       })();
     }
   }, [loading, session, navigate]);
@@ -175,25 +172,29 @@ export default function Onboarding() {
     pending?: PendingOnboarding,
   ) => {
     const profile = await persistProfile(userId, userEmail, pending);
-    try {
-      const deviceId = await getDeviceId();
-      const { data, error } = await supabase.functions.invoke("claim-welcome-pack", {
-        body: { deviceId },
-      });
-      if (error) {
-        toast(t("onboarding.welcome", { name: profile.firstName }));
-      } else if (data?.granted) {
-        toast.success(t("onboarding.welcomePackGranted", { defaultValue: "3 scans offerts ajoutés !" }));
-      } else if (data?.reason === "already_claimed") {
-        toast(t("onboarding.welcomePackUsed", {
-          defaultValue: "Pack de bienvenue déjà utilisé sur cet appareil",
-        }));
-      }
-    } catch {
-      // Non-blocking
-    }
+    // Le welcome pack est traité en arrière-plan — il ne doit JAMAIS bloquer
+    // l'entrée dans l'app, sinon l'utilisateur reste coincé sur "Envoi…".
     clearPending();
     navigate("/app", { replace: true });
+    (async () => {
+      try {
+        const deviceId = await getDeviceId();
+        const { data, error } = await supabase.functions.invoke("claim-welcome-pack", {
+          body: { deviceId },
+        });
+        if (error) {
+          toast(t("onboarding.welcome", { name: profile.firstName }));
+        } else if (data?.granted) {
+          toast.success(t("onboarding.welcomePackGranted", { defaultValue: "3 scans offerts ajoutés !" }));
+        } else if (data?.reason === "already_claimed") {
+          toast(t("onboarding.welcomePackUsed", {
+            defaultValue: "Pack de bienvenue déjà utilisé sur cet appareil",
+          }));
+        }
+      } catch {
+        // silencieux
+      }
+    })();
   };
 
   const next = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
@@ -329,7 +330,13 @@ export default function Onboarding() {
     }
   };
 
-  if (loading) return null;
+  if (loading || returning) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-muted border-t-foreground" />
+      </div>
+    );
+  }
 
   const canProceed = () => {
     switch (step) {
