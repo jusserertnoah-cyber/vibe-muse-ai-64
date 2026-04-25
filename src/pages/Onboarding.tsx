@@ -5,7 +5,7 @@ import type { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { VibeLogo } from "@/components/vibe/VibeLogo";
-import { saveProfile, getProfile, hydrateProfileFromDb } from "@/lib/profile";
+import { saveProfile, getProfile, hydrateProfileFromDb, syncProfileToDb } from "@/lib/profile";
 import { getDeviceId } from "@/lib/device";
 import type { Gender, UserProfile } from "@/lib/types";
 import { ArrowRight, MapPin, Sparkles, Mail, ShieldCheck, Check, Globe } from "lucide-react";
@@ -253,17 +253,7 @@ export default function Onboarding() {
       createdAt: new Date().toISOString(),
     };
     saveProfile(profile);
-    if (userId) {
-      await supabase.from("profiles").update({
-        first_name: profile.firstName,
-        gender: profile.gender,
-        age: profile.age,
-        height: profile.heightCm,
-        weight: profile.weightKg,
-        styles: profile.styles,
-        onboarded: true,
-      }).eq("id", userId);
-    }
+    if (userId) await syncProfileToDb(userId, profile);
     return profile;
   };
 
