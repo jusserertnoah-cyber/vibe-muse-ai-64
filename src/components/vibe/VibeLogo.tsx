@@ -70,6 +70,7 @@ export const VibeLogo = ({
  */
 const VIcon = ({ accent, idSuffix }: { accent: boolean; idSuffix: string }) => {
   const maskId = `vibe-cut-${idSuffix}`;
+  const clipId = `vibe-shape-${idSuffix}`;
   return (
     <>
       <defs>
@@ -77,6 +78,10 @@ const VIcon = ({ accent, idSuffix }: { accent: boolean; idSuffix: string }) => {
           <rect width="100" height="100" fill="white" />
           <polygon points="38,82 62,76 64,82 40,88" fill="black" />
         </mask>
+        <clipPath id={clipId}>
+          <polygon points="10,12 34,12 56,92 46,92" />
+          <polygon points="66,12 90,12 54,92 44,92" />
+        </clipPath>
       </defs>
       <g mask={`url(#${maskId})`} fill="currentColor">
         <polygon points="10,12 34,12 56,92 46,92" />
@@ -86,6 +91,7 @@ const VIcon = ({ accent, idSuffix }: { accent: boolean; idSuffix: string }) => {
         <polygon
           points="38,82 62,76 64,82 40,88"
           fill="hsl(var(--accent))"
+          clipPath={`url(#${clipId})`}
         />
       )}
     </>
