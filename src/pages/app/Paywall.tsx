@@ -26,7 +26,7 @@ const PACKS: Pack[] = [
   {
     id: "starter",
     name: "Starter",
-    price: "2 €",
+    price: "1,99 €",
     priceId: "credits_starter_eur",
     scans: 5,
     perScan: "0,40 € / scan",
@@ -35,7 +35,7 @@ const PACKS: Pack[] = [
   {
     id: "vibe",
     name: "Vibe Pack",
-    price: "5 €",
+    price: "4,99 €",
     priceId: "credits_vibe_pack_eur",
     scans: 15,
     perScan: "0,33 € / scan",
@@ -46,7 +46,7 @@ const PACKS: Pack[] = [
   {
     id: "stylist",
     name: "Styliste",
-    price: "10 €",
+    price: "9,99 €",
     priceId: "credits_styliste_eur",
     scans: 40,
     perScan: "0,25 € / scan",
@@ -55,7 +55,7 @@ const PACKS: Pack[] = [
   {
     id: "premium",
     name: "Premium",
-    price: "20 €",
+    price: "19,99 €",
     priceId: "credits_premium_eur",
     scans: 100,
     perScan: "0,20 € / scan",
