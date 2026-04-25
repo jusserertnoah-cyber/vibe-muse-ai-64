@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Camera, Upload, Loader2, Check, AlertCircle, Ruler, Palette, Sparkles, ShoppingBag, ExternalLink, Share2, Flame, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +11,7 @@ import { pushHistory } from "@/lib/history";
 import { toast } from "sonner";
 import { StylistChat } from "@/components/vibe/StylistChat";
 import { audienceFromGender, getDailyChallenge } from "@/lib/challenges";
-import { getCoords, fetchWeather, type WeatherSnapshot } from "@/lib/weather";
+import { getCoords, fetchWeather, getCurrentWeather, type WeatherSnapshot } from "@/lib/weather";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -81,7 +81,15 @@ export default function Scan() {
   const [occasion, setOccasion] = useState<string>("");
   const [occasionNote, setOccasionNote] = useState<string>("");
   const profileForChallenge = getProfile();
-  const challenge = getDailyChallenge(audienceFromGender(profileForChallenge?.gender));
+  // Température courante (cache léger via getCurrentWeather) → défi adapté à la météo.
+  const [currentTemp, setCurrentTemp] = useState<number | null>(null);
+  useEffect(() => {
+    getCurrentWeather().then((w) => { if (w) setCurrentTemp(w.temp); }).catch(() => {});
+  }, []);
+  const challenge = useMemo(
+    () => getDailyChallenge(audienceFromGender(profileForChallenge?.gender), new Date(), currentTemp),
+    [currentTemp, profileForChallenge?.gender],
+  );
 
   const onFile = async (f: File) => {
     setResult(null);
