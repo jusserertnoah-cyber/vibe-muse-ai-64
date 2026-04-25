@@ -189,15 +189,46 @@ export default function Scan() {
 
   return (
     <div className="space-y-6 px-5 pt-8">
-      <header>
-        <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          {t("scan.kicker")}
-        </p>
-        <h1 className="mt-1 font-serif text-3xl">{t("scan.title")}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t("scan.subtitle")}
-        </p>
-      </header>
+      {/* HERO Scan — visuel marquant */}
+      <section className="relative overflow-hidden rounded-3xl bg-foreground p-6 text-background shadow-card">
+        {/* halos lime */}
+        <div
+          className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full opacity-50 blur-3xl"
+          style={{ background: "#CEFF00" }}
+        />
+        <div
+          className="pointer-events-none absolute -left-12 bottom-0 h-32 w-32 rounded-full opacity-30 blur-3xl"
+          style={{ background: "#CEFF00" }}
+        />
+        <div className="relative">
+          <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] opacity-70">
+            <Sparkles className="h-3.5 w-3.5" /> {t("scan.kicker")}
+          </div>
+          <h1 className="mt-2 font-serif text-4xl leading-tight tracking-tight">
+            {t("scan.title")}
+          </h1>
+          <p className="mt-2 max-w-sm text-sm leading-snug opacity-80">
+            {t("scan.subtitle")}
+          </p>
+
+          {/* mini specs */}
+          <div className="mt-4 grid grid-cols-3 gap-2">
+            {[
+              { icon: <Ruler className="h-3.5 w-3.5" />, label: "Fit" },
+              { icon: <Palette className="h-3.5 w-3.5" />, label: "Couleurs" },
+              { icon: <Sparkles className="h-3.5 w-3.5" />, label: "Touche 2026" },
+            ].map((it) => (
+              <div
+                key={it.label}
+                className="flex items-center justify-center gap-1.5 rounded-full bg-background/10 px-2 py-1.5 text-[10px] font-medium uppercase tracking-widest backdrop-blur"
+              >
+                {it.icon}
+                {it.label}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <div className="rounded-3xl border border-dashed border-border bg-card p-6">
         {preview ? (
@@ -207,13 +238,26 @@ export default function Scan() {
             className="mx-auto h-72 rounded-2xl object-cover"
           />
         ) : (
-          <div className="flex flex-col items-center gap-4 py-6 text-center">
+          <div className="flex flex-col items-center gap-4 py-4 text-center">
+            {/* Polaroid mockup */}
+            <div className="relative">
+              <div className="rotate-[-4deg] rounded-xl bg-background p-3 pb-10 shadow-card">
+                <div className="flex h-32 w-28 items-center justify-center rounded-md bg-gradient-to-br from-secondary to-muted">
+                  <Camera className="h-10 w-10 text-muted-foreground/60" strokeWidth={1.2} />
+                </div>
+              </div>
+              <div
+                className="absolute -right-3 -top-3 flex h-10 w-10 items-center justify-center rounded-full text-black shadow-brand"
+                style={{ backgroundColor: "#CEFF00" }}
+              >
+                <Sparkles className="h-5 w-5" strokeWidth={2} />
+              </div>
+            </div>
             <p className="max-w-xs text-sm leading-snug text-muted-foreground">
               {t("scan.hint")}
             </p>
           </div>
         )}
-
         {/* Inputs cachés : caméra (capture) + galerie */}
         <input
           ref={fileRef}
