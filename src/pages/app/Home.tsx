@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { getProfile } from "@/lib/profile";
-import { Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, Wind, MapPin, Camera, Zap, Flame } from "lucide-react";
+import { Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, Wind, MapPin, Zap, Flame } from "lucide-react";
 import { getCurrentWeather } from "@/lib/weather";
 import { MissionStory } from "@/components/vibe/MissionStory";
 import { audienceFromGender, getDailyChallenge } from "@/lib/challenges";
@@ -161,32 +161,6 @@ export default function Home() {
           </div>
         </div>
       )}
-
-      {/* Action centrale : Scanner ma tenue */}
-      <button
-        onClick={() => navigate("/app/scan")}
-        className="group relative flex w-full flex-col items-center justify-center gap-3 overflow-hidden rounded-3xl bg-foreground px-6 py-10 text-background shadow-card transition-transform active:scale-[0.98]"
-      >
-        <div
-          className="pointer-events-none absolute inset-0 opacity-30"
-          style={{
-            background:
-              "radial-gradient(circle at 50% 30%, #CEFF00 0%, transparent 60%)",
-          }}
-        />
-        <div
-          className="relative flex h-20 w-20 items-center justify-center rounded-full"
-          style={{ backgroundColor: "#CEFF00", boxShadow: "0 0 30px rgba(206,255,0,0.6)" }}
-        >
-          <Camera className="h-10 w-10 text-black" strokeWidth={2} />
-        </div>
-        <span className="relative font-serif text-2xl tracking-tight">
-          SCANNER MA TENUE
-        </span>
-        <span className="relative text-[10px] uppercase tracking-[0.25em] opacity-70">
-          Vibe Check instantané
-        </span>
-      </button>
 
       {/* Mission Story — Jauge récompense */}
       <MissionStory />
