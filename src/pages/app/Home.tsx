@@ -13,7 +13,11 @@ export default function Home() {
   const navigate = useNavigate();
   const profile = getProfile();
   const [weather, setWeather] = useState<{ temp: number; city?: string; label?: string; code?: number; wind?: number } | null>(null);
-  const challenge = getDailyChallenge(audienceFromGender(profile?.gender));
+  // Le défi du jour s'adapte à la météo (chaud / mi-saison / froid).
+  const challenge = useMemo(
+    () => getDailyChallenge(audienceFromGender(profile?.gender), new Date(), weather?.temp ?? null),
+    [weather?.temp, profile?.gender],
+  );
   const [challengeOpen, setChallengeOpen] = useState(false);
 
   useEffect(() => {
