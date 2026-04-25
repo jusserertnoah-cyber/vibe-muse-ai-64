@@ -14,7 +14,9 @@
     "next": "Next",
     "done": "Finish",
     "save": "Save",
-    "generate": "Generate my outfit"
+    "generate": "Generate my outfit",
+    "cancel": "Cancel",
+    "loading": "Loading…"
   },
   "scan": {
     "kicker": "Vibe Check",
