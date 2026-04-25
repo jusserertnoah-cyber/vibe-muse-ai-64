@@ -515,20 +515,21 @@ export default function Scan() {
 
           <div className="space-y-4">
             <div className="flex flex-wrap gap-2">
-              {OCCASION_PRESETS.map((p) => {
-                const active = occasion === p;
+              {OCCASION_KEYS.map((key) => {
+                const label = t(`occasion.${key}`);
+                const active = occasion === label;
                 return (
                   <button
-                    key={p}
+                    key={key}
                     type="button"
-                    onClick={() => setOccasion(active ? "" : p)}
+                    onClick={() => setOccasion(active ? "" : label)}
                     className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
                       active
                         ? "bg-foreground text-background shadow-card"
                         : "bg-secondary text-foreground hover:bg-secondary/80"
                     }`}
                   >
-                    {p}
+                    {label}
                   </button>
                 );
               })}
