@@ -7,16 +7,12 @@ import { VibeLogo } from "@/components/vibe/VibeLogo";
 import { saveProfile, getProfile, hydrateProfileFromDb } from "@/lib/profile";
 import { getDeviceId } from "@/lib/device";
 import type { Gender, UserProfile } from "@/lib/types";
-import { ArrowRight, MapPin, Sparkles, Phone, ShieldCheck, Check, ChevronsUpDown, Globe } from "lucide-react";
+import { ArrowRight, MapPin, Sparkles, Mail, ShieldCheck, Check, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { SUPPORTED_LANGUAGES } from "@/i18n";
-import { COUNTRIES, findCountryByCode } from "@/lib/countries";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { parsePhoneNumberFromString } from "libphonenumber-js";
 
 const GENDERS: { id: Gender; labelKey: string; fallback: string }[] = [
   { id: "femme", labelKey: "onboarding.gender.femme", fallback: "Femme" },
@@ -24,19 +20,11 @@ const GENDERS: { id: Gender; labelKey: string; fallback: string }[] = [
   { id: "unisexe", labelKey: "onboarding.gender.unisex", fallback: "Non-binaire / Unisexe" },
 ];
 
-// Steps: 0 langue, 1 prénom, 2 genre, 3 morpho, 4 localisation, 5 téléphone.
+// Steps: 0 langue, 1 prénom, 2 genre, 3 morpho, 4 localisation, 5 email.
 const TOTAL_STEPS = 6;
-const PHONE_STEP = 5;
+const EMAIL_STEP = 5;
 
-const normalizePhone = (local: string, countryCode: string): string | null => {
-  const country = findCountryByCode(countryCode);
-  const digits = local.replace(/\D/g, "").replace(/^0+/, "");
-  if (!digits) return null;
-  const candidate = `+${country.dial}${digits}`;
-  const parsed = parsePhoneNumberFromString(candidate, country.code as any);
-  if (!parsed || !parsed.isValid()) return null;
-  return parsed.number;
-};
+const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
 
 export default function Onboarding() {
   const navigate = useNavigate();
@@ -52,13 +40,9 @@ export default function Onboarding() {
   const [age, setAge] = useState<string>("");
   const [city, setCity] = useState("");
 
-  // Phone / OTP
-  const [countryCode, setCountryCode] = useState<string>("FR");
-  const [countryOpen, setCountryOpen] = useState(false);
-  const [phone, setPhone] = useState("");
-  const [e164, setE164] = useState("");
-  const [otp, setOtp] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
+  // Email / Magic Link
+  const [email, setEmail] = useState("");
+  const [linkSent, setLinkSent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [loginOnly, setLoginOnly] = useState(false);
 
@@ -69,11 +53,43 @@ export default function Onboarding() {
       return;
     }
     if (session?.user?.id) {
-      hydrateProfileFromDb(session.user.id).then((p) => {
-        if (p) navigate("/app", { replace: true });
-      });
+      // User just clicked the magic link. Hydrate, claim welcome pack, persist.
+      (async () => {
+        const p = await hydrateProfileFromDb(session.user.id);
+        if (p) {
+          navigate("/app", { replace: true });
+          return;
+        }
+        // First-time user: persist their pending onboarding answers if present,
+        // then attempt to claim the welcome pack (1 device = 1 pack).
+        if (firstName.trim() || gender) {
+          await persistAndClaim(session.user.id, session.user.email ?? undefined);
+        }
+      })();
     }
   }, [loading, session, navigate]);
+
+  const persistAndClaim = async (userId: string, userEmail?: string) => {
+    const profile = await persistProfile(userId, userEmail);
+    try {
+      const deviceId = await getDeviceId();
+      const { data, error } = await supabase.functions.invoke("claim-welcome-pack", {
+        body: { deviceId },
+      });
+      if (error) {
+        toast(t("onboarding.welcome", { name: profile.firstName }));
+      } else if (data?.granted) {
+        toast.success(t("onboarding.welcomePackGranted", { defaultValue: "3 scans offerts ajoutés !" }));
+      } else if (data?.reason === "already_claimed") {
+        toast(t("onboarding.welcomePackUsed", {
+          defaultValue: "Pack de bienvenue déjà utilisé sur cet appareil",
+        }));
+      }
+    } catch {
+      // Non-blocking
+    }
+    navigate("/app", { replace: true });
+  };
 
   const next = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
   const back = () => setStep((s) => Math.max(s - 1, 0));
@@ -98,7 +114,7 @@ export default function Onboarding() {
     );
   };
 
-  const persistProfile = async (userId?: string) => {
+  const persistProfile = async (userId?: string, userEmail?: string) => {
     const deviceId = await getDeviceId().catch(() => undefined);
     if (lang && i18n.language?.split("-")[0] !== lang) {
       try { await i18n.changeLanguage(lang); } catch {}
@@ -106,6 +122,7 @@ export default function Onboarding() {
     try { localStorage.setItem("vibe.lang", lang); } catch {}
     const profile: UserProfile = {
       firstName: firstName.trim() || "Vibe",
+      email: userEmail,
       gender: gender ?? "unisexe",
       heightCm: heightCm ? Number(heightCm) : undefined,
       weightKg: weightKg ? Number(weightKg) : undefined,
@@ -127,73 +144,42 @@ export default function Onboarding() {
         height: profile.heightCm,
         weight: profile.weightKg,
         styles: profile.styles,
-        vibers: profile.vibers,
         onboarded: true,
       }).eq("id", userId);
     }
     return profile;
   };
 
-  const sendCode = async () => {
-    const normalized = normalizePhone(phone, countryCode);
-    if (!normalized) {
-      toast.error(t("onboarding.phone.invalidTitle"), { description: t("onboarding.phone.invalidDesc") });
+  const sendMagicLink = async () => {
+    const cleaned = email.trim().toLowerCase();
+    if (!isValidEmail(cleaned)) {
+      toast.error(t("onboarding.email.invalidTitle", { defaultValue: "Email invalide" }), {
+        description: t("onboarding.email.invalidDesc", { defaultValue: "Vérifie ton adresse." }),
+      });
       return;
     }
     setBusy(true);
     const { error } = await supabase.auth.signInWithOtp({
-      phone: normalized,
-      options: { channel: "sms" },
+      email: cleaned,
+      options: {
+        emailRedirectTo: `${window.location.origin}/onboarding`,
+        shouldCreateUser: !loginOnly,
+      },
     });
     setBusy(false);
     if (error) {
-      toast(t("onboarding.phone.demoTitle"), { description: t("onboarding.phone.demoDesc") });
-      setE164(normalized);
-      setOtpSent(true);
+      toast.error(t("onboarding.email.errorTitle", { defaultValue: "Envoi impossible" }), {
+        description: error.message,
+      });
       return;
     }
-    toast.success(t("onboarding.phone.sentTitle"), { description: t("onboarding.phone.sentDesc", { phone: normalized }) });
-    setE164(normalized);
-    setOtpSent(true);
-  };
-
-  const verifyAndFinish = async () => {
-    setBusy(true);
-    const { data, error } = await supabase.auth.verifyOtp({
-      phone: e164,
-      token: otp,
-      type: "sms",
+    setLinkSent(true);
+    toast.success(t("onboarding.email.sentTitle", { defaultValue: "Lien envoyé !" }), {
+      description: t("onboarding.email.sentDesc", {
+        defaultValue: "Ouvre ton mail et clique sur le lien pour te connecter.",
+        email: cleaned,
+      }),
     });
-    if (error) {
-      if (loginOnly) {
-        setBusy(false);
-        toast.error(t("onboarding.phone.codeInvalidTitle"), { description: t("onboarding.phone.codeInvalidDesc") });
-        return;
-      }
-      const profile = await persistProfile(undefined);
-      setBusy(false);
-      toast.success(t("onboarding.welcome", { name: profile.firstName }));
-      navigate("/app", { replace: true });
-      return;
-    }
-    const userId = data.user?.id;
-    if (loginOnly && userId) {
-      const p = await hydrateProfileFromDb(userId);
-      setBusy(false);
-      if (p) {
-        toast.success(t("onboarding.welcomeBack", { name: p.firstName }));
-        navigate("/app", { replace: true });
-        return;
-      }
-      toast(t("onboarding.finishProfile"));
-      setLoginOnly(false);
-      setStep(1);
-      return;
-    }
-    const profile = await persistProfile(userId);
-    setBusy(false);
-    toast.success(t("onboarding.welcome", { name: profile.firstName }));
-    navigate("/app", { replace: true });
   };
 
   if (loading) return null;
@@ -396,86 +382,48 @@ export default function Onboarding() {
             </div>
           )}
 
-          {/* Step 5 — TÉLÉPHONE + OTP */}
-          {step === PHONE_STEP && (
+          {/* Step 5 — EMAIL MAGIC LINK */}
+          {step === EMAIL_STEP && (
             <div className="space-y-6">
-              {!otpSent ? (
+              {!linkSent ? (
                 <>
                   <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary">
-                    <Phone className="h-6 w-6 text-cobalt" strokeWidth={1.5} />
+                    <Mail className="h-6 w-6 text-cobalt" strokeWidth={1.5} />
                   </div>
                   <h1 className="font-serif text-4xl leading-tight text-balance">
-                    {t("onboarding.phone.title")}
+                    {t("onboarding.email.title", { defaultValue: "Ton email" })}
                   </h1>
                   <p className="text-sm text-muted-foreground">
-                    {t("onboarding.phone.subtitle")}
+                    {t("onboarding.email.subtitle", {
+                      defaultValue:
+                        "Pas de mot de passe. Reçois un lien magique pour te connecter en un clic.",
+                    })}
                   </p>
-                  <div className="flex gap-2">
-                    <Popover open={countryOpen} onOpenChange={setCountryOpen}>
-                      <PopoverTrigger asChild>
-                        <button
-                          type="button"
-                          className="flex h-14 items-center gap-2 rounded-2xl border border-border bg-card px-3 text-base"
-                        >
-                          <span className="text-xl leading-none">{findCountryByCode(countryCode).flag}</span>
-                          <span className="font-mono text-sm text-muted-foreground">
-                            +{findCountryByCode(countryCode).dial}
-                          </span>
-                          <ChevronsUpDown className="h-3.5 w-3.5 text-muted-foreground" />
-                        </button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-[280px] p-0" align="start">
-                        <Command>
-                          <CommandInput placeholder={t("onboarding.phone.searchCountry")} />
-                          <CommandList>
-                            <CommandEmpty>{t("onboarding.phone.noCountry")}</CommandEmpty>
-                            <CommandGroup>
-                              {COUNTRIES.map((c) => (
-                                <CommandItem
-                                  key={c.code}
-                                  value={`${c.name} +${c.dial} ${c.code}`}
-                                  onSelect={() => {
-                                    setCountryCode(c.code);
-                                    setCountryOpen(false);
-                                  }}
-                                  className="flex items-center gap-2"
-                                >
-                                  <span className="text-base">{c.flag}</span>
-                                  <span className="flex-1 truncate">{c.name}</span>
-                                  <span className="font-mono text-xs text-muted-foreground">+{c.dial}</span>
-                                  <Check
-                                    className={cn(
-                                      "h-4 w-4 text-cobalt",
-                                      countryCode === c.code ? "opacity-100" : "opacity-0",
-                                    )}
-                                  />
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                    <Input
-                      autoFocus
-                      type="tel"
-                      inputMode="tel"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="6 12 34 56 78"
-                      className="h-14 flex-1 rounded-2xl border-border bg-card text-lg"
-                    />
-                  </div>
+                  <Input
+                    autoFocus
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="toi@exemple.com"
+                    className="h-14 rounded-2xl border-border bg-card text-lg"
+                  />
                   <Button
-                    onClick={sendCode}
-                    disabled={busy}
+                    onClick={sendMagicLink}
+                    disabled={busy || !isValidEmail(email)}
                     className="h-14 w-full rounded-2xl bg-gradient-brand text-foreground hover:opacity-90 text-base shadow-brand border-0"
                   >
                     <Sparkles className="mr-2 h-4 w-4" />
-                    {busy ? t("onboarding.phone.sending") : t("onboarding.phone.receive")}
+                    {busy
+                      ? t("onboarding.email.sending", { defaultValue: "Envoi…" })
+                      : t("onboarding.email.receive", { defaultValue: "Recevoir le lien" })}
                   </Button>
                   <p className="text-[10px] text-muted-foreground">
-                    {t("onboarding.phone.legal")}
+                    {t("onboarding.email.legal", {
+                      defaultValue:
+                        "On utilise ton email uniquement pour te connecter et sécuriser ton compte.",
+                    })}
                   </p>
                 </>
               ) : (
@@ -484,42 +432,34 @@ export default function Onboarding() {
                     <ShieldCheck className="h-6 w-6 text-cobalt" strokeWidth={1.5} />
                   </div>
                   <h1 className="font-serif text-4xl leading-tight text-balance">
-                    {t("onboarding.phone.codeTitle")}
+                    {t("onboarding.email.checkTitle", { defaultValue: "Check tes mails" })}
                   </h1>
                   <p className="text-sm text-muted-foreground">
-                    {t("onboarding.phone.codeSentTo")} <span className="font-medium text-foreground">{e164}</span>.
+                    {t("onboarding.email.sentTo", { defaultValue: "Lien envoyé à" })}{" "}
+                    <span className="font-medium text-foreground">{email}</span>.
                   </p>
-                  <Input
-                    autoFocus
-                    inputMode="numeric"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                    placeholder="123456"
-                    className="h-14 rounded-2xl border-border bg-card text-center font-mono-tech text-2xl tracking-[0.5em]"
-                  />
+                  <p className="text-xs text-muted-foreground">
+                    {t("onboarding.email.openLink", {
+                      defaultValue:
+                        "Ouvre l'email et clique sur le lien — tu seras connecté automatiquement.",
+                    })}
+                  </p>
                   <Button
-                    onClick={verifyAndFinish}
+                    onClick={sendMagicLink}
                     disabled={busy}
-                    className="h-14 w-full rounded-2xl bg-gradient-brand text-foreground hover:opacity-90 text-base shadow-brand border-0"
+                    variant="outline"
+                    className="h-14 w-full rounded-2xl text-base"
                   >
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    {busy ? t("onboarding.phone.verifying") : t("onboarding.phone.enter")}
+                    {t("onboarding.email.resend", { defaultValue: "Renvoyer le lien" })}
                   </Button>
-                  <button
-                    onClick={sendCode}
-                    disabled={busy}
-                    className="w-full text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground"
-                  >
-                    {t("onboarding.phone.resend")}
-                  </button>
                 </>
               )}
             </div>
           )}
         </div>
 
-        {/* CTA Continuer pour étapes 0-3 (4 = location avec son CTA, 5 = phone) */}
-        {step < PHONE_STEP && step !== 4 && (
+        {/* CTA Continuer pour étapes 0-3 (4 = location avec son CTA, 5 = email) */}
+        {step < EMAIL_STEP && step !== 4 && (
           <div className="pb-4 pt-6">
             <Button
               onClick={next}
@@ -534,7 +474,7 @@ export default function Onboarding() {
 
         {step === 0 && (
           <button
-            onClick={() => { setLoginOnly(true); setStep(PHONE_STEP); }}
+            onClick={() => { setLoginOnly(true); setStep(EMAIL_STEP); }}
             className="pb-2 text-center text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground"
           >
             {t("onboarding.haveAccount")}
