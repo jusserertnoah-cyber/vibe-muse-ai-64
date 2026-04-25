@@ -25,7 +25,8 @@ export const getCoords = (): Promise<{ lat: number; lon: number }> =>
 
 export async function fetchWeather(lat: number, lon: number): Promise<WeatherSnapshot> {
   const w = await fetch(
-    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,wind_speed_10m`,
+    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,wind_speed_10m&timezone=auto`,
+    { cache: "no-store" },
   ).then((r) => r.json());
   const temp = Math.round(w?.current?.temperature_2m ?? 0);
   const code = Number(w?.current?.weather_code ?? 0);
@@ -36,6 +37,7 @@ export async function fetchWeather(lat: number, lon: number): Promise<WeatherSna
     const lang = (i18n.language || "fr").split("-")[0];
     const g = await fetch(
       `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=${lang}&format=json`,
+      { cache: "no-store" },
     ).then((r) => r.json());
     city = g?.results?.[0]?.name;
   } catch {}

@@ -67,7 +67,8 @@
     "shareLogin": "Connecte-toi pour partager au feed.",
     "shareDone": "Posté dans Top Vibes !",
     "shareError": "Impossible de partager pour l'instant.",
-    "launchVibe": "Lancer le Vibe Check"
+    "launchVibe": "Lancer le Vibe Check",
+    "previewAlt": "Ton look"
   },
   "missionStory": {
     "title": "Mission Story",
@@ -334,7 +335,15 @@
     "scanIntro": "Verdict posé. Pose-moi tes questions — couleur, coupe, accessoire, alternative à acheter.",
     "scanSug1": "Quelle couleur de chaussure mettre ?",
     "scanSug2": "Comment porter ça en hiver ?",
-    "scanSug3": "Une alternative plus chic ?"
+    "scanSug3": "Une alternative plus chic ?",
+    "title": "Chat styliste",
+    "loginRequired": "Connecte-toi pour discuter avec le styliste.",
+    "rateLimited": "Trop de messages. Patiente une minute.",
+    "creditsExhausted": "Crédits IA épuisés.",
+    "error": "Le styliste ne répond pas. Réessaie.",
+    "typing": "écrit…",
+    "placeholder": "Pose ta question…",
+    "send": "Envoyer"
   },
   "challenge": {
     "step1": "Avant de te prendre en photo, intègre l'élément du défi dans ta tenue.",
@@ -350,14 +359,29 @@
     "scanCta": "Scanner ma tenue"
   },
   "weatherLabel": {
-    "0": "ciel dégagé", "1": "ciel clair", "2": "partiellement nuageux", "3": "couvert",
-    "45": "brouillard", "48": "brouillard givrant",
-    "51": "bruine légère", "53": "bruine", "55": "bruine dense",
-    "61": "pluie faible", "63": "pluie", "65": "pluie forte",
-    "66": "pluie verglaçante", "67": "pluie verglaçante forte",
-    "71": "neige faible", "73": "neige", "75": "neige forte",
-    "80": "averses", "81": "averses", "82": "fortes averses",
-    "95": "orage", "96": "orage avec grêle", "99": "orage violent",
+    "0": "ciel dégagé",
+    "1": "ciel clair",
+    "2": "partiellement nuageux",
+    "3": "couvert",
+    "45": "brouillard",
+    "48": "brouillard givrant",
+    "51": "bruine légère",
+    "53": "bruine",
+    "55": "bruine dense",
+    "61": "pluie faible",
+    "63": "pluie",
+    "65": "pluie forte",
+    "66": "pluie verglaçante",
+    "67": "pluie verglaçante forte",
+    "71": "neige faible",
+    "73": "neige",
+    "75": "neige forte",
+    "80": "averses",
+    "81": "averses",
+    "82": "fortes averses",
+    "95": "orage",
+    "96": "orage avec grêle",
+    "99": "orage violent",
     "fallback": "temps variable"
   },
   "occasion": {
@@ -373,33 +397,145 @@
     "travel": "Voyage"
   },
   "challenges": {
-    "red-touch":      { "name": "Une touche de rouge",   "hint": "Un détail rouge visible (sac, écharpe, chaussettes, top…)" },
-    "silver-acc":     { "name": "Bijou argenté",         "hint": "Bijou, chaîne ou bracelet argenté bien visible" },
-    "gold-acc":       { "name": "Bijou doré",            "hint": "Bijou, chaîne ou bracelet doré bien visible" },
-    "watch":          { "name": "Une belle montre",      "hint": "Montre visible au poignet" },
-    "color-belt":     { "name": "Ceinture colorée",      "hint": "Ceinture rouge, jaune, bleue ou verte bien visible" },
-    "white-sneaker":  { "name": "Sneakers blanches",     "hint": "Une paire de sneakers blanches aux pieds" },
-    "white-shirt":    { "name": "Chemise blanche",       "hint": "Une chemise blanche bien visible" },
-    "denim":          { "name": "Pièce en jean",         "hint": "Pantalon, jupe ou veste en jean" },
-    "bag":            { "name": "Sac à main",            "hint": "Sac à main ou bandoulière" },
-    "sunglasses":     { "name": "Lunettes de soleil",    "hint": "Lunettes de soleil portées" },
-    "shorts":         { "name": "Short ou bermuda",      "hint": "Short, bermuda ou pantacourt" },
-    "cap":            { "name": "Casquette ou bob",      "hint": "Casquette baseball, bob ou chapeau de paille" },
-    "linen":          { "name": "Pièce en lin",          "hint": "Chemise ou pantalon en lin" },
-    "sandals":        { "name": "Sandales",              "hint": "Sandales ou tongs aux pieds" },
-    "tee-white":      { "name": "T-shirt blanc",         "hint": "T-shirt blanc uni" },
-    "denim-jacket":   { "name": "Veste en jean",         "hint": "Une veste en jean portée" },
-    "blazer":         { "name": "Blazer",                "hint": "Blazer ou veste de costume" },
-    "leather-jacket": { "name": "Veste en cuir",         "hint": "Veste en cuir noire ou marron" },
-    "hoodie":         { "name": "Hoodie / Sweat capuche", "hint": "Sweat à capuche bien visible" },
-    "cargo":          { "name": "Pantalon cargo",        "hint": "Pantalon avec poches cargo" },
-    "loafers":        { "name": "Mocassins",             "hint": "Mocassins ou derbies en cuir" },
-    "long-coat":      { "name": "Manteau long",          "hint": "Manteau long descendant aux genoux" },
-    "trench":         { "name": "Trench-coat",           "hint": "Trench beige ou kaki" },
-    "scarf":          { "name": "Écharpe",               "hint": "Écharpe visible autour du cou" },
-    "knit-sweater":   { "name": "Pull en grosse maille", "hint": "Pull tricoté épais" },
-    "boots":          { "name": "Bottines",              "hint": "Bottines en cuir aux pieds" },
-    "beanie":         { "name": "Bonnet",                "hint": "Bonnet sur la tête" },
-    "turtleneck":     { "name": "Col roulé",             "hint": "Col roulé visible au cou" }
+    "red-touch": {
+      "name": "Une touche de rouge",
+      "hint": "Un détail rouge visible (sac, écharpe, chaussettes, top…)",
+      "detect": "un élément clairement rouge (vêtement ou accessoire) visible sur la photo"
+    },
+    "silver-acc": {
+      "name": "Bijou argenté",
+      "hint": "Bijou, chaîne ou bracelet argenté bien visible",
+      "detect": "au moins un bijou ou accessoire argenté visible"
+    },
+    "gold-acc": {
+      "name": "Bijou doré",
+      "hint": "Bijou, chaîne ou bracelet doré bien visible",
+      "detect": "au moins un bijou ou accessoire doré visible"
+    },
+    "watch": {
+      "name": "Une belle montre",
+      "hint": "Montre visible au poignet",
+      "detect": "une montre visible au poignet"
+    },
+    "color-belt": {
+      "name": "Ceinture colorée",
+      "hint": "Ceinture rouge, jaune, bleue ou verte bien visible",
+      "detect": "une ceinture de couleur vive (rouge, jaune, bleue, verte) clairement visible"
+    },
+    "white-sneaker": {
+      "name": "Sneakers blanches",
+      "hint": "Une paire de sneakers blanches aux pieds",
+      "detect": "des sneakers blanches aux pieds"
+    },
+    "white-shirt": {
+      "name": "Chemise blanche",
+      "hint": "Une chemise blanche bien visible",
+      "detect": "une chemise blanche clairement visible"
+    },
+    "denim": {
+      "name": "Pièce en jean",
+      "hint": "Pantalon, jupe ou veste en jean",
+      "detect": "un vêtement en jean (denim) clairement visible"
+    },
+    "bag": {
+      "name": "Sac à main",
+      "hint": "Sac à main ou bandoulière",
+      "detect": "un sac à main ou bandoulière clairement visible"
+    },
+    "sunglasses": {
+      "name": "Lunettes de soleil",
+      "hint": "Lunettes de soleil portées",
+      "detect": "des lunettes de soleil portées sur le visage ou sur la tête"
+    },
+    "shorts": {
+      "name": "Short ou bermuda",
+      "hint": "Short, bermuda ou pantacourt",
+      "detect": "un short, bermuda ou pantacourt visible"
+    },
+    "cap": {
+      "name": "Casquette ou bob",
+      "hint": "Casquette baseball, bob ou chapeau de paille",
+      "detect": "une casquette, un bob ou un chapeau visible sur la tête"
+    },
+    "linen": {
+      "name": "Pièce en lin",
+      "hint": "Chemise ou pantalon en lin",
+      "detect": "un vêtement clairement en lin (chemise, pantalon, robe)"
+    },
+    "sandals": {
+      "name": "Sandales",
+      "hint": "Sandales ou tongs aux pieds",
+      "detect": "des sandales ou tongs visibles aux pieds"
+    },
+    "tee-white": {
+      "name": "T-shirt blanc",
+      "hint": "T-shirt blanc uni",
+      "detect": "un t-shirt blanc uni clairement visible"
+    },
+    "denim-jacket": {
+      "name": "Veste en jean",
+      "hint": "Une veste en jean portée",
+      "detect": "une veste en jean (trucker) clairement visible"
+    },
+    "blazer": {
+      "name": "Blazer",
+      "hint": "Blazer ou veste de costume",
+      "detect": "un blazer ou veste de costume clairement visible"
+    },
+    "leather-jacket": {
+      "name": "Veste en cuir",
+      "hint": "Veste en cuir noire ou marron",
+      "detect": "une veste en cuir clairement visible"
+    },
+    "hoodie": {
+      "name": "Hoodie / Sweat capuche",
+      "hint": "Sweat à capuche bien visible",
+      "detect": "un sweat à capuche (hoodie) clairement visible"
+    },
+    "cargo": {
+      "name": "Pantalon cargo",
+      "hint": "Pantalon avec poches cargo",
+      "detect": "un pantalon cargo (poches latérales visibles)"
+    },
+    "loafers": {
+      "name": "Mocassins",
+      "hint": "Mocassins ou derbies en cuir",
+      "detect": "des mocassins ou derbies en cuir visibles"
+    },
+    "long-coat": {
+      "name": "Manteau long",
+      "hint": "Manteau long descendant aux genoux",
+      "detect": "un manteau long (descendant au moins aux genoux) clairement visible"
+    },
+    "trench": {
+      "name": "Trench-coat",
+      "hint": "Trench beige ou kaki",
+      "detect": "un trench-coat clairement visible"
+    },
+    "scarf": {
+      "name": "Écharpe",
+      "hint": "Écharpe visible autour du cou",
+      "detect": "une écharpe clairement visible autour du cou"
+    },
+    "knit-sweater": {
+      "name": "Pull en grosse maille",
+      "hint": "Pull tricoté épais",
+      "detect": "un pull en grosse maille tricotée clairement visible"
+    },
+    "boots": {
+      "name": "Bottines",
+      "hint": "Bottines en cuir aux pieds",
+      "detect": "des bottines (boots, Chelsea) clairement visibles"
+    },
+    "beanie": {
+      "name": "Bonnet",
+      "hint": "Bonnet sur la tête",
+      "detect": "un bonnet clairement visible sur la tête"
+    },
+    "turtleneck": {
+      "name": "Col roulé",
+      "hint": "Col roulé visible au cou",
+      "detect": "un col roulé clairement visible au cou"
+    }
   }
 }

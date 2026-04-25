@@ -67,7 +67,8 @@
     "shareLogin": "Sign in to share to the feed.",
     "shareDone": "Posted to Top Vibes!",
     "shareError": "Cannot share right now.",
-    "launchVibe": "Run the Vibe Check"
+    "launchVibe": "Run the Vibe Check",
+    "previewAlt": "Your look"
   },
   "missionStory": {
     "title": "Story Mission",
@@ -333,7 +334,15 @@
     "scanIntro": "Verdict delivered. Ask me anything — color, cut, accessory, alternative to buy.",
     "scanSug1": "Which shoe color works best?",
     "scanSug2": "How to wear this in winter?",
-    "scanSug3": "A more upscale alternative?"
+    "scanSug3": "A more upscale alternative?",
+    "title": "Stylist chat",
+    "loginRequired": "Sign in to chat with the stylist.",
+    "rateLimited": "Too many messages. Wait a minute.",
+    "creditsExhausted": "AI credits exhausted.",
+    "error": "The stylist is not responding. Try again.",
+    "typing": "typing…",
+    "placeholder": "Ask your question…",
+    "send": "Send"
   },
   "challenge": {
     "step1": "Before taking your photo, integrate the challenge element into your outfit.",
@@ -349,14 +358,29 @@
     "scanCta": "Scan my outfit"
   },
   "weatherLabel": {
-    "0": "clear sky", "1": "mostly clear", "2": "partly cloudy", "3": "overcast",
-    "45": "fog", "48": "freezing fog",
-    "51": "light drizzle", "53": "drizzle", "55": "dense drizzle",
-    "61": "light rain", "63": "rain", "65": "heavy rain",
-    "66": "freezing rain", "67": "heavy freezing rain",
-    "71": "light snow", "73": "snow", "75": "heavy snow",
-    "80": "showers", "81": "showers", "82": "heavy showers",
-    "95": "thunderstorm", "96": "thunderstorm with hail", "99": "violent thunderstorm",
+    "0": "clear sky",
+    "1": "mostly clear",
+    "2": "partly cloudy",
+    "3": "overcast",
+    "45": "fog",
+    "48": "freezing fog",
+    "51": "light drizzle",
+    "53": "drizzle",
+    "55": "dense drizzle",
+    "61": "light rain",
+    "63": "rain",
+    "65": "heavy rain",
+    "66": "freezing rain",
+    "67": "heavy freezing rain",
+    "71": "light snow",
+    "73": "snow",
+    "75": "heavy snow",
+    "80": "showers",
+    "81": "showers",
+    "82": "heavy showers",
+    "95": "thunderstorm",
+    "96": "thunderstorm with hail",
+    "99": "violent thunderstorm",
     "fallback": "variable weather"
   },
   "occasion": {
@@ -372,33 +396,145 @@
     "travel": "Travel"
   },
   "challenges": {
-    "red-touch":      { "name": "A touch of red",        "hint": "A visible red detail (bag, scarf, socks, top…)" },
-    "silver-acc":     { "name": "Silver jewelry",        "hint": "Silver jewelry, chain or bracelet clearly visible" },
-    "gold-acc":       { "name": "Gold jewelry",          "hint": "Gold jewelry, chain or bracelet clearly visible" },
-    "watch":          { "name": "A nice watch",          "hint": "Watch visible on the wrist" },
-    "color-belt":     { "name": "Colored belt",          "hint": "Red, yellow, blue or green belt clearly visible" },
-    "white-sneaker":  { "name": "White sneakers",        "hint": "A pair of white sneakers on your feet" },
-    "white-shirt":    { "name": "White shirt",           "hint": "A white shirt clearly visible" },
-    "denim":          { "name": "Denim piece",           "hint": "Denim pants, skirt or jacket" },
-    "bag":            { "name": "Handbag",               "hint": "Handbag or shoulder bag" },
-    "sunglasses":     { "name": "Sunglasses",            "hint": "Sunglasses on" },
-    "shorts":         { "name": "Shorts",                "hint": "Shorts, bermudas or capri pants" },
-    "cap":            { "name": "Cap or bucket hat",     "hint": "Baseball cap, bucket hat or straw hat" },
-    "linen":          { "name": "Linen piece",           "hint": "Linen shirt or pants" },
-    "sandals":        { "name": "Sandals",               "hint": "Sandals or flip-flops on your feet" },
-    "tee-white":      { "name": "White t-shirt",         "hint": "Plain white t-shirt" },
-    "denim-jacket":   { "name": "Denim jacket",          "hint": "A denim jacket worn" },
-    "blazer":         { "name": "Blazer",                "hint": "Blazer or suit jacket" },
-    "leather-jacket": { "name": "Leather jacket",        "hint": "Black or brown leather jacket" },
-    "hoodie":         { "name": "Hoodie",                "hint": "Hooded sweatshirt clearly visible" },
-    "cargo":          { "name": "Cargo pants",           "hint": "Pants with cargo pockets" },
-    "loafers":        { "name": "Loafers",               "hint": "Leather loafers or derbies visible" },
-    "long-coat":      { "name": "Long coat",             "hint": "Long coat reaching the knees" },
-    "trench":         { "name": "Trench coat",           "hint": "Beige or khaki trench" },
-    "scarf":          { "name": "Scarf",                 "hint": "Scarf clearly visible around the neck" },
-    "knit-sweater":   { "name": "Chunky knit sweater",   "hint": "Thick knit sweater" },
-    "boots":          { "name": "Boots",                 "hint": "Leather boots on your feet" },
-    "beanie":         { "name": "Beanie",                "hint": "Beanie on your head" },
-    "turtleneck":     { "name": "Turtleneck",            "hint": "Turtleneck clearly visible at the neck" }
+    "red-touch": {
+      "name": "A touch of red",
+      "hint": "A visible red detail (bag, scarf, socks, top…)",
+      "detect": "a clearly red item (clothing or accessory) visible in the photo"
+    },
+    "silver-acc": {
+      "name": "Silver jewelry",
+      "hint": "Silver jewelry, chain or bracelet clearly visible",
+      "detect": "at least one visible silver piece of jewelry or accessory"
+    },
+    "gold-acc": {
+      "name": "Gold jewelry",
+      "hint": "Gold jewelry, chain or bracelet clearly visible",
+      "detect": "at least one visible gold piece of jewelry or accessory"
+    },
+    "watch": {
+      "name": "A nice watch",
+      "hint": "Watch visible on the wrist",
+      "detect": "a watch visible on the wrist"
+    },
+    "color-belt": {
+      "name": "Colored belt",
+      "hint": "Red, yellow, blue or green belt clearly visible",
+      "detect": "a bright colored belt (red, yellow, blue or green) clearly visible"
+    },
+    "white-sneaker": {
+      "name": "White sneakers",
+      "hint": "A pair of white sneakers on your feet",
+      "detect": "white sneakers visible on the feet"
+    },
+    "white-shirt": {
+      "name": "White shirt",
+      "hint": "A white shirt clearly visible",
+      "detect": "a white shirt clearly visible"
+    },
+    "denim": {
+      "name": "Denim piece",
+      "hint": "Denim pants, skirt or jacket",
+      "detect": "a denim item clearly visible"
+    },
+    "bag": {
+      "name": "Handbag",
+      "hint": "Handbag or shoulder bag",
+      "detect": "a handbag or shoulder bag clearly visible"
+    },
+    "sunglasses": {
+      "name": "Sunglasses",
+      "hint": "Sunglasses on",
+      "detect": "sunglasses worn on the face or on the head"
+    },
+    "shorts": {
+      "name": "Shorts",
+      "hint": "Shorts, bermudas or capri pants",
+      "detect": "shorts, bermudas or capri pants visible"
+    },
+    "cap": {
+      "name": "Cap or bucket hat",
+      "hint": "Baseball cap, bucket hat or straw hat",
+      "detect": "a cap, bucket hat or hat visible on the head"
+    },
+    "linen": {
+      "name": "Linen piece",
+      "hint": "Linen shirt or pants",
+      "detect": "a clearly linen garment (shirt, pants or dress)"
+    },
+    "sandals": {
+      "name": "Sandals",
+      "hint": "Sandals or flip-flops on your feet",
+      "detect": "sandals or flip-flops visible on the feet"
+    },
+    "tee-white": {
+      "name": "White t-shirt",
+      "hint": "Plain white t-shirt",
+      "detect": "a plain white t-shirt clearly visible"
+    },
+    "denim-jacket": {
+      "name": "Denim jacket",
+      "hint": "A denim jacket worn",
+      "detect": "a denim trucker jacket clearly visible"
+    },
+    "blazer": {
+      "name": "Blazer",
+      "hint": "Blazer or suit jacket",
+      "detect": "a blazer or suit jacket clearly visible"
+    },
+    "leather-jacket": {
+      "name": "Leather jacket",
+      "hint": "Black or brown leather jacket",
+      "detect": "a leather jacket clearly visible"
+    },
+    "hoodie": {
+      "name": "Hoodie",
+      "hint": "Hooded sweatshirt clearly visible",
+      "detect": "a hooded sweatshirt clearly visible"
+    },
+    "cargo": {
+      "name": "Cargo pants",
+      "hint": "Pants with cargo pockets",
+      "detect": "cargo pants with visible side pockets"
+    },
+    "loafers": {
+      "name": "Loafers",
+      "hint": "Leather loafers or derbies visible",
+      "detect": "leather loafers or derbies visible"
+    },
+    "long-coat": {
+      "name": "Long coat",
+      "hint": "Long coat reaching the knees",
+      "detect": "a long coat reaching at least the knees, clearly visible"
+    },
+    "trench": {
+      "name": "Trench coat",
+      "hint": "Beige or khaki trench",
+      "detect": "a trench coat clearly visible"
+    },
+    "scarf": {
+      "name": "Scarf",
+      "hint": "Scarf clearly visible around the neck",
+      "detect": "a scarf clearly visible around the neck"
+    },
+    "knit-sweater": {
+      "name": "Chunky knit sweater",
+      "hint": "Thick knit sweater",
+      "detect": "a chunky knitted sweater clearly visible"
+    },
+    "boots": {
+      "name": "Boots",
+      "hint": "Leather boots on your feet",
+      "detect": "boots or Chelsea boots clearly visible"
+    },
+    "beanie": {
+      "name": "Beanie",
+      "hint": "Beanie on your head",
+      "detect": "a beanie clearly visible on the head"
+    },
+    "turtleneck": {
+      "name": "Turtleneck",
+      "hint": "Turtleneck clearly visible at the neck",
+      "detect": "a turtleneck clearly visible at the neck"
+    }
   }
 }
