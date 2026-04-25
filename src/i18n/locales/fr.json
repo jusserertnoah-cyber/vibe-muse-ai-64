@@ -14,7 +14,9 @@
     "next": "Suivant",
     "done": "Terminer",
     "save": "Enregistrer",
-    "generate": "Générer ma tenue"
+    "generate": "Générer ma tenue",
+    "cancel": "Annuler",
+    "loading": "Chargement…"
   },
   "scan": {
     "kicker": "Vibe Check",
