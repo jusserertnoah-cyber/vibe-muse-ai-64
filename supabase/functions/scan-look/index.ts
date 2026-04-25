@@ -53,6 +53,9 @@ serve(async (req) => {
       imageDataUrl, gender, heightCm, weightKg,
       lang = "fr", tier = "free",
       challenge,         // { name, detect }  — défi du jour, optionnel
+      occasion,          // string libre / preset (ex "Soirée", "Mariage")
+      occasionNote,      // détails libres utilisateur (max 200 chars côté client)
+      weather,           // { temp, label, city? }
     } = body ?? {};
 
     if (!imageDataUrl) {
@@ -69,6 +72,21 @@ serve(async (req) => {
       heightCm ? `taille: ${heightCm}cm` : null,
       weightKg ? `poids: ${weightKg}kg` : null,
     ].filter(Boolean).join(", ");
+
+    const contextBlock = (() => {
+      const parts: string[] = [];
+      if (occasion) parts.push(`Occasion : ${String(occasion).slice(0, 80)}`);
+      if (occasionNote) parts.push(`Précision utilisateur : ${String(occasionNote).slice(0, 240)}`);
+      if (weather && typeof weather === "object") {
+        const t = typeof weather.temp === "number" ? `${Math.round(weather.temp)}°C` : null;
+        const lbl = weather.label ? String(weather.label) : null;
+        const city = weather.city ? String(weather.city) : null;
+        const wparts = [t, lbl, city].filter(Boolean).join(" · ");
+        if (wparts) parts.push(`Météo actuelle : ${wparts}`);
+      }
+      if (parts.length === 0) return "";
+      return `\n\nCONTEXTE DE PORT DE LA TENUE — adapte tes conseils en conséquence (couleurs, matières, couches, pertinence sociale) :\n- ${parts.join("\n- ")}`;
+    })();
 
     const challengeBlock = challenge?.name
       ? `\n\nDÉFI DU JOUR : "${challenge.name}".
@@ -105,7 +123,7 @@ RÈGLES DE FORME :
 3. JAMAIS de conseils vagues, toujours CONCRET (couleur, cm, matière nommée).
 4. Tu réponds STRICTEMENT en ${langName}, via la fonction tool fournie.
 
-BIBLE STYLES : "Vintage", "Old Money", "Classique", "Sobre", "Sport", "Oversize", "Américain". Tu DOIS choisir UN style exact dans cette liste pour le champ "style".${challengeBlock}
+BIBLE STYLES : "Vintage", "Old Money", "Classique", "Sobre", "Sport", "Oversize", "Américain". Tu DOIS choisir UN style exact dans cette liste pour le champ "style".${contextBlock}${challengeBlock}
 ${profileLine ? `\nProfil : ${profileLine}.` : ""}`;
 
     const userText = `Analyse cette tenue avec rigueur. Donne une note décimale (ex 8.4, 9.2). Sois sélectif sur le 9.5+. Verdict, fort, faible, 3 actions concrètes, fit, couleurs, touche 2026, 3 produits shopping.${challenge?.name ? ` Évalue aussi le défi : "${challenge.name}".` : ""}`;
