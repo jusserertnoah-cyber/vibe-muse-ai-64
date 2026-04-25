@@ -38,7 +38,13 @@ export const AppLayout = () => {
     return () => { cancelled = true; };
   }, [loading, session]);
 
-  if (loading || hydrating) return null;
+  if (loading || hydrating) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-muted border-t-foreground" />
+      </div>
+    );
+  }
   // Mode démo : si aucun provider SMS n'est branché, l'utilisateur n'a pas de
   // session Supabase mais a quand même rempli son profil local — on le laisse
   // entrer dans l'app pour ne pas le forcer à re-saisir son numéro.
