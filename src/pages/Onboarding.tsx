@@ -159,10 +159,17 @@ export default function Onboarding() {
       return;
     }
     setBusy(true);
+    // En prod (mobile inclus), on force l'URL publiée stable plutôt que
+    // window.location.origin (qui pointerait vers un preview Lovable).
+    const isProd = window.location.hostname.endsWith(".lovable.app") &&
+      !window.location.hostname.startsWith("id-preview--");
+    const baseUrl = isProd
+      ? window.location.origin
+      : "https://vibe-muse-ai-64.lovable.app";
     const { error } = await supabase.auth.signInWithOtp({
       email: cleaned,
       options: {
-        emailRedirectTo: `${window.location.origin}/onboarding`,
+        emailRedirectTo: `${baseUrl}/onboarding`,
         shouldCreateUser: !loginOnly,
       },
     });

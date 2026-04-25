@@ -456,11 +456,11 @@ export default function Scan() {
           <StylistChat
             mode="scan"
             context={{ scan: result }}
-            intro="Verdict posé. Pose-moi tes questions — couleur, coupe, accessoire, alternative à acheter."
+            intro={t("stylistChat.scanIntro")}
             suggestions={[
-              "Quelle couleur de chaussure mettre ?",
-              "Comment porter ça en hiver ?",
-              "Une alternative plus chic ?",
+              t("stylistChat.scanSug1"),
+              t("stylistChat.scanSug2"),
+              t("stylistChat.scanSug3"),
             ]}
           />
         </div>
@@ -468,18 +468,14 @@ export default function Scan() {
       <AlertDialog open={confirmShare} onOpenChange={setConfirmShare}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Partager dans Top Vibes</AlertDialogTitle>
-            <AlertDialogDescription>
-              En partageant tu confirmes être l'auteur de la photo et autorises VIBE à l'afficher publiquement
-              dans le classement hebdomadaire. La photo sera supprimée au reset de la semaine
-              (sauf si tu finis n°1, dans ce cas elle rejoint le Hall of Fame).
-            </AlertDialogDescription>
+            <AlertDialogTitle>{t("scanDialog.shareTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>{t("scanDialog.shareDesc")}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={sharing}>Annuler</AlertDialogCancel>
+            <AlertDialogCancel disabled={sharing}>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={shareToFeed} disabled={sharing}>
               {sharing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              J'accepte et je partage
+              {t("scanDialog.shareConfirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -488,10 +484,8 @@ export default function Scan() {
       <AlertDialog open={pickerOpen} onOpenChange={setPickerOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Scanner ma tenue</AlertDialogTitle>
-            <AlertDialogDescription>
-              Prends-toi en photo en pied (lumière naturelle) ou importe une photo existante.
-            </AlertDialogDescription>
+            <AlertDialogTitle>{t("scanDialog.pickerTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>{t("scanDialog.pickerDesc")}</AlertDialogDescription>
           </AlertDialogHeader>
           <div className="grid grid-cols-2 gap-3">
             <button
@@ -499,18 +493,18 @@ export default function Scan() {
               className="flex flex-col items-center gap-2 rounded-2xl bg-foreground p-4 text-background transition active:scale-[0.97]"
             >
               <Camera className="h-7 w-7" strokeWidth={1.6} />
-              <span className="font-serif text-sm">Appareil photo</span>
+              <span className="font-serif text-sm">{t("scanDialog.pickerCamera")}</span>
             </button>
             <button
               onClick={() => { setPickerOpen(false); galleryRef.current?.click(); }}
               className="flex flex-col items-center gap-2 rounded-2xl bg-secondary p-4 text-foreground transition active:scale-[0.97]"
             >
               <Upload className="h-7 w-7" strokeWidth={1.6} />
-              <span className="font-serif text-sm">Importer une photo</span>
+              <span className="font-serif text-sm">{t("scanDialog.pickerImport")}</span>
             </button>
           </div>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -519,11 +513,11 @@ export default function Scan() {
       <AlertDialog open={contextOpen} onOpenChange={(o) => { if (!loading) setContextOpen(o); }}>
         <AlertDialogContent className="max-h-[85vh] overflow-y-auto">
           <AlertDialogHeader>
-            <AlertDialogTitle>Pour quelle occasion ?</AlertDialogTitle>
+            <AlertDialogTitle>{t("scanDialog.occasionTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Dis à VIBE où tu vas porter cette tenue. Plus de contexte = conseils plus précis.
+              {t("scanDialog.occasionDesc")}
               <span className="mt-1 block text-xs text-muted-foreground">
-                La météo est récupérée automatiquement.
+                {t("scanDialog.occasionWeather")}
               </span>
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -551,12 +545,12 @@ export default function Scan() {
 
             <div>
               <label className="mb-1.5 block text-xs uppercase tracking-widest text-muted-foreground">
-                Détails (optionnel)
+                {t("scanDialog.occasionDetails")}
               </label>
               <Textarea
                 value={occasionNote}
                 onChange={(e) => setOccasionNote(e.target.value.slice(0, 200))}
-                placeholder="Ex : dîner chic en intérieur, je veux paraître élégant sans en faire trop."
+                placeholder={t("scanDialog.occasionPlaceholder")}
                 className="min-h-[80px] rounded-2xl"
               />
               <p className="mt-1 text-[10px] text-muted-foreground">{occasionNote.length}/200</p>
@@ -564,7 +558,7 @@ export default function Scan() {
           </div>
 
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={loading}>Annuler</AlertDialogCancel>
+            <AlertDialogCancel disabled={loading}>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               disabled={loading || !dataUrl}
               onClick={() => {

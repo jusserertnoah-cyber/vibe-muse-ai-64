@@ -1,5 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function LegalLayout({
   title,
@@ -11,24 +12,25 @@ export default function LegalLayout({
   children: React.ReactNode;
 }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen bg-background pb-24">
       <header className="sticky top-0 z-10 flex items-center gap-3 bg-background/80 px-5 py-4 backdrop-blur">
         <button
           onClick={() => navigate(-1)}
           className="flex h-10 w-10 items-center justify-center rounded-full bg-card shadow-card"
-          aria-label="Retour"
+          aria-label={t("legal.back")}
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
         <div>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Légal</p>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{t("legal.kicker")}</p>
           <h1 className="font-serif text-2xl leading-tight">{title}</h1>
         </div>
       </header>
       <article className="prose prose-sm mx-auto max-w-2xl space-y-5 px-5 pt-2 text-sm leading-relaxed text-foreground">
         <p className="text-xs uppercase tracking-widest text-muted-foreground">
-          Dernière mise à jour : {updated}
+          {t("legal.lastUpdated", { date: updated })}
         </p>
         {children}
       </article>
