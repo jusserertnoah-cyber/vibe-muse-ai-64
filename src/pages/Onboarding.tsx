@@ -54,6 +54,24 @@ const clearPending = () => {
 
 const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
 
+const encodePending = (pending: PendingOnboarding) => {
+  try {
+    return btoa(encodeURIComponent(JSON.stringify(pending)));
+  } catch {
+    return "";
+  }
+};
+
+const loadPendingFromUrl = (): PendingOnboarding | null => {
+  try {
+    const encoded = new URLSearchParams(window.location.search).get("pending");
+    if (!encoded) return null;
+    return JSON.parse(decodeURIComponent(atob(encoded))) as PendingOnboarding;
+  } catch {
+    return null;
+  }
+};
+
 const getAuthRedirectBaseUrl = () => {
   const isProd = window.location.hostname.endsWith(".lovable.app") &&
     !window.location.hostname.startsWith("id-preview--");
@@ -123,7 +141,7 @@ export default function Onboarding() {
         // First-time user: récupère les réponses sauvegardées avant l'envoi
         // du magic link (le clic sur le lien ouvre souvent un nouvel onglet,
         // donc le state React est vide).
-        const pending = loadPending() ?? readPendingFromUser(session.user);
+        const pending = loadPending() ?? loadPendingFromUrl() ?? readPendingFromUser(session.user);
         if (pending) {
           if (pending.lang) setLang(pending.lang);
           if (pending.firstName) setFirstName(pending.firstName);
@@ -264,10 +282,11 @@ export default function Onboarding() {
       savePending(pendingData);
     }
     const baseUrl = getAuthRedirectBaseUrl();
+    const pendingParam = !loginOnly ? `?pending=${encodeURIComponent(encodePending(pendingData))}` : "";
     const { error } = await supabase.auth.signInWithOtp({
       email: cleaned,
       options: {
-        emailRedirectTo: `${baseUrl}/onboarding`,
+        emailRedirectTo: `${baseUrl}/onboarding${pendingParam}`,
         shouldCreateUser: !loginOnly,
         data: loginOnly ? undefined : {
           first_name: firstName.trim(),
@@ -296,8 +315,11 @@ export default function Onboarding() {
     if (!loginOnly) {
       savePending({ lang, email: email.trim().toLowerCase(), firstName, gender, heightCm, weightKg, age, city });
     }
+    const pendingParam = !loginOnly
+      ? `?pending=${encodeURIComponent(encodePending({ lang, email: email.trim().toLowerCase(), firstName, gender, heightCm, weightKg, age, city }))}`
+      : "";
     const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${getAuthRedirectBaseUrl()}/onboarding`,
+      redirect_uri: `${getAuthRedirectBaseUrl()}/onboarding${pendingParam}`,
     });
     if (error) {
       setBusy(false);
