@@ -566,6 +566,15 @@ export default function Onboarding() {
                       ? t("onboarding.email.sending", { defaultValue: "Envoi…" })
                       : t("onboarding.email.receive", { defaultValue: "Recevoir le lien" })}
                   </Button>
+                  <Button
+                    onClick={signInWithGoogle}
+                    disabled={busy}
+                    variant="outline"
+                    className="h-14 w-full rounded-2xl text-base"
+                  >
+                    <span className="mr-2 font-semibold" aria-hidden="true">G</span>
+                    {t("onboarding.email.google", { defaultValue: "Continuer avec Google" })}
+                  </Button>
                   <p className="text-[10px] text-muted-foreground">
                     {t("onboarding.email.legal", {
                       defaultValue:
