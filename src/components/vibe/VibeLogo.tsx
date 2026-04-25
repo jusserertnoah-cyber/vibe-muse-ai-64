@@ -21,7 +21,7 @@ export type VibeLogoProps = {
 export const VibeLogo = ({
   className,
   variant = "full",
-  accent = false,
+  accent = true,
 }: VibeLogoProps) => {
   if (variant === "icon") {
     return (
