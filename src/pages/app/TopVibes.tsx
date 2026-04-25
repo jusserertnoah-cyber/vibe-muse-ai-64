@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/useSession";
 import { audienceFromGender, getDailyChallenge, nextResetMs } from "@/lib/challenges";
 import { getProfile } from "@/lib/profile";
+import { getCurrentWeather } from "@/lib/weather";
 import { toast } from "sonner";
 
 interface Post {
@@ -26,10 +27,14 @@ export default function TopVibes() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [myVotes, setMyVotes] = useState<Set<string>>(new Set());
+  const [currentTemp, setCurrentTemp] = useState<number | null>(null);
+  useEffect(() => {
+    getCurrentWeather().then((w) => { if (w) setCurrentTemp(w.temp); }).catch(() => {});
+  }, []);
   const challenge = useMemo(() => {
     const p = getProfile();
-    return getDailyChallenge(audienceFromGender(p?.gender));
-  }, []);
+    return getDailyChallenge(audienceFromGender(p?.gender), new Date(), currentTemp);
+  }, [currentTemp]);
   const [resetIn, setResetIn] = useState(nextResetMs());
 
   useEffect(() => {
