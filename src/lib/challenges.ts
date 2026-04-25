@@ -6,45 +6,56 @@ export interface DailyChallenge {
   name: string;       // Affiché dans le bandeau (court)
   hint: string;       // Petit conseil pour l'utilisateur
   detect: string;     // Description précise utilisée par l'IA pour détecter
+  // Compatibilité météo. "any" = peu importe.
+  // hot   : ≥ 22°C (pas de manteau / grosse maille)
+  // cold  : ≤ 10°C (pas de robes courtes / sandales)
+  // mild  : entre 10 et 22°C
+  weather?: ("hot" | "mild" | "cold" | "any")[];
 }
 
 export type ChallengeAudience = "unisexe";
 
-// Défis UNISEXE (utilisés pour tout le monde, fallback si pas de genre).
+// Défis UNISEXE — uniquement des objets/pièces concrets et simples.
+// Pas de concepts vagues type "layering 3 pièces" ou "tailoring".
 export const CHALLENGES_UNISEX: DailyChallenge[] = [
-  { id: "red-touch",    name: "Une touche de rouge",          hint: "Un détail rouge visible (sac, écharpe, chaussettes, top…)", detect: "un élément clairement rouge (vêtement ou accessoire) visible sur la photo" },
-  { id: "silver-acc",   name: "Accessoires argentés",          hint: "Bijou, ceinture ou chaîne argentée bien visible",            detect: "au moins un accessoire argenté (bijou, ceinture, chaîne) visible" },
-  { id: "gold-acc",     name: "Détails dorés",                  hint: "Bijou doré, boutons dorés, ceinture dorée…",                 detect: "au moins un détail doré (bijou, bouton, ceinture) visible" },
-  { id: "futuro-glasses", name: "Lunettes futuristes",          hint: "Lunettes de soleil sport/wrap/visière",                       detect: "des lunettes de soleil au design futuriste (wrap, visière, masque)" },
-  { id: "minimal-jewel",  name: "Bijoux minimalistes",          hint: "Une fine chaîne, anneaux discrets…",                          detect: "des bijoux fins et minimalistes (fine chaîne, petits anneaux)" },
-  { id: "white-sneaker",  name: "Sneakers blanches",            hint: "Une paire de sneakers blanches",                              detect: "des sneakers blanches aux pieds" },
-  { id: "leather-piece",  name: "Une pièce en cuir",            hint: "Veste, jupe, sac, ceinture en cuir",                          detect: "une pièce en cuir clairement visible (veste, jupe, sac, ceinture)" },
-  { id: "denim-on-denim", name: "Total denim",                  hint: "Haut + bas en denim",                                         detect: "un look total denim (haut et bas en jean)" },
-  { id: "monochrome",     name: "Total look monochrome",        hint: "Une seule couleur dominante sur tout le look",                detect: "un look monochrome (une seule teinte dominante)" },
-  { id: "oversized-coat", name: "Manteau oversize",             hint: "Un manteau XXL/oversize",                                     detect: "un manteau ou veste clairement oversize" },
-  { id: "scarf",          name: "Écharpe statement",            hint: "Écharpe XXL, motif ou couleur forte",                         detect: "une écharpe visible et marquée (taille, motif ou couleur)" },
-  { id: "cap",            name: "Casquette ou bob",             hint: "Cap baseball, bob, gavroche…",                                detect: "un couvre-chef visible (casquette, bob)" },
-  { id: "watch",          name: "Une belle montre",             hint: "Montre visible au poignet",                                   detect: "une montre visible au poignet" },
-  { id: "boots",          name: "Bottes ou bottines",           hint: "Boots cuir, Chelsea, cowboy…",                                detect: "des bottes ou bottines visibles" },
-  { id: "knit",           name: "Maille épaisse",               hint: "Gros pull en maille / cardigan tricoté",                      detect: "un vêtement en grosse maille tricotée" },
-  { id: "stripes",        name: "Rayures marinières",           hint: "Top ou pull à rayures",                                        detect: "des rayures clairement visibles sur un vêtement" },
-  { id: "color-pop",      name: "Une couleur pop",              hint: "Vert pomme, fuchsia, jaune fluo…",                            detect: "une couleur saturée et pop sur au moins une pièce" },
-  { id: "tailoring",      name: "Touche tailoring",             hint: "Blazer ou pantalon coupe tailleur",                            detect: "un vêtement coupe tailleur (blazer, pantalon à pli)" },
-  { id: "layering",       name: "Layering 3 pièces",            hint: "Au moins 3 couches superposées (ex: tee + chemise + veste)",  detect: "au moins 3 couches de vêtements superposées clairement visibles" },
-  { id: "structured-bag", name: "Sac structuré",                hint: "Sac à main ou bandoulière structuré",                          detect: "un sac structuré (à main ou bandoulière) visible" },
-  { id: "logo-free",      name: "Zéro logo apparent",           hint: "Aucun logo visible sur le look",                              detect: "aucun logo de marque visible sur les vêtements" },
-  { id: "earth-tones",    name: "Palette terreuse",             hint: "Camel, beige, marron, olive",                                 detect: "une palette de tons terreux dominants (camel, beige, marron, olive)" },
-  { id: "pleated",        name: "Pli/plissé",                   hint: "Jupe ou pantalon plissé",                                     detect: "un vêtement plissé ou à plis (jupe, pantalon)" },
-  { id: "satin",          name: "Touche satin",                 hint: "Une pièce satinée (top, jupe, foulard)",                       detect: "une pièce en matière satinée brillante" },
-  { id: "color-block",    name: "Color blocking",               hint: "2-3 blocs de couleurs franches",                              detect: "un color blocking franc (au moins 2 blocs de couleurs vives)" },
-  { id: "loafers",        name: "Mocassins ou derbies",         hint: "Mocassins, derbies cuir aux pieds",                           detect: "des mocassins ou derbies en cuir visibles" },
-  { id: "hoodie",         name: "Hoodie sous une veste",        hint: "Hoodie visible sous un blazer ou trench",                     detect: "un hoodie portée sous une veste structurée" },
-  { id: "cargo",          name: "Pantalon cargo",               hint: "Pantalon avec poches latérales cargo",                        detect: "un pantalon cargo (poches latérales visibles)" },
-  { id: "white-shirt",    name: "Chemise blanche",              hint: "Une chemise blanche dans le look",                            detect: "une chemise blanche clairement visible" },
-  { id: "bold-belt",      name: "Ceinture statement",           hint: "Ceinture marquée (boucle, couleur, taille)",                  detect: "une ceinture marquée et bien visible" },
+  // === Accessoires (toute météo) ===
+  { id: "red-touch",      name: "Une touche de rouge",   hint: "Un détail rouge visible (sac, écharpe, chaussettes, top…)", detect: "un élément clairement rouge (vêtement ou accessoire) visible sur la photo", weather: ["any"] },
+  { id: "silver-acc",     name: "Bijou argenté",         hint: "Bijou, chaîne ou bracelet argenté bien visible",             detect: "au moins un bijou ou accessoire argenté visible", weather: ["any"] },
+  { id: "gold-acc",       name: "Bijou doré",            hint: "Bijou, chaîne ou bracelet doré bien visible",                detect: "au moins un bijou ou accessoire doré visible", weather: ["any"] },
+  { id: "watch",          name: "Une belle montre",      hint: "Montre visible au poignet",                                   detect: "une montre visible au poignet", weather: ["any"] },
+  { id: "color-belt",     name: "Ceinture colorée",      hint: "Ceinture rouge, jaune, bleue ou verte bien visible",         detect: "une ceinture de couleur vive (rouge, jaune, bleue, verte) clairement visible", weather: ["any"] },
+  { id: "white-sneaker",  name: "Sneakers blanches",     hint: "Une paire de sneakers blanches aux pieds",                   detect: "des sneakers blanches aux pieds", weather: ["any"] },
+  { id: "white-shirt",    name: "Chemise blanche",       hint: "Une chemise blanche bien visible",                           detect: "une chemise blanche clairement visible", weather: ["any"] },
+  { id: "denim",          name: "Pièce en jean",         hint: "Pantalon, jupe ou veste en jean",                            detect: "un vêtement en jean (denim) clairement visible", weather: ["any"] },
+  { id: "bag",            name: "Sac à main",            hint: "Sac à main ou bandoulière",                                  detect: "un sac à main ou bandoulière clairement visible", weather: ["any"] },
+
+  // === Chaud (≥ 22°C) ===
+  { id: "sunglasses",     name: "Lunettes de soleil",    hint: "Lunettes de soleil portées",                                 detect: "des lunettes de soleil portées sur le visage ou sur la tête", weather: ["hot"] },
+  { id: "shorts",         name: "Short ou bermuda",      hint: "Short, bermuda ou pantacourt",                               detect: "un short, bermuda ou pantacourt visible", weather: ["hot"] },
+  { id: "cap",            name: "Casquette ou bob",      hint: "Casquette baseball, bob ou chapeau de paille",               detect: "une casquette, un bob ou un chapeau visible sur la tête", weather: ["hot", "mild"] },
+  { id: "linen",          name: "Pièce en lin",          hint: "Chemise ou pantalon en lin",                                 detect: "un vêtement clairement en lin (chemise, pantalon, robe)", weather: ["hot"] },
+  { id: "sandals",        name: "Sandales",              hint: "Sandales ou tongs aux pieds",                                detect: "des sandales ou tongs visibles aux pieds", weather: ["hot"] },
+  { id: "tee-white",      name: "T-shirt blanc",         hint: "T-shirt blanc uni",                                          detect: "un t-shirt blanc uni clairement visible", weather: ["hot", "mild"] },
+
+  // === Frais / Mi-saison (10–22°C) ===
+  { id: "denim-jacket",   name: "Veste en jean",         hint: "Une veste en jean portée",                                   detect: "une veste en jean (trucker) clairement visible", weather: ["mild"] },
+  { id: "blazer",         name: "Blazer",                hint: "Blazer ou veste de costume",                                 detect: "un blazer ou veste de costume clairement visible", weather: ["mild", "cold"] },
+  { id: "leather-jacket", name: "Veste en cuir",         hint: "Veste en cuir noire ou marron",                              detect: "une veste en cuir clairement visible", weather: ["mild", "cold"] },
+  { id: "hoodie",         name: "Hoodie / Sweat capuche", hint: "Sweat à capuche bien visible",                              detect: "un sweat à capuche (hoodie) clairement visible", weather: ["mild", "cold"] },
+  { id: "cargo",          name: "Pantalon cargo",        hint: "Pantalon avec poches cargo",                                 detect: "un pantalon cargo (poches latérales visibles)", weather: ["mild", "cold"] },
+  { id: "loafers",        name: "Mocassins",             hint: "Mocassins ou derbies en cuir",                               detect: "des mocassins ou derbies en cuir visibles", weather: ["mild", "cold"] },
+
+  // === Froid (≤ 10°C) ===
+  { id: "long-coat",      name: "Manteau long",          hint: "Manteau long descendant aux genoux",                         detect: "un manteau long (descendant au moins aux genoux) clairement visible", weather: ["cold"] },
+  { id: "trench",         name: "Trench-coat",           hint: "Trench beige ou kaki",                                       detect: "un trench-coat clairement visible", weather: ["cold", "mild"] },
+  { id: "scarf",          name: "Écharpe",               hint: "Écharpe visible autour du cou",                              detect: "une écharpe clairement visible autour du cou", weather: ["cold"] },
+  { id: "knit-sweater",   name: "Pull en grosse maille", hint: "Pull tricoté épais",                                         detect: "un pull en grosse maille tricotée clairement visible", weather: ["cold"] },
+  { id: "boots",          name: "Bottines",              hint: "Bottines en cuir aux pieds",                                 detect: "des bottines (boots, Chelsea) clairement visibles", weather: ["cold", "mild"] },
+  { id: "beanie",         name: "Bonnet",                hint: "Bonnet sur la tête",                                         detect: "un bonnet clairement visible sur la tête", weather: ["cold"] },
+  { id: "turtleneck",     name: "Col roulé",             hint: "Col roulé visible au cou",                                   detect: "un col roulé clairement visible au cou", weather: ["cold"] },
 ];
 
-// Compat : conservées comme alias des défis communs (ne plus utiliser).
+// Compat : alias historiques (ne plus utiliser).
 export const CHALLENGES_MEN: DailyChallenge[] = CHALLENGES_UNISEX;
 export const CHALLENGES_WOMEN: DailyChallenge[] = CHALLENGES_UNISEX;
 
@@ -57,12 +68,31 @@ function dayIndex(d = new Date()): number {
   return Math.floor(utc / 86400000);
 }
 
+export type WeatherBand = "hot" | "mild" | "cold";
+
+export function bandFromTemp(tempC?: number | null): WeatherBand | null {
+  if (typeof tempC !== "number" || Number.isNaN(tempC)) return null;
+  if (tempC >= 22) return "hot";
+  if (tempC <= 10) return "cold";
+  return "mild";
+}
+
 export function getDailyChallenge(
   _audience: ChallengeAudience = "unisexe",
   date = new Date(),
+  tempC?: number | null,
 ): DailyChallenge {
-  // Défis communs : tout le monde reçoit le même défi unisexe du jour.
-  return CHALLENGES_UNISEX[dayIndex(date) % CHALLENGES_UNISEX.length];
+  const band = bandFromTemp(tempC);
+  // Si météo connue : on filtre les défis compatibles (any + bande courante).
+  // Sinon : tout le pool.
+  const pool = band
+    ? CHALLENGES_UNISEX.filter((c) => {
+        const w = c.weather ?? ["any"];
+        return w.includes("any") || w.includes(band);
+      })
+    : CHALLENGES_UNISEX;
+  const list = pool.length > 0 ? pool : CHALLENGES_UNISEX;
+  return list[dayIndex(date) % list.length];
 }
 
 // Helper conservé pour compat : retourne toujours "unisexe".
