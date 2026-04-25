@@ -358,16 +358,16 @@ export default function Scan() {
                 </div>
               </div>
               <div className="rounded-full bg-lime px-3 py-1 font-mono-tech text-[10px] uppercase tracking-widest shadow-brand">
-                +10 VIBERS
+                {t("scan.vibers")}
               </div>
             </div>
             <p className="mt-3 font-serif text-lg leading-snug">{result.verdict}</p>
             {result.challenge_met != null && (
-              <div className={`mt-3 flex items-start gap-2 rounded-2xl p-3 text-sm ${result.challenge_met ? "bg-emerald-500/10 text-emerald-700" : "bg-muted text-muted-foreground"}`}>
+              <div className={`mt-3 flex items-start gap-2 rounded-2xl p-3 text-sm ${result.challenge_met ? "bg-accent/15 text-foreground" : "bg-muted text-muted-foreground"}`}>
                 <Flame className="mt-0.5 h-4 w-4 shrink-0" />
                 <div>
-                  <p className="font-semibold">Défi : {challenge.name}</p>
-                  <p className="text-xs">{result.challenge_met ? "Validé" : "Non détecté sur la photo"}{result.challenge_reason ? ` — ${result.challenge_reason}` : ""}</p>
+                  <p className="font-semibold">{t("scan.challengeLabel")} : {challenge.name}</p>
+                  <p className="text-xs">{result.challenge_met ? t("scan.challengeValidated") : t("scan.challengeNotDetected")}{result.challenge_reason ? ` — ${result.challenge_reason}` : ""}</p>
                 </div>
               </div>
             )}
@@ -378,11 +378,11 @@ export default function Scan() {
                 className="mt-4 h-11 w-full rounded-2xl bg-gradient-brand text-foreground shadow-brand"
               >
                 {sharing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Share2 className="mr-2 h-4 w-4" />}
-                {shared ? "Posté dans Top Vibes" : "Partager mon look dans le Feed"}
+                {shared ? t("scan.sharedDone") : t("scan.shareCta")}
               </Button>
             ) : (
               <p className="mt-4 rounded-2xl bg-secondary p-3 text-center text-xs text-muted-foreground">
-                Score 9.0+ requis pour entrer dans Top Vibes (actuel : {result.score.toFixed(1)})
+                {t("scan.scoreNeeded", { score: result.score.toFixed(1) })}
               </p>
             )}
           </div>
@@ -414,22 +414,22 @@ export default function Scan() {
           {(result.fit || result.colors || result.touch2026) && (
             <section className="rounded-3xl bg-card p-5 shadow-card">
               <header className="mb-4 flex items-center justify-between">
-                <p className="font-serif text-xl leading-none">L'avis de VIBE</p>
+                <p className="font-serif text-xl leading-none">{t("scan.vibeAdvice")}</p>
                 <span className="rounded-full bg-secondary px-2 py-1 text-[10px] uppercase tracking-widest text-muted-foreground">
-                  Audit styliste
+                  {t("scan.stylistAudit")}
                 </span>
               </header>
               <div className="space-y-4">
                 {result.fit && (
-                  <AuditBlock icon={<Ruler className="h-4 w-4" />} title="Analyse du Fit" text={result.fit} />
+                  <AuditBlock icon={<Ruler className="h-4 w-4" />} title={t("scan.auditFit")} text={result.fit} />
                 )}
                 {result.colors && (
-                  <AuditBlock icon={<Palette className="h-4 w-4" />} title="Harmonie des couleurs" text={result.colors} />
+                  <AuditBlock icon={<Palette className="h-4 w-4" />} title={t("scan.auditColors")} text={result.colors} />
                 )}
                 {result.touch2026 && (
                   <AuditBlock
                     icon={<Sparkles className="h-4 w-4" />}
-                    title="La Touche 2026"
+                    title={t("scan.auditTouch")}
                     text={result.touch2026}
                     accent
                   />
@@ -443,11 +443,11 @@ export default function Scan() {
             <section>
               <header className="mb-3 flex items-center gap-2 px-1">
                 <ShoppingBag className="h-4 w-4 text-foreground" strokeWidth={1.8} />
-                <p className="font-serif text-xl leading-none">Complète ta tenue</p>
+                <p className="font-serif text-xl leading-none">{t("scan.completeOutfit")}</p>
               </header>
               <div className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2">
                 {result.shopping.map((item, i) => (
-                  <ShoppingCard key={i} item={item} />
+                  <ShoppingCard key={i} item={item} buyLabel={t("scan.buy")} />
                 ))}
               </div>
             </section>
