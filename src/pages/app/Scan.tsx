@@ -231,24 +231,28 @@ export default function Scan() {
   return (
     <div className="space-y-6 px-5 pt-8">
       {/* HERO Scan — visuel marquant */}
-      <section className="relative overflow-hidden rounded-3xl bg-foreground p-6 text-background shadow-card">
-        {/* halos lime */}
+      <section className="relative overflow-hidden rounded-3xl border border-border bg-card p-6 text-foreground shadow-card">
+        {/* halos lime adoucis sur fond clair */}
         <div
-          className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full opacity-50 blur-3xl"
+          className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full opacity-30 blur-3xl"
           style={{ background: "#CEFF00" }}
         />
         <div
-          className="pointer-events-none absolute -left-12 bottom-0 h-32 w-32 rounded-full opacity-30 blur-3xl"
+          className="pointer-events-none absolute -left-12 bottom-0 h-32 w-32 rounded-full opacity-20 blur-3xl"
           style={{ background: "#CEFF00" }}
         />
         <div className="relative">
-          <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] opacity-70">
-            <Sparkles className="h-3.5 w-3.5" /> {t("scan.kicker")}
+          <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+            <Sparkles className="h-3.5 w-3.5" style={{ color: "#7BAA00" }} /> {t("scan.kicker")}
           </div>
           <h1 className="mt-2 font-serif text-4xl leading-tight tracking-tight">
-            {t("scan.title")}
+            {t("scan.title").split(" ").map((word, i, arr) => (
+              <span key={i} style={i === arr.length - 1 ? { color: "#7BAA00" } : undefined}>
+                {word}{i < arr.length - 1 ? " " : ""}
+              </span>
+            ))}
           </h1>
-          <p className="mt-2 max-w-sm text-sm leading-snug opacity-80">
+          <p className="mt-2 max-w-sm text-sm leading-snug text-muted-foreground">
             {t("scan.subtitle")}
           </p>
 
@@ -261,7 +265,7 @@ export default function Scan() {
             ].map((it) => (
               <div
                 key={it.label}
-                className="flex items-center justify-center gap-1.5 rounded-full bg-background/10 px-2 py-1.5 text-[10px] font-medium uppercase tracking-widest backdrop-blur"
+                className="flex items-center justify-center gap-1.5 rounded-full bg-secondary px-2 py-1.5 text-[10px] font-medium uppercase tracking-widest text-foreground"
               >
                 {it.icon}
                 {it.label}
