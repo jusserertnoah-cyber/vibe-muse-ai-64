@@ -207,46 +207,75 @@ export default function Scan() {
             className="mx-auto h-72 rounded-2xl object-cover"
           />
         ) : (
-          <div className="flex flex-col items-center gap-4 py-10 text-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary">
-              <Camera className="h-7 w-7 text-foreground" strokeWidth={1.5} />
-            </div>
+          <div className="flex flex-col items-center gap-4 py-6 text-center">
             <p className="max-w-xs text-sm leading-snug text-muted-foreground">
               {t("scan.hint")}
             </p>
           </div>
         )}
+
+        {/* Inputs cachés : caméra (capture) + galerie */}
         <input
           ref={fileRef}
           type="file"
           accept="image/*"
           capture="environment"
           className="hidden"
-          onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            e.target.value = "";
+            if (f) onFile(f);
+          }}
         />
-        <div className="mt-5 flex gap-2">
-          <Button
-            onClick={() => fileRef.current?.click()}
-            disabled={loading}
-            className="h-14 flex-1 rounded-3xl bg-gradient-brand font-serif text-lg text-foreground hover:opacity-90 shadow-brand border-0"
+        <input
+          ref={galleryRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            e.target.value = "";
+            if (f) onFile(f);
+          }}
+        />
+
+        {/* Bouton noir façon Home : "SCANNER MA TENUE" */}
+        <button
+          onClick={() => !loading && setPickerOpen(true)}
+          disabled={loading}
+          className="group relative mt-5 flex w-full flex-col items-center justify-center gap-3 overflow-hidden rounded-3xl bg-foreground px-6 py-8 text-background shadow-card transition-transform active:scale-[0.98] disabled:opacity-60"
+        >
+          <div
+            className="pointer-events-none absolute inset-0 opacity-30"
+            style={{ background: "radial-gradient(circle at 50% 30%, #CEFF00 0%, transparent 60%)" }}
+          />
+          <div
+            className="relative flex h-16 w-16 items-center justify-center rounded-full"
+            style={{ backgroundColor: "#CEFF00", boxShadow: "0 0 30px rgba(206,255,0,0.6)" }}
           >
             {loading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="h-8 w-8 animate-spin text-black" />
             ) : (
-              <Upload className="mr-2 h-4 w-4" />
+              <Camera className="h-8 w-8 text-black" strokeWidth={2} />
             )}
-            {loading ? t("scan.loading") : preview ? t("scan.change") : t("scan.choose")}
+          </div>
+          <span className="relative font-serif text-2xl tracking-tight">
+            {loading ? t("scan.loading") : preview ? t("scan.change").toUpperCase() : "SCANNER MA TENUE"}
+          </span>
+          <span className="relative text-[10px] uppercase tracking-[0.25em] opacity-70">
+            Vibe Check instantané
+          </span>
+        </button>
+
+        {preview && !loading && result && (
+          <Button
+            variant="outline"
+            onClick={() => dataUrl && analyze(dataUrl)}
+            className="mt-3 h-12 w-full rounded-3xl"
+          >
+            {t("scan.rescore")}
           </Button>
-          {preview && !loading && result && (
-            <Button
-              variant="outline"
-              onClick={() => dataUrl && analyze(dataUrl)}
-              className="h-12 rounded-3xl"
-            >
-              {t("scan.rescore")}
-            </Button>
-          )}
-        </div>
+        )}
       </div>
 
       {result && (
