@@ -95,7 +95,7 @@ Renvoie une analyse courte (max 90 mots) sous forme de 3-4 puces, chaque puce co
   } catch (e) {
     console.error(e);
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }),
+      JSON.stringify({ error: "internal_error" }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -145,7 +145,7 @@ RÈGLES :
   } catch (e) {
     console.error("chat-stylist error", e);
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }),
+      JSON.stringify({ error: "internal_error" }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
