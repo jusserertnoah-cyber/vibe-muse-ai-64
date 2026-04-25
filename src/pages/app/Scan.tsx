@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Camera, Upload, Loader2, Check, AlertCircle, Ruler, Palette, Sparkles, ShoppingBag, ExternalLink, Share2, Flame } from "lucide-react";
+import { Camera, Upload, Loader2, Check, AlertCircle, Ruler, Palette, Sparkles, ShoppingBag, ExternalLink, Share2, Flame, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,11 +11,12 @@ import { pushHistory } from "@/lib/history";
 import { toast } from "sonner";
 import { StylistChat } from "@/components/vibe/StylistChat";
 import { audienceFromGender, getDailyChallenge } from "@/lib/challenges";
-import scanMirrorSelfie from "@/assets/scan-mirror-selfie.jpg";
+import { getCoords, fetchWeather, type WeatherSnapshot } from "@/lib/weather";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 interface ShoppingItem {
   name: string;
@@ -49,6 +50,19 @@ const fileToDataUrl = (file: File) =>
     reader.readAsDataURL(file);
   });
 
+const OCCASION_PRESETS = [
+  "Rendez-vous",
+  "Soirée",
+  "Travail / Bureau",
+  "Brunch / Café",
+  "Mariage",
+  "Sortie entre amis",
+  "Date romantique",
+  "Cours / Université",
+  "Sport",
+  "Voyage",
+] as const;
+
 export default function Scan() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -62,6 +76,10 @@ export default function Scan() {
   const [confirmShare, setConfirmShare] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const galleryRef = useRef<HTMLInputElement>(null);
+  // Étape "contexte" entre import photo et analyse
+  const [contextOpen, setContextOpen] = useState(false);
+  const [occasion, setOccasion] = useState<string>("");
+  const [occasionNote, setOccasionNote] = useState<string>("");
   const profileForChallenge = getProfile();
   const challenge = getDailyChallenge(audienceFromGender(profileForChallenge?.gender));
 
@@ -72,15 +90,24 @@ export default function Scan() {
     try {
       const url = await fileToDataUrl(f);
       setDataUrl(url);
-      analyze(url);
+      // Avant d'analyser, on demande le contexte (occasion / situation)
+      setContextOpen(true);
     } catch {
       toast.error(t("scan.readError"));
     }
   };
 
-  const analyze = async (img: string) => {
+  const analyze = async (img: string, ctx?: { occasion?: string; note?: string }) => {
     const profile = getProfile();
     setLoading(true);
+    // Météo auto (l'IA "sait" déjà, vu qu'on l'a dans l'app)
+    let weather: WeatherSnapshot | null = null;
+    try {
+      const c = await getCoords();
+      weather = await fetchWeather(c.lat, c.lon);
+    } catch {
+      // pas de météo dispo, on continue sans
+    }
     try {
       const { data, error } = await supabase.functions.invoke("scan-look", {
         body: {
@@ -91,6 +118,11 @@ export default function Scan() {
           lang: i18n.language?.split("-")[0] ?? "fr",
           tier: getTier(),
           challenge: { name: challenge.name, detect: challenge.detect },
+          occasion: ctx?.occasion ?? undefined,
+          occasionNote: ctx?.note ?? undefined,
+          weather: weather
+            ? { temp: weather.temp, label: weather.label, city: weather.city ?? null }
+            : undefined,
         },
       });
       if (error) {
