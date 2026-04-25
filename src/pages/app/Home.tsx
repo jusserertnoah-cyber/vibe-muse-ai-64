@@ -50,22 +50,22 @@ export default function Home() {
     const isCold = t <= 5;
     const isHot = t >= 28;
 
-    // Phrase contextuelle (priorité : extrême > pluie/neige/orage > vent > nuages > beau)
+    // Phrase contextuelle traduite
     let phrase = "";
-    if (kind === "storm") phrase = "Tempête en vue. Reste à l'abri ou sort le trench imperméable.";
-    else if (kind === "snow") phrase = "Il neige. Manteau chaud, écharpe en maille et bottes — on joue cocooning.";
-    else if (kind === "rain") phrase = "Pluie au programme. Trench long, bottines en cuir et un parapluie élégant.";
-    else if (kind === "fog") phrase = "Brouillard épais. Joue les couches sombres, écharpe XXL et silhouette mystérieuse.";
-    else if (isWindy) phrase = `Du vent à ${wind} km/h. Évite les pièces volantes, mise sur des coupes ajustées.`;
-    else if (isCold && kind === "cloud") phrase = "Froid et couvert. Pull en grosse maille + manteau long, ambiance sobre.";
-    else if (isCold) phrase = "Il fait froid. Superpose intelligemment : sous-pull fin, pull, manteau structuré.";
-    else if (isHot) phrase = "Il fait chaud. Lin, coton léger, couleurs claires — respire le style.";
-    else if (kind === "cloud") phrase = "Ciel couvert. Parfait pour les tons neutres et un blazer bien coupé.";
-    else phrase = "Beau temps. Sors la pièce qui te fait sentir bien, lumière naturelle au top.";
+    if (kind === "storm") phrase = tt("home.weather.storm");
+    else if (kind === "snow") phrase = tt("home.weather.snow");
+    else if (kind === "rain") phrase = tt("home.weather.rain");
+    else if (kind === "fog") phrase = tt("home.weather.fog");
+    else if (isWindy) phrase = tt("home.weather.windy", { wind });
+    else if (isCold && kind === "cloud") phrase = tt("home.weather.coldCloud");
+    else if (isCold) phrase = tt("home.weather.cold");
+    else if (isHot) phrase = tt("home.weather.hot");
+    else if (kind === "cloud") phrase = tt("home.weather.cloud");
+    else phrase = tt("home.weather.sun");
 
     // Override si une pièce du dressing est mise en avant
     if (featuredPiece && !["storm", "snow", "rain"].includes(kind) && !isCold) {
-      phrase = `${phrase.split(".")[0]}. Et si tu sortais ton ${featuredPiece} aujourd'hui ?`;
+      phrase = `${phrase.split(".")[0]}. ${tt("home.weather.featuredAddon", { piece: featuredPiece })}`;
     }
 
     const Icon =
@@ -90,7 +90,7 @@ export default function Home() {
     const textOnDark = ["storm", "rain", "fog"].includes(kind);
 
     return { Icon, gradient, phrase, textOnDark, kind, isWindy };
-  }, [weather, featuredPiece]);
+  }, [weather, featuredPiece, tt]);
 
   return (
     <div className="space-y-6 px-5 pt-8">
@@ -104,12 +104,9 @@ export default function Home() {
             {profile?.firstName}
           </h1>
         </div>
-        <div
-          className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-mono-tech text-sm font-bold text-black"
-          style={{ backgroundColor: "#CEFF00", boxShadow: "0 0 18px rgba(206,255,0,0.5)" }}
-        >
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 font-mono-tech text-sm font-bold text-accent-foreground shadow-brand">
           <Zap className="h-3.5 w-3.5" strokeWidth={2.5} />
-          Crédits&nbsp;: {credits}
+          {t("home.credits")}&nbsp;: {credits}
         </div>
       </header>
 
@@ -122,11 +119,11 @@ export default function Home() {
           <Flame className="h-7 w-7 text-foreground" strokeWidth={1.6} />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-[10px] uppercase tracking-[0.25em] text-foreground/70">Défi du jour</p>
+          <p className="text-[10px] uppercase tracking-[0.25em] text-foreground/70">{t("home.dailyChallenge")}</p>
           <p className="mt-0.5 truncate font-serif text-xl">{challenge.name}</p>
           <p className="mt-0.5 truncate text-xs text-foreground/80">{challenge.hint}</p>
         </div>
-        <span className="hidden text-[10px] font-semibold uppercase tracking-widest text-foreground/70 sm:block">10/10 = scan offert</span>
+        <span className="hidden text-[10px] font-semibold uppercase tracking-widest text-foreground/70 sm:block">{t("home.scanReward")}</span>
       </button>
 
       {/* Carte météo visuelle */}
