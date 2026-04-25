@@ -24,6 +24,31 @@ const GENDERS: { id: Gender; labelKey: string; fallback: string }[] = [
 const TOTAL_STEPS = 6;
 const EMAIL_STEP = 5;
 
+const PENDING_KEY = "vibe.onboarding.pending.v1";
+
+type PendingOnboarding = {
+  lang?: string;
+  firstName?: string;
+  gender?: Gender | null;
+  heightCm?: string;
+  weightKg?: string;
+  age?: string;
+  city?: string;
+};
+
+const savePending = (p: PendingOnboarding) => {
+  try { localStorage.setItem(PENDING_KEY, JSON.stringify(p)); } catch {}
+};
+const loadPending = (): PendingOnboarding | null => {
+  try {
+    const raw = localStorage.getItem(PENDING_KEY);
+    return raw ? (JSON.parse(raw) as PendingOnboarding) : null;
+  } catch { return null; }
+};
+const clearPending = () => {
+  try { localStorage.removeItem(PENDING_KEY); } catch {}
+};
+
 const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
 
 export default function Onboarding() {
@@ -60,17 +85,43 @@ export default function Onboarding() {
           navigate("/app", { replace: true });
           return;
         }
-        // First-time user: persist their pending onboarding answers if present,
-        // then attempt to claim the welcome pack (1 device = 1 pack).
-        if (firstName.trim() || gender) {
-          await persistAndClaim(session.user.id, session.user.email ?? undefined);
+        // First-time user: récupère les réponses sauvegardées avant l'envoi
+        // du magic link (le clic sur le lien ouvre souvent un nouvel onglet,
+        // donc le state React est vide).
+        const pending = loadPending();
+        if (pending) {
+          if (pending.lang) setLang(pending.lang);
+          if (pending.firstName) setFirstName(pending.firstName);
+          if (pending.gender) setGender(pending.gender);
+          if (pending.heightCm) setHeightCm(pending.heightCm);
+          if (pending.weightKg) setWeightKg(pending.weightKg);
+          if (pending.age) setAge(pending.age);
+          if (pending.city) setCity(pending.city);
+        }
+        const hasAnswers =
+          (pending?.firstName?.trim()?.length ?? 0) >= 2 ||
+          firstName.trim().length >= 2 ||
+          !!pending?.gender || !!gender;
+        if (hasAnswers) {
+          await persistAndClaim(
+            session.user.id,
+            session.user.email ?? undefined,
+            pending ?? undefined,
+          );
+        } else {
+          // Pas de réponses : on laisse l'utilisateur faire l'onboarding,
+          // puis on persistera à la fin via le même flux.
         }
       })();
     }
   }, [loading, session, navigate]);
 
-  const persistAndClaim = async (userId: string, userEmail?: string) => {
-    const profile = await persistProfile(userId, userEmail);
+  const persistAndClaim = async (
+    userId: string,
+    userEmail?: string,
+    pending?: PendingOnboarding,
+  ) => {
+    const profile = await persistProfile(userId, userEmail, pending);
     try {
       const deviceId = await getDeviceId();
       const { data, error } = await supabase.functions.invoke("claim-welcome-pack", {
@@ -88,6 +139,7 @@ export default function Onboarding() {
     } catch {
       // Non-blocking
     }
+    clearPending();
     navigate("/app", { replace: true });
   };
 
@@ -114,21 +166,32 @@ export default function Onboarding() {
     );
   };
 
-  const persistProfile = async (userId?: string, userEmail?: string) => {
+  const persistProfile = async (
+    userId?: string,
+    userEmail?: string,
+    pending?: PendingOnboarding,
+  ) => {
     const deviceId = await getDeviceId().catch(() => undefined);
-    if (lang && i18n.language?.split("-")[0] !== lang) {
-      try { await i18n.changeLanguage(lang); } catch {}
+    const effLang = pending?.lang || lang;
+    const effFirstName = (pending?.firstName ?? firstName).trim() || "Vibe";
+    const effGender = (pending?.gender ?? gender) ?? "unisexe";
+    const effHeight = pending?.heightCm ?? heightCm;
+    const effWeight = pending?.weightKg ?? weightKg;
+    const effAge = pending?.age ?? age;
+    const effCity = pending?.city ?? city;
+    if (effLang && i18n.language?.split("-")[0] !== effLang) {
+      try { await i18n.changeLanguage(effLang); } catch {}
     }
-    try { localStorage.setItem("vibe.lang", lang); } catch {}
+    try { localStorage.setItem("vibe.lang", effLang); } catch {}
     const profile: UserProfile = {
-      firstName: firstName.trim() || "Vibe",
+      firstName: effFirstName,
       email: userEmail,
-      gender: gender ?? "unisexe",
-      heightCm: heightCm ? Number(heightCm) : undefined,
-      weightKg: weightKg ? Number(weightKg) : undefined,
-      age: age ? Number(age) : undefined,
+      gender: effGender,
+      heightCm: effHeight ? Number(effHeight) : undefined,
+      weightKg: effWeight ? Number(effWeight) : undefined,
+      age: effAge ? Number(effAge) : undefined,
       styles: [],
-      city: city || undefined,
+      city: effCity || undefined,
       referencePhoto: undefined,
       closet: [],
       vibers: 0,
@@ -159,6 +222,11 @@ export default function Onboarding() {
       return;
     }
     setBusy(true);
+    // Sauvegarde les réponses pour qu'elles survivent à l'ouverture du
+    // magic link dans un nouvel onglet / une nouvelle session.
+    if (!loginOnly) {
+      savePending({ lang, firstName, gender, heightCm, weightKg, age, city });
+    }
     // En prod (mobile inclus), on force l'URL publiée stable plutôt que
     // window.location.origin (qui pointerait vers un preview Lovable).
     const isProd = window.location.hostname.endsWith(".lovable.app") &&
