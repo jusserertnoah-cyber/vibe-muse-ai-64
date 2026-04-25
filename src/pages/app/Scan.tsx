@@ -639,7 +639,7 @@ function AuditBlock({
   );
 }
 
-function ShoppingCard({ item }: { item: { name: string; brand: string; price: string; why: string; query: string } }) {
+function ShoppingCard({ item, buyLabel }: { item: { name: string; brand: string; price: string; why: string; query: string }; buyLabel: string }) {
   const url = `https://www.google.com/search?tbm=shop&q=${encodeURIComponent(item.query)}`;
   return (
     <a
@@ -657,7 +657,7 @@ function ShoppingCard({ item }: { item: { name: string; brand: string; price: st
       <div className="mt-3 flex items-center justify-between">
         <span className="font-mono-tech text-sm font-semibold">{item.price}</span>
         <span className="flex items-center gap-1 rounded-full bg-gradient-brand px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-foreground shadow-brand">
-          Acheter
+          {buyLabel}
           <ExternalLink className="h-3 w-3" />
         </span>
       </div>
