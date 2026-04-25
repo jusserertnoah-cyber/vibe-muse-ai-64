@@ -122,7 +122,7 @@ export default function Onboarding() {
         // First-time user: récupère les réponses sauvegardées avant l'envoi
         // du magic link (le clic sur le lien ouvre souvent un nouvel onglet,
         // donc le state React est vide).
-        const pending = loadPending();
+        const pending = loadPending() ?? readPendingFromUser(session.user);
         if (pending) {
           if (pending.lang) setLang(pending.lang);
           if (pending.firstName) setFirstName(pending.firstName);
@@ -256,23 +256,22 @@ export default function Onboarding() {
       return;
     }
     setBusy(true);
+    const pendingData = { lang, email: cleaned, firstName, gender, heightCm, weightKg, age, city };
     // Sauvegarde les réponses pour qu'elles survivent à l'ouverture du
     // magic link dans un nouvel onglet / une nouvelle session.
     if (!loginOnly) {
-      savePending({ lang, firstName, gender, heightCm, weightKg, age, city });
+      savePending(pendingData);
     }
-    // En prod (mobile inclus), on force l'URL publiée stable plutôt que
-    // window.location.origin (qui pointerait vers un preview Lovable).
-    const isProd = window.location.hostname.endsWith(".lovable.app") &&
-      !window.location.hostname.startsWith("id-preview--");
-    const baseUrl = isProd
-      ? window.location.origin
-      : "https://vibe-muse-ai-64.lovable.app";
+    const baseUrl = getAuthRedirectBaseUrl();
     const { error } = await supabase.auth.signInWithOtp({
       email: cleaned,
       options: {
         emailRedirectTo: `${baseUrl}/onboarding`,
         shouldCreateUser: !loginOnly,
+        data: loginOnly ? undefined : {
+          first_name: firstName.trim(),
+          onboarding: pendingData,
+        },
       },
     });
     setBusy(false);
