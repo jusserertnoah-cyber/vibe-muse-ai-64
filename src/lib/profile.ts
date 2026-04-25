@@ -3,6 +3,33 @@ import { supabase } from "@/integrations/supabase/client";
 
 const KEY = "vibe.profile.v1";
 
+const toNullableNumber = (value?: number) =>
+  typeof value === "number" && Number.isFinite(value) ? value : null;
+
+export const syncProfileToDb = async (userId: string, profile: UserProfile) => {
+  const { error } = await supabase.from("profiles").upsert({
+    id: userId,
+    first_name: profile.firstName || "Vibe",
+    gender: profile.gender || "unisexe",
+    age: toNullableNumber(profile.age),
+    height: toNullableNumber(profile.heightCm),
+    weight: toNullableNumber(profile.weightKg),
+    styles: profile.styles ?? [],
+    closet: profile.closet ?? [],
+    onboarded: true,
+  }, { onConflict: "id" });
+
+  if (error) throw error;
+};
+
+const syncCurrentProfileInBackground = (profile: UserProfile) => {
+  supabase.auth.getSession().then(({ data }) => {
+    const userId = data.session?.user?.id;
+    if (!userId) return;
+    void syncProfileToDb(userId, profile).catch(() => {});
+  }).catch(() => {});
+};
+
 export const getProfile = (): UserProfile | null => {
   try {
     const raw = localStorage.getItem(KEY);
@@ -14,6 +41,7 @@ export const getProfile = (): UserProfile | null => {
 
 export const saveProfile = (p: UserProfile) => {
   localStorage.setItem(KEY, JSON.stringify(p));
+  syncCurrentProfileInBackground(p);
   try { window.dispatchEvent(new CustomEvent("vibe:profile-changed")); } catch {}
 };
 
