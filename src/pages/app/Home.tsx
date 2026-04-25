@@ -7,8 +7,6 @@ import { getCurrentWeather } from "@/lib/weather";
 import { MissionStory } from "@/components/vibe/MissionStory";
 import { audienceFromGender, getDailyChallenge } from "@/lib/challenges";
 import { ChallengeDetailDialog } from "@/components/vibe/ChallengeDetailDialog";
-import { useState } from "react";
-import { getProfile as _getP } from "@/lib/profile";
 
 export default function Home() {
   const { t } = useTranslation();
