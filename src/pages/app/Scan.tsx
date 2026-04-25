@@ -137,14 +137,14 @@ export default function Scan() {
         // Edge function renvoie 402 quand pas de crédit → message clair + paywall
         const msg = String(error.message ?? "");
         if (msg.includes("402") || msg.toLowerCase().includes("no_credits")) {
-          toast.error("Crédit insuffisant", { description: "Achète un pack pour continuer." });
+          toast.error(t("scan.creditInsufficient"), { description: t("scan.creditTopup") });
           navigate("/app/paywall");
           return;
         }
         throw error;
       }
       if ((data as any)?.error === "no_credits") {
-        toast.error("Crédit insuffisant", { description: "Achète un pack pour continuer." });
+        toast.error(t("scan.creditInsufficient"), { description: t("scan.creditTopup") });
         navigate("/app/paywall");
         return;
       }
@@ -164,10 +164,10 @@ export default function Scan() {
       const r = data as ScanResult;
       if (r.challenge_met) {
         if (r.challenge_reward?.granted_credit) {
-          toast.success("🎉 10 défis réussis !", { description: "1 scan gratuit ajouté à ton compte." });
+          toast.success(t("scan.challengeBonus"), { description: t("scan.challengeBonusDesc") });
         } else {
-          toast.success(`✓ Défi "${challenge.name}" validé`, {
-            description: r.challenge_reward ? `${r.challenge_reward.total_completed % 10}/10 vers ton prochain scan offert` : undefined,
+          toast.success(t("scan.challengeOk", { name: challenge.name }), {
+            description: r.challenge_reward ? t("scan.challengeProgress", { n: r.challenge_reward.total_completed % 10 }) : undefined,
           });
         }
       }
@@ -192,7 +192,7 @@ export default function Scan() {
       const { data: sess } = await supabase.auth.getSession();
       const userId = sess.session?.user?.id;
       if (!userId) {
-        toast.error("Connecte-toi pour partager au feed.");
+        toast.error(t("scan.shareLogin"));
         return;
       }
       const profile = getProfile();
@@ -209,11 +209,11 @@ export default function Scan() {
       });
       if (error) throw error;
       setShared(true);
-      toast.success("Posté dans Top Vibes !");
+      toast.success(t("scan.shareDone"));
       navigate("/app/topvibes");
     } catch (e) {
       console.error(e);
-      toast.error("Impossible de partager pour l'instant.");
+      toast.error(t("scan.shareError"));
     } finally {
       setSharing(false);
       setConfirmShare(false);
