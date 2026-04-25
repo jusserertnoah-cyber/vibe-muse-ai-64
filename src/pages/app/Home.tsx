@@ -6,7 +6,7 @@ import { Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, Wind, MapPi
 import { getCurrentWeather } from "@/lib/weather";
 import { MissionStory } from "@/components/vibe/MissionStory";
 import { audienceFromGender, getDailyChallenge } from "@/lib/challenges";
-import { DailyNotifCta } from "@/components/vibe/DailyNotifCta";
+import { ChallengeDetailDialog } from "@/components/vibe/ChallengeDetailDialog";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -14,6 +14,7 @@ export default function Home() {
   const profile = getProfile();
   const [weather, setWeather] = useState<{ temp: number; city?: string; label?: string; code?: number; wind?: number } | null>(null);
   const challenge = getDailyChallenge(audienceFromGender(profile?.gender));
+  const [challengeOpen, setChallengeOpen] = useState(false);
 
   useEffect(() => {
     getCurrentWeather().then((w) => {
@@ -108,6 +109,22 @@ export default function Home() {
         </div>
       </header>
 
+      {/* Bandeau Défi du jour — TOUT EN HAUT (au-dessus de la météo) */}
+      <button
+        onClick={() => setChallengeOpen(true)}
+        className="group relative flex w-full items-center gap-4 overflow-hidden rounded-3xl bg-gradient-brand p-5 text-left shadow-brand active:scale-[0.99]"
+      >
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-foreground/10">
+          <Flame className="h-7 w-7 text-foreground" strokeWidth={1.6} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-[10px] uppercase tracking-[0.25em] text-foreground/70">Défi du jour</p>
+          <p className="mt-0.5 truncate font-serif text-xl">{challenge.name}</p>
+          <p className="mt-0.5 truncate text-xs text-foreground/80">{challenge.hint}</p>
+        </div>
+        <span className="hidden text-[10px] font-semibold uppercase tracking-widest text-foreground/70 sm:block">10/10 = scan offert</span>
+      </button>
+
       {/* Carte météo visuelle */}
       {weather && weatherVisual && (
         <div
@@ -171,26 +188,15 @@ export default function Home() {
         </span>
       </button>
 
-      {/* Bandeau Défi du jour */}
-      <button
-        onClick={() => navigate("/app/scan")}
-        className="group relative flex w-full items-center gap-4 overflow-hidden rounded-3xl bg-gradient-brand p-5 text-left shadow-brand active:scale-[0.99]"
-      >
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-foreground/10">
-          <Flame className="h-7 w-7 text-foreground" strokeWidth={1.6} />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-[10px] uppercase tracking-[0.25em] text-foreground/70">Défi du jour</p>
-          <p className="mt-0.5 truncate font-serif text-xl">{challenge.name}</p>
-          <p className="mt-0.5 truncate text-xs text-foreground/80">{challenge.hint}</p>
-        </div>
-        <span className="hidden text-[10px] font-semibold uppercase tracking-widest text-foreground/70 sm:block">10/10 = scan offert</span>
-      </button>
-
       {/* Mission Story — Jauge récompense */}
       <MissionStory />
-      {/* CTA notification 7h (s'auto-masque une fois activée) */}
-      <DailyNotifCta />
+
+      <ChallengeDetailDialog
+        open={challengeOpen}
+        onOpenChange={setChallengeOpen}
+        challenge={challenge}
+        onScan={() => { setChallengeOpen(false); navigate("/app/scan"); }}
+      />
     </div>
   );
 }

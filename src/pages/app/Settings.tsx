@@ -22,6 +22,7 @@ import { SUPPORTED_LANGUAGES } from "@/i18n";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { THEMES, getSavedTheme, setTheme, resolveTheme, type ThemeName } from "@/lib/theme";
+import { DailyNotifCta } from "@/components/vibe/DailyNotifCta";
 
 const Section = ({
   icon,
@@ -266,6 +267,8 @@ export default function Settings() {
 
       {/* Preferences */}
       <Section icon={<Bell className="h-4 w-4" />} title={t("settings.preferences")}>
+        {/* Notif quotidienne du défi à 7h */}
+        <DailyNotifCta />
         <div className="flex items-center justify-between rounded-xl border border-border bg-background px-4 py-3">
           <span className="text-sm">{t("settings.morningTip")}</span>
           <Switch checked={morningTip} onCheckedChange={toggleMorning} />
