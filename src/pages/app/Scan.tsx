@@ -11,6 +11,7 @@ import { pushHistory } from "@/lib/history";
 import { toast } from "sonner";
 import { StylistChat } from "@/components/vibe/StylistChat";
 import { audienceFromGender, getDailyChallenge } from "@/lib/challenges";
+import scanMirrorSelfie from "@/assets/scan-mirror-selfie.jpg";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -239,13 +240,16 @@ export default function Scan() {
           />
         ) : (
           <div className="flex flex-col items-center gap-4 py-4 text-center">
-            {/* Polaroid mockup */}
+            {/* Mirror selfie hero — illustre la pose attendue */}
             <div className="relative">
-              <div className="rotate-[-4deg] rounded-xl bg-background p-3 pb-10 shadow-card">
-                <div className="flex h-32 w-28 items-center justify-center rounded-md bg-gradient-to-br from-secondary to-muted">
-                  <Camera className="h-10 w-10 text-muted-foreground/60" strokeWidth={1.2} />
-                </div>
-              </div>
+              <img
+                src={scanMirrorSelfie}
+                alt="Selfie miroir tenue dressing"
+                width={1024}
+                height={1024}
+                loading="lazy"
+                className="h-72 w-56 rounded-2xl object-cover shadow-card"
+              />
               <div
                 className="absolute -right-3 -top-3 flex h-10 w-10 items-center justify-center rounded-full text-black shadow-brand"
                 style={{ backgroundColor: "#CEFF00" }}
