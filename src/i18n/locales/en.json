@@ -146,7 +146,23 @@
     "addPiece": "Add a piece",
     "history": "History",
     "myStats": "My Stats",
-    "location": "Location"
+    "location": "Location",
+    "credits": "Credits",
+    "dailyChallenge": "Daily challenge",
+    "scanReward": "10/10 = free scan",
+    "weather": {
+      "storm": "Storm ahead. Stay sheltered or pull out the waterproof trench.",
+      "snow": "It's snowing. Warm coat, knit scarf and boots — full cocoon mode.",
+      "rain": "Rain on the menu. Long trench, leather boots and an elegant umbrella.",
+      "fog": "Heavy fog. Layer dark tones, oversized scarf and a mysterious silhouette.",
+      "windy": "Wind at {{wind}} km/h. Skip flowing pieces, go for tailored cuts.",
+      "coldCloud": "Cold and overcast. Chunky knit + long coat, sober mood.",
+      "cold": "It's cold. Layer smart: thin base, sweater, structured coat.",
+      "hot": "It's hot. Linen, light cotton, bright tones — breathe in style.",
+      "cloud": "Overcast skies. Perfect for neutral tones and a sharp blazer.",
+      "sun": "Beautiful weather. Wear what makes you feel good — natural light at its best.",
+      "featuredAddon": "What if you wore your {{piece}} today?"
+    }
   },
   "dressing": {
     "title": "Build your outfit",
