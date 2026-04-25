@@ -30,9 +30,6 @@ export default function Profil() {
           {profile?.firstName?.[0]?.toUpperCase()}
         </div>
         <h1 className="mt-3 font-serif text-2xl">{profile?.firstName}</h1>
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">
-          {profile?.styles.slice(0, 3).join(" · ")}
-        </p>
       </header>
 
       {/* Premium card */}

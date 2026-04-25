@@ -264,34 +264,12 @@ export default function Scan() {
       </section>
 
       <div className="rounded-3xl border border-dashed border-border bg-card p-6">
-        {preview ? (
+        {preview && (
           <img
             src={preview}
             alt="Ton look"
             className="mx-auto h-72 rounded-2xl object-cover"
           />
-        ) : (
-          <div className="flex flex-col items-center gap-4 py-4 text-center">
-            {/* Placeholder neutre — pas de personne illustrée */}
-            <div
-              className="relative flex h-56 w-56 items-center justify-center rounded-3xl"
-              style={{
-                background:
-                  "radial-gradient(circle at 50% 35%, rgba(206,255,0,0.15) 0%, transparent 65%), hsl(var(--secondary))",
-              }}
-            >
-              <div
-                className="flex h-20 w-20 items-center justify-center rounded-full"
-                style={{ backgroundColor: "#CEFF00", boxShadow: "0 0 30px rgba(206,255,0,0.45)" }}
-              >
-                <Camera className="h-9 w-9 text-black" strokeWidth={1.8} />
-              </div>
-              <div className="pointer-events-none absolute inset-3 rounded-2xl border border-dashed border-foreground/15" />
-            </div>
-            <p className="max-w-xs text-sm leading-snug text-muted-foreground">
-              {t("scan.hint")}
-            </p>
-          </div>
         )}
         {/* Inputs cachés : caméra (capture) + galerie */}
         <input
@@ -322,7 +300,7 @@ export default function Scan() {
         <button
           onClick={() => !loading && setPickerOpen(true)}
           disabled={loading}
-          className="group relative mt-5 flex w-full flex-col items-center justify-center gap-3 overflow-hidden rounded-3xl bg-foreground px-6 py-8 text-background shadow-card transition-transform active:scale-[0.98] disabled:opacity-60"
+          className={`group relative ${preview ? "mt-5" : ""} flex w-full flex-col items-center justify-center gap-3 overflow-hidden rounded-3xl bg-foreground px-6 py-8 text-background shadow-card transition-transform active:scale-[0.98] disabled:opacity-60`}
         >
           <div
             className="pointer-events-none absolute inset-0 opacity-30"
