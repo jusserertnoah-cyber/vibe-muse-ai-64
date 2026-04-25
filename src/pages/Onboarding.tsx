@@ -7,16 +7,12 @@ import { VibeLogo } from "@/components/vibe/VibeLogo";
 import { saveProfile, getProfile, hydrateProfileFromDb } from "@/lib/profile";
 import { getDeviceId } from "@/lib/device";
 import type { Gender, UserProfile } from "@/lib/types";
-import { ArrowRight, MapPin, Sparkles, Phone, ShieldCheck, Check, ChevronsUpDown, Globe } from "lucide-react";
+import { ArrowRight, MapPin, Sparkles, Mail, ShieldCheck, Check, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { SUPPORTED_LANGUAGES } from "@/i18n";
-import { COUNTRIES, findCountryByCode } from "@/lib/countries";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { parsePhoneNumberFromString } from "libphonenumber-js";
 
 const GENDERS: { id: Gender; labelKey: string; fallback: string }[] = [
   { id: "femme", labelKey: "onboarding.gender.femme", fallback: "Femme" },
@@ -24,19 +20,11 @@ const GENDERS: { id: Gender; labelKey: string; fallback: string }[] = [
   { id: "unisexe", labelKey: "onboarding.gender.unisex", fallback: "Non-binaire / Unisexe" },
 ];
 
-// Steps: 0 langue, 1 prénom, 2 genre, 3 morpho, 4 localisation, 5 téléphone.
+// Steps: 0 langue, 1 prénom, 2 genre, 3 morpho, 4 localisation, 5 email.
 const TOTAL_STEPS = 6;
-const PHONE_STEP = 5;
+const EMAIL_STEP = 5;
 
-const normalizePhone = (local: string, countryCode: string): string | null => {
-  const country = findCountryByCode(countryCode);
-  const digits = local.replace(/\D/g, "").replace(/^0+/, "");
-  if (!digits) return null;
-  const candidate = `+${country.dial}${digits}`;
-  const parsed = parsePhoneNumberFromString(candidate, country.code as any);
-  if (!parsed || !parsed.isValid()) return null;
-  return parsed.number;
-};
+const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
 
 export default function Onboarding() {
   const navigate = useNavigate();
@@ -52,13 +40,9 @@ export default function Onboarding() {
   const [age, setAge] = useState<string>("");
   const [city, setCity] = useState("");
 
-  // Phone / OTP
-  const [countryCode, setCountryCode] = useState<string>("FR");
-  const [countryOpen, setCountryOpen] = useState(false);
-  const [phone, setPhone] = useState("");
-  const [e164, setE164] = useState("");
-  const [otp, setOtp] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
+  // Email / Magic Link
+  const [email, setEmail] = useState("");
+  const [linkSent, setLinkSent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [loginOnly, setLoginOnly] = useState(false);
 
@@ -69,11 +53,43 @@ export default function Onboarding() {
       return;
     }
     if (session?.user?.id) {
-      hydrateProfileFromDb(session.user.id).then((p) => {
-        if (p) navigate("/app", { replace: true });
-      });
+      // User just clicked the magic link. Hydrate, claim welcome pack, persist.
+      (async () => {
+        const p = await hydrateProfileFromDb(session.user.id);
+        if (p) {
+          navigate("/app", { replace: true });
+          return;
+        }
+        // First-time user: persist their pending onboarding answers if present,
+        // then attempt to claim the welcome pack (1 device = 1 pack).
+        if (firstName.trim() || gender) {
+          await persistAndClaim(session.user.id, session.user.email ?? undefined);
+        }
+      })();
     }
   }, [loading, session, navigate]);
+
+  const persistAndClaim = async (userId: string, userEmail?: string) => {
+    const profile = await persistProfile(userId, userEmail);
+    try {
+      const deviceId = await getDeviceId();
+      const { data, error } = await supabase.functions.invoke("claim-welcome-pack", {
+        body: { deviceId },
+      });
+      if (error) {
+        toast(t("onboarding.welcome", { name: profile.firstName }));
+      } else if (data?.granted) {
+        toast.success(t("onboarding.welcomePackGranted", { defaultValue: "3 scans offerts ajoutés !" }));
+      } else if (data?.reason === "already_claimed") {
+        toast(t("onboarding.welcomePackUsed", {
+          defaultValue: "Pack de bienvenue déjà utilisé sur cet appareil",
+        }));
+      }
+    } catch {
+      // Non-blocking
+    }
+    navigate("/app", { replace: true });
+  };
 
   const next = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
   const back = () => setStep((s) => Math.max(s - 1, 0));
@@ -98,7 +114,7 @@ export default function Onboarding() {
     );
   };
 
-  const persistProfile = async (userId?: string) => {
+  const persistProfile = async (userId?: string, userEmail?: string) => {
     const deviceId = await getDeviceId().catch(() => undefined);
     if (lang && i18n.language?.split("-")[0] !== lang) {
       try { await i18n.changeLanguage(lang); } catch {}
@@ -106,6 +122,7 @@ export default function Onboarding() {
     try { localStorage.setItem("vibe.lang", lang); } catch {}
     const profile: UserProfile = {
       firstName: firstName.trim() || "Vibe",
+      email: userEmail,
       gender: gender ?? "unisexe",
       heightCm: heightCm ? Number(heightCm) : undefined,
       weightKg: weightKg ? Number(weightKg) : undefined,
@@ -127,73 +144,42 @@ export default function Onboarding() {
         height: profile.heightCm,
         weight: profile.weightKg,
         styles: profile.styles,
-        vibers: profile.vibers,
         onboarded: true,
       }).eq("id", userId);
     }
     return profile;
   };
 
-  const sendCode = async () => {
-    const normalized = normalizePhone(phone, countryCode);
-    if (!normalized) {
-      toast.error(t("onboarding.phone.invalidTitle"), { description: t("onboarding.phone.invalidDesc") });
+  const sendMagicLink = async () => {
+    const cleaned = email.trim().toLowerCase();
+    if (!isValidEmail(cleaned)) {
+      toast.error(t("onboarding.email.invalidTitle", { defaultValue: "Email invalide" }), {
+        description: t("onboarding.email.invalidDesc", { defaultValue: "Vérifie ton adresse." }),
+      });
       return;
     }
     setBusy(true);
     const { error } = await supabase.auth.signInWithOtp({
-      phone: normalized,
-      options: { channel: "sms" },
+      email: cleaned,
+      options: {
+        emailRedirectTo: `${window.location.origin}/onboarding`,
+        shouldCreateUser: !loginOnly,
+      },
     });
     setBusy(false);
     if (error) {
-      toast(t("onboarding.phone.demoTitle"), { description: t("onboarding.phone.demoDesc") });
-      setE164(normalized);
-      setOtpSent(true);
+      toast.error(t("onboarding.email.errorTitle", { defaultValue: "Envoi impossible" }), {
+        description: error.message,
+      });
       return;
     }
-    toast.success(t("onboarding.phone.sentTitle"), { description: t("onboarding.phone.sentDesc", { phone: normalized }) });
-    setE164(normalized);
-    setOtpSent(true);
-  };
-
-  const verifyAndFinish = async () => {
-    setBusy(true);
-    const { data, error } = await supabase.auth.verifyOtp({
-      phone: e164,
-      token: otp,
-      type: "sms",
+    setLinkSent(true);
+    toast.success(t("onboarding.email.sentTitle", { defaultValue: "Lien envoyé !" }), {
+      description: t("onboarding.email.sentDesc", {
+        defaultValue: "Ouvre ton mail et clique sur le lien pour te connecter.",
+        email: cleaned,
+      }),
     });
-    if (error) {
-      if (loginOnly) {
-        setBusy(false);
-        toast.error(t("onboarding.phone.codeInvalidTitle"), { description: t("onboarding.phone.codeInvalidDesc") });
-        return;
-      }
-      const profile = await persistProfile(undefined);
-      setBusy(false);
-      toast.success(t("onboarding.welcome", { name: profile.firstName }));
-      navigate("/app", { replace: true });
-      return;
-    }
-    const userId = data.user?.id;
-    if (loginOnly && userId) {
-      const p = await hydrateProfileFromDb(userId);
-      setBusy(false);
-      if (p) {
-        toast.success(t("onboarding.welcomeBack", { name: p.firstName }));
-        navigate("/app", { replace: true });
-        return;
-      }
-      toast(t("onboarding.finishProfile"));
-      setLoginOnly(false);
-      setStep(1);
-      return;
-    }
-    const profile = await persistProfile(userId);
-    setBusy(false);
-    toast.success(t("onboarding.welcome", { name: profile.firstName }));
-    navigate("/app", { replace: true });
   };
 
   if (loading) return null;
