@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Flame, Sparkles, Target, Camera, Trophy } from "lucide-react";
 import {
   Dialog,
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export const ChallengeDetailDialog = ({ open, onOpenChange, challenge, onScan }: Props) => {
+  const { t } = useTranslation();
   const [completed, setCompleted] = useState<number | null>(null);
 
   useEffect(() => {
