@@ -340,7 +340,13 @@
     "step2": "The item must be clearly visible in the photo (the AI checks).",
     "step3": "Run your scan: if validated, the challenge counts toward the streak.",
     "howItWorks": "How it works",
-    "whatAILooksFor": "What the AI looks for"
+    "whatAILooksFor": "What the AI looks for",
+    "kicker": "Daily challenge",
+    "reward": "Reward",
+    "rewardLine": "10 challenges done = 1 free scan",
+    "progress_one": "{{n}}/10 — {{r}} more challenge for your next free scan.",
+    "progress_other": "{{n}}/10 — {{r}} more challenges for your next free scan.",
+    "scanCta": "Scan my outfit"
   },
   "weatherLabel": {
     "0": "clear sky", "1": "mostly clear", "2": "partly cloudy", "3": "overcast",
