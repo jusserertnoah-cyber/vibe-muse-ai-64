@@ -222,10 +222,10 @@ export default function Scan() {
 
   const scoreColor = result
     ? result.score >= 8
-      ? "text-emerald-500"
+      ? "text-accent"
       : result.score >= 6.5
       ? "text-foreground"
-      : "text-rose-500"
+      : "text-destructive"
     : "text-foreground";
 
   return (
@@ -235,11 +235,11 @@ export default function Scan() {
         {/* halos lime adoucis sur fond clair */}
         <div
           className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full opacity-30 blur-3xl"
-          style={{ background: "#CEFF00" }}
+          style={{ background: "hsl(var(--accent))" }}
         />
         <div
           className="pointer-events-none absolute -left-12 bottom-0 h-32 w-32 rounded-full opacity-20 blur-3xl"
-          style={{ background: "#CEFF00" }}
+          style={{ background: "hsl(var(--accent))" }}
         />
         <div className="relative">
           <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
@@ -255,9 +255,9 @@ export default function Scan() {
           {/* mini specs */}
           <div className="mt-4 grid grid-cols-3 gap-2">
             {[
-              { icon: <Ruler className="h-3.5 w-3.5" />, label: "Fit" },
-              { icon: <Palette className="h-3.5 w-3.5" />, label: "Couleurs" },
-              { icon: <Sparkles className="h-3.5 w-3.5" />, label: "Touche 2026" },
+              { icon: <Ruler className="h-3.5 w-3.5" />, label: t("scan.specFit") },
+              { icon: <Palette className="h-3.5 w-3.5" />, label: t("scan.specColors") },
+              { icon: <Sparkles className="h-3.5 w-3.5" />, label: t("scan.spec2026") },
             ].map((it) => (
               <div
                 key={it.label}
@@ -312,23 +312,23 @@ export default function Scan() {
         >
           <div
             className="pointer-events-none absolute inset-0 opacity-30"
-            style={{ background: "radial-gradient(circle at 50% 30%, #CEFF00 0%, transparent 60%)" }}
+            style={{ background: "radial-gradient(circle at 50% 30%, hsl(var(--accent)) 0%, transparent 60%)" }}
           />
           <div
             className="relative flex h-16 w-16 items-center justify-center rounded-full"
-            style={{ backgroundColor: "#CEFF00", boxShadow: "0 0 30px rgba(206,255,0,0.6)" }}
+            style={{ backgroundColor: "hsl(var(--accent))", boxShadow: "0 0 30px hsl(var(--accent) / 0.6)" }}
           >
             {loading ? (
-              <Loader2 className="h-8 w-8 animate-spin text-black" />
+              <Loader2 className="h-8 w-8 animate-spin text-accent-foreground" />
             ) : (
-              <Camera className="h-8 w-8 text-black" strokeWidth={2} />
+              <Camera className="h-8 w-8 text-accent-foreground" strokeWidth={2} />
             )}
           </div>
           <span className="relative font-serif text-2xl tracking-tight">
-            {loading ? t("scan.loading") : preview ? t("scan.change").toUpperCase() : "SCANNER MA TENUE"}
+            {loading ? t("scan.loading") : preview ? t("scan.change").toUpperCase() : t("scan.ctaScan")}
           </span>
           <span className="relative text-[10px] uppercase tracking-[0.25em] opacity-70">
-            Vibe Check instantané
+            {t("scan.instant")}
           </span>
         </button>
 
