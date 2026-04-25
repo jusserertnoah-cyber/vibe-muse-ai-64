@@ -246,11 +246,7 @@ export default function Scan() {
             <Sparkles className="h-3.5 w-3.5" style={{ color: "#7BAA00" }} /> {t("scan.kicker")}
           </div>
           <h1 className="mt-2 font-serif text-4xl leading-tight tracking-tight">
-            {t("scan.title").split(" ").map((word, i, arr) => (
-              <span key={i} style={i === arr.length - 1 ? { color: "#7BAA00" } : undefined}>
-                {word}{i < arr.length - 1 ? " " : ""}
-              </span>
-            ))}
+            {t("scan.title")}
           </h1>
           <p className="mt-2 max-w-sm text-sm leading-snug text-muted-foreground">
             {t("scan.subtitle")}
