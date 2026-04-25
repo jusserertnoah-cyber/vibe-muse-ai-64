@@ -103,7 +103,8 @@ import i18n from "@/i18n";
 export function getLocalizedChallenge(c: DailyChallenge): DailyChallenge {
   const name = i18n.t(`challenges.${c.id}.name`, { defaultValue: c.name });
   const hint = i18n.t(`challenges.${c.id}.hint`, { defaultValue: c.hint });
-  return { ...c, name, hint };
+  const detect = i18n.t(`challenges.${c.id}.detect`, { defaultValue: c.detect });
+  return { ...c, name, hint, detect };
 }
 
 // Helper conservé pour compat : retourne toujours "unisexe".
