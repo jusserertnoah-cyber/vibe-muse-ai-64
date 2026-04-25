@@ -34,7 +34,7 @@ export default function Home() {
   const weatherVisual = useMemo(() => {
     if (!weather) return null;
     const c = weather.code ?? 0;
-    const t = weather.temp;
+    const temp = weather.temp;
     const wind = weather.wind ?? 0;
 
     // Catégories
@@ -47,25 +47,25 @@ export default function Home() {
     else kind = "sun";
 
     const isWindy = wind >= 30;
-    const isCold = t <= 5;
-    const isHot = t >= 28;
+    const isCold = temp <= 5;
+    const isHot = temp >= 28;
 
     // Phrase contextuelle traduite
     let phrase = "";
-    if (kind === "storm") phrase = tt("home.weather.storm");
-    else if (kind === "snow") phrase = tt("home.weather.snow");
-    else if (kind === "rain") phrase = tt("home.weather.rain");
-    else if (kind === "fog") phrase = tt("home.weather.fog");
-    else if (isWindy) phrase = tt("home.weather.windy", { wind });
-    else if (isCold && kind === "cloud") phrase = tt("home.weather.coldCloud");
-    else if (isCold) phrase = tt("home.weather.cold");
-    else if (isHot) phrase = tt("home.weather.hot");
-    else if (kind === "cloud") phrase = tt("home.weather.cloud");
-    else phrase = tt("home.weather.sun");
+    if (kind === "storm") phrase = t("home.weather.storm");
+    else if (kind === "snow") phrase = t("home.weather.snow");
+    else if (kind === "rain") phrase = t("home.weather.rain");
+    else if (kind === "fog") phrase = t("home.weather.fog");
+    else if (isWindy) phrase = t("home.weather.windy", { wind });
+    else if (isCold && kind === "cloud") phrase = t("home.weather.coldCloud");
+    else if (isCold) phrase = t("home.weather.cold");
+    else if (isHot) phrase = t("home.weather.hot");
+    else if (kind === "cloud") phrase = t("home.weather.cloud");
+    else phrase = t("home.weather.sun");
 
     // Override si une pièce du dressing est mise en avant
     if (featuredPiece && !["storm", "snow", "rain"].includes(kind) && !isCold) {
-      phrase = `${phrase.split(".")[0]}. ${tt("home.weather.featuredAddon", { piece: featuredPiece })}`;
+      phrase = `${phrase.split(".")[0]}. ${t("home.weather.featuredAddon", { piece: featuredPiece })}`;
     }
 
     const Icon =
@@ -90,7 +90,7 @@ export default function Home() {
     const textOnDark = ["storm", "rain", "fog"].includes(kind);
 
     return { Icon, gradient, phrase, textOnDark, kind, isWindy };
-  }, [weather, featuredPiece, tt]);
+  }, [weather, featuredPiece, t]);
 
   return (
     <div className="space-y-6 px-5 pt-8">
