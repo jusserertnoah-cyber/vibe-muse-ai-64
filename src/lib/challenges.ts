@@ -95,6 +95,17 @@ export function getDailyChallenge(
   return list[dayIndex(date) % list.length];
 }
 
+/**
+ * Renvoie le défi avec son nom et son hint traduits dans la langue active.
+ * Fallback sur le texte FR par défaut si la clé n'existe pas.
+ */
+import i18n from "@/i18n";
+export function getLocalizedChallenge(c: DailyChallenge): DailyChallenge {
+  const name = i18n.t(`challenges.${c.id}.name`, { defaultValue: c.name });
+  const hint = i18n.t(`challenges.${c.id}.hint`, { defaultValue: c.hint });
+  return { ...c, name, hint };
+}
+
 // Helper conservé pour compat : retourne toujours "unisexe".
 export function audienceFromGender(_gender?: string | null): ChallengeAudience {
   return "unisexe";

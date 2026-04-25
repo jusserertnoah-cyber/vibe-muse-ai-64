@@ -49,7 +49,7 @@ export const ChallengeDetailDialog = ({ open, onOpenChange, challenge, onScan }:
         <DialogHeader>
           <div className="mb-2 flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
             <Flame className="h-3.5 w-3.5 text-accent" />
-            Défi du jour
+            {t("challenge.kicker")}
           </div>
           <DialogTitle className="font-serif text-2xl leading-tight">
             {challenge.name}
@@ -95,10 +95,10 @@ export const ChallengeDetailDialog = ({ open, onOpenChange, challenge, onScan }:
           <div className="rounded-2xl bg-gradient-brand p-4 shadow-brand">
             <div className="mb-2 flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-foreground/70">
               <Trophy className="h-3.5 w-3.5" />
-              Récompense
+              {t("challenge.reward")}
             </div>
             <p className="font-serif text-lg leading-tight">
-              10 défis réussis = 1 scan offert
+              {t("challenge.rewardLine")}
             </p>
             {completed != null && (
               <>
@@ -111,7 +111,7 @@ export const ChallengeDetailDialog = ({ open, onOpenChange, challenge, onScan }:
                   ))}
                 </div>
                 <p className="mt-2 text-xs text-foreground/80">
-                  {inCycle}/10 — encore <strong>{remaining}</strong> défi{remaining > 1 ? "s" : ""} pour ton prochain scan offert.
+                  {t("challenge.progress", { count: remaining, n: inCycle, r: remaining })}
                 </p>
               </>
             )}
@@ -122,7 +122,7 @@ export const ChallengeDetailDialog = ({ open, onOpenChange, challenge, onScan }:
             className="h-12 w-full rounded-2xl bg-foreground text-background hover:bg-foreground/90"
           >
             <Camera className="mr-2 h-4 w-4" />
-            Scanner ma tenue
+            {t("challenge.scanCta")}
           </Button>
         </div>
       </DialogContent>

@@ -10,7 +10,7 @@ import { getTier } from "@/lib/tier";
 import { pushHistory } from "@/lib/history";
 import { toast } from "sonner";
 import { StylistChat } from "@/components/vibe/StylistChat";
-import { audienceFromGender, getDailyChallenge } from "@/lib/challenges";
+import { audienceFromGender, getDailyChallenge, getLocalizedChallenge } from "@/lib/challenges";
 import { getCoords, fetchWeather, getCurrentWeather, type WeatherSnapshot } from "@/lib/weather";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -50,17 +50,8 @@ const fileToDataUrl = (file: File) =>
     reader.readAsDataURL(file);
   });
 
-const OCCASION_PRESETS = [
-  "Rendez-vous",
-  "Soirée",
-  "Travail / Bureau",
-  "Brunch / Café",
-  "Mariage",
-  "Sortie entre amis",
-  "Date romantique",
-  "Cours / Université",
-  "Sport",
-  "Voyage",
+const OCCASION_KEYS = [
+  "date","evening","work","brunch","wedding","friends","romantic","school","sport","travel",
 ] as const;
 
 export default function Scan() {
@@ -87,8 +78,8 @@ export default function Scan() {
     getCurrentWeather().then((w) => { if (w) setCurrentTemp(w.temp); }).catch(() => {});
   }, []);
   const challenge = useMemo(
-    () => getDailyChallenge(audienceFromGender(profileForChallenge?.gender), new Date(), currentTemp),
-    [currentTemp, profileForChallenge?.gender],
+    () => getLocalizedChallenge(getDailyChallenge(audienceFromGender(profileForChallenge?.gender), new Date(), currentTemp)),
+    [currentTemp, profileForChallenge?.gender, i18n.language],
   );
 
   const onFile = async (f: File) => {
@@ -524,20 +515,21 @@ export default function Scan() {
 
           <div className="space-y-4">
             <div className="flex flex-wrap gap-2">
-              {OCCASION_PRESETS.map((p) => {
-                const active = occasion === p;
+              {OCCASION_KEYS.map((key) => {
+                const label = t(`occasion.${key}`);
+                const active = occasion === label;
                 return (
                   <button
-                    key={p}
+                    key={key}
                     type="button"
-                    onClick={() => setOccasion(active ? "" : p)}
+                    onClick={() => setOccasion(active ? "" : label)}
                     className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
                       active
                         ? "bg-foreground text-background shadow-card"
                         : "bg-secondary text-foreground hover:bg-secondary/80"
                     }`}
                   >
-                    {p}
+                    {label}
                   </button>
                 );
               })}
