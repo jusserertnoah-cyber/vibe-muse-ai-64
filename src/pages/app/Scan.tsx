@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Camera, Upload, Loader2, Check, AlertCircle, Ruler, Palette, Sparkles, ShoppingBag, ExternalLink, Share2, Flame } from "lucide-react";
+import { Camera, Upload, Loader2, Check, AlertCircle, Ruler, Palette, Sparkles, ShoppingBag, ExternalLink, Share2, Flame, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,11 +11,12 @@ import { pushHistory } from "@/lib/history";
 import { toast } from "sonner";
 import { StylistChat } from "@/components/vibe/StylistChat";
 import { audienceFromGender, getDailyChallenge } from "@/lib/challenges";
-import scanMirrorSelfie from "@/assets/scan-mirror-selfie.jpg";
+import { getCoords, fetchWeather, type WeatherSnapshot } from "@/lib/weather";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 interface ShoppingItem {
   name: string;
@@ -49,6 +50,19 @@ const fileToDataUrl = (file: File) =>
     reader.readAsDataURL(file);
   });
 
+const OCCASION_PRESETS = [
+  "Rendez-vous",
+  "Soirée",
+  "Travail / Bureau",
+  "Brunch / Café",
+  "Mariage",
+  "Sortie entre amis",
+  "Date romantique",
+  "Cours / Université",
+  "Sport",
+  "Voyage",
+] as const;
+
 export default function Scan() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -62,6 +76,10 @@ export default function Scan() {
   const [confirmShare, setConfirmShare] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const galleryRef = useRef<HTMLInputElement>(null);
+  // Étape "contexte" entre import photo et analyse
+  const [contextOpen, setContextOpen] = useState(false);
+  const [occasion, setOccasion] = useState<string>("");
+  const [occasionNote, setOccasionNote] = useState<string>("");
   const profileForChallenge = getProfile();
   const challenge = getDailyChallenge(audienceFromGender(profileForChallenge?.gender));
 
@@ -72,15 +90,24 @@ export default function Scan() {
     try {
       const url = await fileToDataUrl(f);
       setDataUrl(url);
-      analyze(url);
+      // Avant d'analyser, on demande le contexte (occasion / situation)
+      setContextOpen(true);
     } catch {
       toast.error(t("scan.readError"));
     }
   };
 
-  const analyze = async (img: string) => {
+  const analyze = async (img: string, ctx?: { occasion?: string; note?: string }) => {
     const profile = getProfile();
     setLoading(true);
+    // Météo auto (l'IA "sait" déjà, vu qu'on l'a dans l'app)
+    let weather: WeatherSnapshot | null = null;
+    try {
+      const c = await getCoords();
+      weather = await fetchWeather(c.lat, c.lon);
+    } catch {
+      // pas de météo dispo, on continue sans
+    }
     try {
       const { data, error } = await supabase.functions.invoke("scan-look", {
         body: {
@@ -91,6 +118,11 @@ export default function Scan() {
           lang: i18n.language?.split("-")[0] ?? "fr",
           tier: getTier(),
           challenge: { name: challenge.name, detect: challenge.detect },
+          occasion: ctx?.occasion ?? undefined,
+          occasionNote: ctx?.note ?? undefined,
+          weather: weather
+            ? { temp: weather.temp, label: weather.label, city: weather.city ?? null }
+            : undefined,
         },
       });
       if (error) {
@@ -240,22 +272,21 @@ export default function Scan() {
           />
         ) : (
           <div className="flex flex-col items-center gap-4 py-4 text-center">
-            {/* Mirror selfie hero — illustre la pose attendue */}
-            <div className="relative">
-              <img
-                src={scanMirrorSelfie}
-                alt="Selfie miroir tenue dressing"
-                width={1024}
-                height={1024}
-                loading="lazy"
-                className="h-72 w-56 rounded-2xl object-cover shadow-card"
-              />
+            {/* Placeholder neutre — pas de personne illustrée */}
+            <div
+              className="relative flex h-56 w-56 items-center justify-center rounded-3xl"
+              style={{
+                background:
+                  "radial-gradient(circle at 50% 35%, rgba(206,255,0,0.15) 0%, transparent 65%), hsl(var(--secondary))",
+              }}
+            >
               <div
-                className="absolute -right-3 -top-3 flex h-10 w-10 items-center justify-center rounded-full text-black shadow-brand"
-                style={{ backgroundColor: "#CEFF00" }}
+                className="flex h-20 w-20 items-center justify-center rounded-full"
+                style={{ backgroundColor: "#CEFF00", boxShadow: "0 0 30px rgba(206,255,0,0.45)" }}
               >
-                <Sparkles className="h-5 w-5" strokeWidth={2} />
+                <Camera className="h-9 w-9 text-black" strokeWidth={1.8} />
               </div>
+              <div className="pointer-events-none absolute inset-3 rounded-2xl border border-dashed border-foreground/15" />
             </div>
             <p className="max-w-xs text-sm leading-snug text-muted-foreground">
               {t("scan.hint")}
@@ -494,6 +525,71 @@ export default function Scan() {
           </div>
           <AlertDialogFooter>
             <AlertDialogCancel>Annuler</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Étape contexte : occasion / situation avant l'analyse */}
+      <AlertDialog open={contextOpen} onOpenChange={(o) => { if (!loading) setContextOpen(o); }}>
+        <AlertDialogContent className="max-h-[85vh] overflow-y-auto">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Pour quelle occasion ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Dis à VIBE où tu vas porter cette tenue. Plus de contexte = conseils plus précis.
+              <span className="mt-1 block text-xs text-muted-foreground">
+                La météo est récupérée automatiquement.
+              </span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <div className="space-y-4">
+            <div className="flex flex-wrap gap-2">
+              {OCCASION_PRESETS.map((p) => {
+                const active = occasion === p;
+                return (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => setOccasion(active ? "" : p)}
+                    className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
+                      active
+                        ? "bg-foreground text-background shadow-card"
+                        : "bg-secondary text-foreground hover:bg-secondary/80"
+                    }`}
+                  >
+                    {p}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-xs uppercase tracking-widest text-muted-foreground">
+                Détails (optionnel)
+              </label>
+              <Textarea
+                value={occasionNote}
+                onChange={(e) => setOccasionNote(e.target.value.slice(0, 200))}
+                placeholder="Ex : dîner chic en intérieur, je veux paraître élégant sans en faire trop."
+                className="min-h-[80px] rounded-2xl"
+              />
+              <p className="mt-1 text-[10px] text-muted-foreground">{occasionNote.length}/200</p>
+            </div>
+          </div>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={loading}>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={loading || !dataUrl}
+              onClick={() => {
+                if (!dataUrl) return;
+                setContextOpen(false);
+                analyze(dataUrl, { occasion: occasion || undefined, note: occasionNote || undefined });
+              }}
+            >
+              {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ArrowRight className="mr-2 h-4 w-4" />}
+              Lancer le Vibe Check
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
