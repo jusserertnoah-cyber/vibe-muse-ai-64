@@ -10,7 +10,7 @@ import { getTier } from "@/lib/tier";
 import { pushHistory } from "@/lib/history";
 import { toast } from "sonner";
 import { StylistChat } from "@/components/vibe/StylistChat";
-import { getDailyChallenge } from "@/lib/challenges";
+import { audienceFromGender, getDailyChallenge } from "@/lib/challenges";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -59,7 +59,10 @@ export default function Scan() {
   const [sharing, setSharing] = useState(false);
   const [shared, setShared] = useState(false);
   const [confirmShare, setConfirmShare] = useState(false);
-  const challenge = getDailyChallenge();
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const galleryRef = useRef<HTMLInputElement>(null);
+  const profileForChallenge = getProfile();
+  const challenge = getDailyChallenge(audienceFromGender(profileForChallenge?.gender));
 
   const onFile = async (f: File) => {
     setResult(null);
