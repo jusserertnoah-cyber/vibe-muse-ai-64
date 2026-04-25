@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import type { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { VibeLogo } from "@/components/vibe/VibeLogo";
@@ -28,6 +29,7 @@ const PENDING_KEY = "vibe.onboarding.pending.v1";
 
 type PendingOnboarding = {
   lang?: string;
+  email?: string;
   firstName?: string;
   gender?: Gender | null;
   heightCm?: string;
@@ -50,6 +52,38 @@ const clearPending = () => {
 };
 
 const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
+
+const getAuthRedirectBaseUrl = () => {
+  const isProd = window.location.hostname.endsWith(".lovable.app") &&
+    !window.location.hostname.startsWith("id-preview--");
+  return isProd ? window.location.origin : "https://vibe-muse-ai-64.lovable.app";
+};
+
+const readPendingFromUser = (user: User): PendingOnboarding | null => {
+  const meta = user.user_metadata ?? {};
+  const raw = (meta.onboarding ?? meta.vibe_onboarding) as Partial<PendingOnboarding> | undefined;
+  const pending = raw && typeof raw === "object" ? raw : meta;
+  const firstName = typeof pending.firstName === "string"
+    ? pending.firstName
+    : typeof meta.first_name === "string"
+      ? meta.first_name
+      : undefined;
+
+  if (!firstName && !pending.gender) return null;
+
+  return {
+    lang: typeof pending.lang === "string" ? pending.lang : undefined,
+    email: user.email ?? undefined,
+    firstName,
+    gender: pending.gender === "femme" || pending.gender === "homme" || pending.gender === "unisexe"
+      ? pending.gender
+      : null,
+    heightCm: typeof pending.heightCm === "string" ? pending.heightCm : undefined,
+    weightKg: typeof pending.weightKg === "string" ? pending.weightKg : undefined,
+    age: typeof pending.age === "string" ? pending.age : undefined,
+    city: typeof pending.city === "string" ? pending.city : undefined,
+  };
+};
 
 export default function Onboarding() {
   const navigate = useNavigate();
