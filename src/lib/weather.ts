@@ -1,5 +1,7 @@
 // Open-Meteo: free, no key. Reverse geocoding via Open-Meteo.
 
+import i18n from "@/i18n";
+
 export type WeatherSnapshot = {
   temp: number;
   code: number;
@@ -8,33 +10,8 @@ export type WeatherSnapshot = {
   wind?: number;
 };
 
-const WMO: Record<number, string> = {
-  0: "ciel dégagé",
-  1: "ciel clair",
-  2: "partiellement nuageux",
-  3: "couvert",
-  45: "brouillard",
-  48: "brouillard givrant",
-  51: "bruine légère",
-  53: "bruine",
-  55: "bruine dense",
-  61: "pluie faible",
-  63: "pluie",
-  65: "pluie forte",
-  66: "pluie verglaçante",
-  67: "pluie verglaçante forte",
-  71: "neige faible",
-  73: "neige",
-  75: "neige forte",
-  80: "averses",
-  81: "averses",
-  82: "fortes averses",
-  95: "orage",
-  96: "orage avec grêle",
-  99: "orage violent",
-};
-
-export const labelForCode = (code: number) => WMO[code] ?? "temps variable";
+export const labelForCode = (code: number) =>
+  i18n.t(`weatherLabel.${code}`, { defaultValue: i18n.t("weatherLabel.fallback") }) as string;
 
 export const getCoords = (): Promise<{ lat: number; lon: number }> =>
   new Promise((resolve, reject) => {
@@ -56,8 +33,9 @@ export async function fetchWeather(lat: number, lon: number): Promise<WeatherSna
 
   let city: string | undefined;
   try {
+    const lang = (i18n.language || "fr").split("-")[0];
     const g = await fetch(
-      `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=fr&format=json`,
+      `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=${lang}&format=json`,
     ).then((r) => r.json());
     city = g?.results?.[0]?.name;
   } catch {}
