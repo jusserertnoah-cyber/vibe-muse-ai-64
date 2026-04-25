@@ -77,7 +77,7 @@ export default function Home() {
 
     // Override si une pièce du dressing est mise en avant
     if (featuredPiece && !["storm", "snow", "rain"].includes(kind) && !isCold) {
-      phrase = `${phrase.split(".")[0]}. ${t("home.weather.featuredAddon", { piece: featuredPiece })}`;
+      phrase = `${phrase} ${t("home.weather.featuredAddon", { piece: featuredPiece })}`;
     }
 
     const Icon =
