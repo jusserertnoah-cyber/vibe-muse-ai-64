@@ -51,12 +51,25 @@ serve(async (req) => {
     const body = await req.json();
     const {
       imageDataUrl, gender, heightCm, weightKg,
-      lang = "fr", tier = "free",
+      lang = "fr",
       challenge,         // { name, detect }  — défi du jour, optionnel
       occasion,          // string libre / preset (ex "Soirée", "Mariage")
       occasionNote,      // détails libres utilisateur (max 200 chars côté client)
       weather,           // { temp, label, city? }
     } = body ?? {};
+
+    // Derive tier server-side from the DB — never trust client.
+    let tier: "free" | "premium" = "free";
+    try {
+      const { data: prof } = await supabaseUser
+        .from("profiles")
+        .select("premium_until")
+        .eq("id", userData.user.id)
+        .maybeSingle();
+      if (prof?.premium_until && new Date(prof.premium_until) > new Date()) {
+        tier = "premium";
+      }
+    } catch (_) { /* default free */ }
 
     if (!imageDataUrl) {
       return new Response(JSON.stringify({ error: "imageDataUrl required" }), {

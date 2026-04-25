@@ -45,8 +45,25 @@ serve(async (req) => {
       messages = [],
       context = {},
       lang = "fr",
-      tier = "free",
     } = body ?? {};
+
+    // Derive tier server-side — never trust client.
+    let tier: "free" | "premium" = "free";
+    try {
+      const sbUser = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_ANON_KEY")!,
+        { global: { headers: { Authorization: authHeader } } },
+      );
+      const { data: prof } = await sbUser
+        .from("profiles")
+        .select("premium_until")
+        .eq("id", userData.user.id)
+        .maybeSingle();
+      if (prof?.premium_until && new Date(prof.premium_until) > new Date()) {
+        tier = "premium";
+      }
+    } catch (_) { /* default free */ }
 
     if (!Array.isArray(messages) || messages.length === 0) {
       return new Response(JSON.stringify({ error: "messages required" }), {

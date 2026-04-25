@@ -39,7 +39,7 @@ export const hydrateProfileFromDb = async (userId: string): Promise<UserProfile 
   try {
     const { data, error } = await supabase
       .from("profiles")
-      .select("first_name, gender, age, height, weight, styles, vibers, onboarded")
+      .select("first_name, gender, age, height, weight, styles, vibers, onboarded, premium_until")
       .eq("id", userId)
       .maybeSingle();
     if (error || !data || !data.onboarded) return null;
@@ -55,7 +55,7 @@ export const hydrateProfileFromDb = async (userId: string): Promise<UserProfile 
       referencePhoto: existing?.referencePhoto,
       closet: existing?.closet ?? [],
       vibers: data.vibers ?? existing?.vibers ?? 0,
-      premiumUntil: existing?.premiumUntil,
+      premiumUntil: data.premium_until ?? existing?.premiumUntil,
       deviceId: existing?.deviceId,
       createdAt: existing?.createdAt || new Date().toISOString(),
     };
