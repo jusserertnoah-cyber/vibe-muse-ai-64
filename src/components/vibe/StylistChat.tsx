@@ -18,7 +18,7 @@ interface Props {
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-stylist`;
 
 export function StylistChat({ mode, context, intro, suggestions = [] }: Props) {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [messages, setMessages] = useState<Msg[]>(
     intro ? [{ role: "assistant", content: intro }] : [],
   );
@@ -58,7 +58,7 @@ export function StylistChat({ mode, context, intro, suggestions = [] }: Props) {
       const { data: sessionData } = await supabase.auth.getSession();
       const accessToken = sessionData.session?.access_token;
       if (!accessToken) {
-        toast.error("Connecte-toi pour discuter avec le styliste.");
+        toast.error(t("stylistChat.loginRequired"));
         setLoading(false);
         return;
       }
@@ -84,12 +84,12 @@ export function StylistChat({ mode, context, intro, suggestions = [] }: Props) {
       });
 
       if (resp.status === 429) {
-        toast.error("Trop de messages. Patiente une minute.");
+        toast.error(t("stylistChat.rateLimited"));
         setLoading(false);
         return;
       }
       if (resp.status === 402) {
-        toast.error("Crédits IA épuisés.");
+        toast.error(t("stylistChat.creditsExhausted"));
         setLoading(false);
         return;
       }
@@ -124,7 +124,7 @@ export function StylistChat({ mode, context, intro, suggestions = [] }: Props) {
       }
     } catch (e) {
       console.error(e);
-      toast.error("Le styliste ne répond pas. Réessaie.");
+      toast.error(t("stylistChat.error"));
     } finally {
       setLoading(false);
     }
@@ -135,7 +135,7 @@ export function StylistChat({ mode, context, intro, suggestions = [] }: Props) {
       <div className="flex items-center gap-2 border-b border-border px-5 py-3">
         <Sparkles className="h-4 w-4 text-accent" />
         <span className="text-xs uppercase tracking-widest font-mono-tech">
-          Chat styliste
+          {t("stylistChat.title")}
         </span>
       </div>
 
@@ -160,7 +160,7 @@ export function StylistChat({ mode, context, intro, suggestions = [] }: Props) {
           <div className="flex justify-start">
             <div className="rounded-2xl bg-secondary px-4 py-2.5 text-sm text-muted-foreground">
               <Loader2 className="h-3.5 w-3.5 animate-spin inline mr-1" />
-              écrit…
+              {t("stylistChat.typing")}
             </div>
           </div>
         )}
@@ -188,12 +188,13 @@ export function StylistChat({ mode, context, intro, suggestions = [] }: Props) {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Pose ta question…"
+          placeholder={t("stylistChat.placeholder")}
           disabled={loading}
           className="flex-1 rounded-xl bg-background px-4 py-2.5 text-sm outline-none border border-border focus:border-accent disabled:opacity-50"
         />
         <button
           type="submit"
+          aria-label={t("stylistChat.send")}
           disabled={loading || !input.trim()}
           className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent text-accent-foreground disabled:opacity-40"
         >

@@ -77,8 +77,11 @@ serve(async (req) => {
       });
     }
 
-    const langName =
-      ({ fr: "français", en: "anglais", es: "espagnol", de: "allemand", it: "italien" } as Record<string, string>)[lang] ?? "français";
+    const langCode = ["fr", "en"].includes(lang) ? lang : "fr";
+    const langName = langCode === "en" ? "English" : "français";
+    const outputRule = langCode === "en"
+      ? "Every visible text field you return MUST be in English: verdict, strong, weak, tips, fit, colors, touch2026, shopping.name, shopping.why and challenge_reason. Keep only the brand name Vibe unchanged."
+      : "Tous les champs textuels visibles que tu renvoies DOIVENT être en français : verdict, strong, weak, tips, fit, colors, touch2026, shopping.name, shopping.why et challenge_reason. Garde seulement le nom Vibe inchangé.";
 
     const profileLine = [
       gender ? `genre: ${gender}` : null,
@@ -139,7 +142,11 @@ RÈGLES DE FORME :
 BIBLE STYLES : "Vintage", "Old Money", "Classique", "Sobre", "Sport", "Oversize", "Américain". Tu DOIS choisir UN style exact dans cette liste pour le champ "style".${contextBlock}${challengeBlock}
 ${profileLine ? `\nProfil : ${profileLine}.` : ""}`;
 
-    const userText = `Analyse cette tenue avec rigueur. Donne une note décimale (ex 8.4, 9.2). Sois sélectif sur le 9.5+. Verdict, fort, faible, 3 actions concrètes, fit, couleurs, touche 2026, 3 produits shopping.${challenge?.name ? ` Évalue aussi le défi : "${challenge.name}".` : ""}`;
+${outputRule}`;
+
+    const userText = langCode === "en"
+      ? `Analyze this outfit rigorously. Give a decimal score (e.g. 8.4, 9.2). Be selective with 9.5+. Return the verdict, strength, weakness, 3 concrete actions, fit, colors, 2026 touch and 3 shopping products in English.${challenge?.name ? ` Also evaluate the challenge: "${challenge.name}".` : ""}`
+      : `Analyse cette tenue avec rigueur. Donne une note décimale (ex 8.4, 9.2). Sois sélectif sur le 9.5+. Verdict, fort, faible, 3 actions concrètes, fit, couleurs, touche 2026, 3 produits shopping en français.${challenge?.name ? ` Évalue aussi le défi : "${challenge.name}".` : ""}`;
 
     const properties: any = {
       score: { type: "number", description: "Note /10 OBLIGATOIREMENT décimale (ex 7.4, 8.6, 9.1). 10.0 quasi interdit." },

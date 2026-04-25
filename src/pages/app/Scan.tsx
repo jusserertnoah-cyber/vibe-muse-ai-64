@@ -266,7 +266,7 @@ export default function Scan() {
         {preview && (
           <img
             src={preview}
-            alt="Ton look"
+            alt={t("scan.previewAlt")}
             className="mx-auto h-72 rounded-2xl object-cover"
           />
         )}
@@ -348,7 +348,7 @@ export default function Scan() {
                   <span className="text-2xl text-muted-foreground">/10</span>
                 </div>
               </div>
-              <div className="rounded-full bg-lime px-3 py-1 font-mono-tech text-[10px] uppercase tracking-widest shadow-brand">
+              <div className="rounded-full bg-accent px-3 py-1 font-mono-tech text-[10px] uppercase tracking-widest text-accent-foreground shadow-brand">
                 {t("scan.vibers")}
               </div>
             </div>
