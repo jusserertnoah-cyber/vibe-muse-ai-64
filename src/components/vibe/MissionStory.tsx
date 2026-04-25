@@ -17,7 +17,7 @@ type State = "idle" | "uploading" | "verifying" | "done" | "error";
 
 const ERROR_KEYS = [
   "not_a_story", "no_outfit", "missing_tag", "close_friends",
-  "duplicate", "rate_limited", "payment_required", "ai_error",
+  "not_public", "duplicate", "rate_limited", "payment_required", "ai_error",
 ] as const;
 
 export const MissionStory = () => {
