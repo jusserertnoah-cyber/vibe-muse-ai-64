@@ -341,7 +341,13 @@
     "step2": "L'objet doit être clairement visible sur la photo (l'IA vérifie).",
     "step3": "Lance ton scan : si validé, le défi compte pour le compteur.",
     "howItWorks": "Comment ça marche",
-    "whatAILooksFor": "Ce que l'IA cherche"
+    "whatAILooksFor": "Ce que l'IA cherche",
+    "kicker": "Défi du jour",
+    "reward": "Récompense",
+    "rewardLine": "10 défis réussis = 1 scan offert",
+    "progress_one": "{{n}}/10 — encore {{r}} défi pour ton prochain scan offert.",
+    "progress_other": "{{n}}/10 — encore {{r}} défis pour ton prochain scan offert.",
+    "scanCta": "Scanner ma tenue"
   },
   "weatherLabel": {
     "0": "ciel dégagé", "1": "ciel clair", "2": "partiellement nuageux", "3": "couvert",
