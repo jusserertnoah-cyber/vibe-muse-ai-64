@@ -5,26 +5,38 @@ import { getProfile } from "@/lib/profile";
 import { Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, Wind, MapPin, Zap, Flame } from "lucide-react";
 import { getCurrentWeather } from "@/lib/weather";
 import { MissionStory } from "@/components/vibe/MissionStory";
-import { audienceFromGender, getDailyChallenge } from "@/lib/challenges";
+import { audienceFromGender, getDailyChallenge, getLocalizedChallenge } from "@/lib/challenges";
 import { ChallengeDetailDialog } from "@/components/vibe/ChallengeDetailDialog";
 
 export default function Home() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const profile = getProfile();
   const [weather, setWeather] = useState<{ temp: number; city?: string; label?: string; code?: number; wind?: number } | null>(null);
   // Le défi du jour s'adapte à la météo (chaud / mi-saison / froid).
   const challenge = useMemo(
-    () => getDailyChallenge(audienceFromGender(profile?.gender), new Date(), weather?.temp ?? null),
-    [weather?.temp, profile?.gender],
+    () => getLocalizedChallenge(getDailyChallenge(audienceFromGender(profile?.gender), new Date(), weather?.temp ?? null)),
+    [weather?.temp, profile?.gender, i18n.language],
   );
   const [challengeOpen, setChallengeOpen] = useState(false);
 
   useEffect(() => {
-    getCurrentWeather().then((w) => {
-      if (w) setWeather({ temp: w.temp, city: w.city, label: w.label, code: w.code, wind: w.wind });
-    });
-  }, []);
+    let cancelled = false;
+    const load = () =>
+      getCurrentWeather().then((w) => {
+        if (!cancelled && w) setWeather({ temp: w.temp, city: w.city, label: w.label, code: w.code, wind: w.wind });
+      });
+    load();
+    // Auto-refresh toutes les 5 min + à chaque retour sur l'onglet
+    const id = setInterval(load, 5 * 60 * 1000);
+    const onVis = () => { if (document.visibilityState === "visible") load(); };
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, [i18n.language]);
 
   const credits = profile?.vibers ?? 0;
   const closetCount = profile?.closet?.length ?? 0;
