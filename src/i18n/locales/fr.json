@@ -147,7 +147,23 @@
     "addPiece": "Ajouter une pièce",
     "history": "Historique",
     "myStats": "Mes Stats",
-    "location": "Localisation"
+    "location": "Localisation",
+    "credits": "Crédits",
+    "dailyChallenge": "Défi du jour",
+    "scanReward": "10/10 = scan offert",
+    "weather": {
+      "storm": "Tempête en vue. Reste à l'abri ou sors le trench imperméable.",
+      "snow": "Il neige. Manteau chaud, écharpe en maille et bottes — on joue cocooning.",
+      "rain": "Pluie au programme. Trench long, bottines en cuir et un parapluie élégant.",
+      "fog": "Brouillard épais. Joue les couches sombres, écharpe XXL et silhouette mystérieuse.",
+      "windy": "Du vent à {{wind}} km/h. Évite les pièces volantes, mise sur des coupes ajustées.",
+      "coldCloud": "Froid et couvert. Pull en grosse maille + manteau long, ambiance sobre.",
+      "cold": "Il fait froid. Superpose intelligemment : sous-pull fin, pull, manteau structuré.",
+      "hot": "Il fait chaud. Lin, coton léger, couleurs claires — respire le style.",
+      "cloud": "Ciel couvert. Parfait pour les tons neutres et un blazer bien coupé.",
+      "sun": "Beau temps. Sors la pièce qui te fait sentir bien, lumière naturelle au top.",
+      "featuredAddon": "Et si tu sortais ton {{piece}} aujourd'hui ?"
+    }
   },
   "dressing": {
     "title": "Compose ta tenue",
