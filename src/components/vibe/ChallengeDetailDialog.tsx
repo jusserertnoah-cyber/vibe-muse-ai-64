@@ -69,15 +69,11 @@ export const ChallengeDetailDialog = ({ open, onOpenChange, challenge, onScan }:
             <ol className="space-y-2 text-sm">
               <li className="flex gap-2">
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-foreground text-[11px] font-bold text-background">1</span>
-                <span>Avant de te prendre en photo, intègre l'élément du défi dans ta tenue.</span>
+                <span>{t("challenge.step1")}</span>
               </li>
               <li className="flex gap-2">
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-foreground text-[11px] font-bold text-background">2</span>
-                <span>L'objet doit être <strong>clairement visible</strong> sur la photo (l'IA vérifie).</span>
-              </li>
-              <li className="flex gap-2">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-foreground text-[11px] font-bold text-background">3</span>
-                <span>Lance ton scan : si validé, le défi compte pour le compteur.</span>
+                <span>{t("challenge.step2")}</span>
               </li>
             </ol>
           </div>
