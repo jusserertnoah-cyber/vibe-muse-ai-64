@@ -294,6 +294,9 @@
   },
   "challenge": {
     "step1": "Before taking your photo, integrate the challenge element into your outfit.",
-    "step2": "Run your scan: if validated, the challenge counts toward the streak."
+    "step2": "The item must be clearly visible in the photo (the AI checks).",
+    "step3": "Run your scan: if validated, the challenge counts toward the streak.",
+    "howItWorks": "How it works",
+    "whatAILooksFor": "What the AI looks for"
   }
 }

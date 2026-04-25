@@ -64,7 +64,7 @@ export const ChallengeDetailDialog = ({ open, onOpenChange, challenge, onScan }:
           <div className="rounded-2xl bg-secondary p-4">
             <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               <Target className="h-3.5 w-3.5" />
-              Comment ça marche
+              {t("challenge.howItWorks")}
             </div>
             <ol className="space-y-2 text-sm">
               <li className="flex gap-2">
@@ -75,6 +75,10 @@ export const ChallengeDetailDialog = ({ open, onOpenChange, challenge, onScan }:
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-foreground text-[11px] font-bold text-background">2</span>
                 <span>{t("challenge.step2")}</span>
               </li>
+              <li className="flex gap-2">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-foreground text-[11px] font-bold text-background">3</span>
+                <span>{t("challenge.step3")}</span>
+              </li>
             </ol>
           </div>
 
@@ -82,7 +86,7 @@ export const ChallengeDetailDialog = ({ open, onOpenChange, challenge, onScan }:
           <div className="rounded-2xl border border-border p-4">
             <div className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               <Sparkles className="h-3.5 w-3.5" />
-              Ce que l'IA cherche
+              {t("challenge.whatAILooksFor")}
             </div>
             <p className="text-sm text-foreground/90">{challenge.detect}</p>
           </div>

@@ -295,6 +295,9 @@
   },
   "challenge": {
     "step1": "Avant de te prendre en photo, intègre l'élément du défi dans ta tenue.",
-    "step2": "Lance ton scan : si validé, le défi compte pour le compteur."
+    "step2": "L'objet doit être clairement visible sur la photo (l'IA vérifie).",
+    "step3": "Lance ton scan : si validé, le défi compte pour le compteur.",
+    "howItWorks": "Comment ça marche",
+    "whatAILooksFor": "Ce que l'IA cherche"
   }
 }
