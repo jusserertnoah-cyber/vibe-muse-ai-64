@@ -332,6 +332,11 @@ export default function Scan() {
             {t("scan.rescore")}
           </Button>
         )}
+        {loading && (
+          <p className="mt-4 text-center font-serif text-sm italic text-muted-foreground">
+            Vibe : ne doute plus jamais de ton style.
+          </p>
+        )}
       </div>
 
       {result && (
