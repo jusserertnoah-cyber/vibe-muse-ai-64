@@ -36,15 +36,17 @@ export default function Profil() {
       <div className="rounded-3xl bg-foreground p-5 text-background shadow-soft">
         <div className="flex items-center gap-2">
           <Crown className="h-4 w-4 text-accent" />
-          <span className="text-xs uppercase tracking-widest">{t("profile.creditsScans")}</span>
+          <span className="text-xs uppercase tracking-widest">Crédits & abonnements</span>
         </div>
-        <p className="mt-2 font-serif text-2xl">{t("profile.rechargeTitle")}</p>
-        <p className="mt-1 text-xs text-background/70">{t("profile.rechargeHint")}</p>
+        <p className="mt-2 font-serif text-2xl">Recharge ou passe en Style Pass</p>
+        <p className="mt-1 text-xs text-background/70">
+          Pack Découverte ponctuel (1,99 €) ou Style Pass mensuel / trimestriel pour scanner chaque jour avec l'IA premium.
+        </p>
         <Button
           onClick={() => navigate("/app/paywall")}
           className="mt-4 h-11 w-full rounded-2xl bg-accent text-accent-foreground hover:bg-accent/90"
         >
-          {t("profile.viewPacks")}
+          Voir les offres
         </Button>
       </div>
 
