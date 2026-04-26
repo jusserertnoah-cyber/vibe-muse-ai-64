@@ -116,10 +116,10 @@ export default function Paywall() {
             <Sparkles className="h-7 w-7" strokeWidth={1.5} />
           </div>
           <h1 className="mt-4 font-serif text-3xl leading-tight text-balance">
-            Choisis ton plan
+            Vibe : un boost de confiance en soi.
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Un pack ponctuel ou un abonnement Style Pass pour devenir une icône.
+            Choisis ton plan : pack ponctuel ou Style Pass pour devenir une icône.
           </p>
         </div>
 
