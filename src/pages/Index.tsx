@@ -45,7 +45,7 @@ const Index = () => {
       <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-background px-6">
         <VibeLogo variant="full" className="text-4xl" />
         <p className="font-serif text-sm italic text-muted-foreground text-center max-w-xs">
-          Vibe : ne doute plus jamais de ton style.
+          Avec Vibe, ne doute plus jamais de ton style.
         </p>
         <div className="h-5 w-5 animate-spin rounded-full border-2 border-muted border-t-foreground" />
       </div>
