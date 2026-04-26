@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Camera, Sparkles, Zap, Crown } from "lucide-react";
+import { ArrowLeft, Camera, Sparkles, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -8,66 +8,74 @@ import { StripeCheckoutModal } from "@/components/StripeCheckoutModal";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { supabase } from "@/integrations/supabase/client";
 
-type PackId = "starter" | "vibe" | "stylist" | "premium";
+type OfferId = "discovery" | "monthly" | "quarterly";
 
-type Pack = {
-  id: PackId;
+type Offer = {
+  id: OfferId;
   name: string;
   price: string;
   priceId: string;
-  scans: number;
-  perScan: string;
+  subtitle: string;
+  perks: string[];
   tag?: string;
   icon: React.ReactNode;
-  highlight?: boolean;
+  cta: string;
 };
 
-const PACKS: Pack[] = [
+const OFFERS: Offer[] = [
   {
-    id: "starter",
-    name: "Starter",
+    id: "discovery",
+    name: "Pack Découverte",
     price: "1,99 €",
     priceId: "credits_starter_eur",
-    scans: 5,
-    perScan: "0,40 € / scan",
+    subtitle: "Usage ponctuel · sans engagement",
+    perks: [
+      "5 scans (0,40 € / scan)",
+      "Analyse IA standard",
+      "Sans renouvellement automatique",
+      "Idéal pour un événement (mariage, soirée…)",
+    ],
     icon: <Camera className="h-5 w-5" />,
+    cta: "Acheter le pack",
   },
   {
-    id: "vibe",
-    name: "Vibe Pack",
-    price: "4,99 €",
-    priceId: "credits_vibe_pack_eur",
-    scans: 15,
-    perScan: "0,33 € / scan",
+    id: "monthly",
+    name: "Style Pass Mensuel",
+    price: "8,99 € / mois",
+    priceId: "style_pass_monthly_eur",
+    subtitle: "L'IA premium au quotidien",
+    perks: [
+      "Jusqu'à 10 scans par jour",
+      "IA premium (plus performante)",
+      "Analyse complète : couleurs, coupe, météo",
+      "Accès prioritaire au Top Vibes",
+    ],
     tag: "Populaire",
     icon: <Sparkles className="h-5 w-5" />,
-    highlight: true,
+    cta: "S'abonner — 8,99 €/mois",
   },
   {
-    id: "stylist",
-    name: "Styliste",
-    price: "9,99 €",
-    priceId: "credits_styliste_eur",
-    scans: 40,
-    perScan: "0,25 € / scan",
-    icon: <Zap className="h-5 w-5" />,
-  },
-  {
-    id: "premium",
-    name: "Premium",
-    price: "19,99 €",
-    priceId: "credits_premium_eur",
-    scans: 100,
-    perScan: "0,20 € / scan",
-    tag: "Best value",
+    id: "quarterly",
+    name: "Style Pass Trimestriel",
+    price: "19,99 € / 3 mois",
+    priceId: "style_pass_quarterly_eur",
+    subtitle: "Soit 6,66 € / mois — économise 25 %",
+    perks: [
+      "Toutes les fonctionnalités du Pass Mensuel",
+      "Reviens à 6,66 € / mois",
+      "Économise 25 % vs mensuel",
+      "Offre la plus rentable",
+    ],
+    tag: "Éco -25%",
     icon: <Crown className="h-5 w-5" />,
+    cta: "S'abonner — 19,99 € / 3 mois",
   },
 ];
 
 export default function Paywall() {
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
-  const [selected, setSelected] = useState<PackId>("vibe");
+  const [selected, setSelected] = useState<OfferId>("monthly");
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [checkoutPriceId, setCheckoutPriceId] = useState<string | null>(null);
 
@@ -82,13 +90,12 @@ export default function Paywall() {
   }, [params, setParams]);
 
   const buy = async () => {
-    const pack = PACKS.find((p) => p.id === selected)!;
-    // L'achat est ouvert même sans session : l'edge function `create-checkout`
-    // gère le cas anonyme. Le checkout Stripe collecte un email et le webhook
-    // crédite ensuite l'utilisateur correspondant.
-    setCheckoutPriceId(pack.priceId);
+    const offer = OFFERS.find((o) => o.id === selected)!;
+    setCheckoutPriceId(offer.priceId);
     setCheckoutOpen(true);
   };
+
+  const current = OFFERS.find((o) => o.id === selected)!;
 
   return (
     <div className="min-h-screen bg-background pb-32">
@@ -106,56 +113,67 @@ export default function Paywall() {
       <div className="mx-auto max-w-md px-5 pt-2">
         <div className="text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-accent text-accent-foreground shadow-cobalt">
-            <Camera className="h-7 w-7" strokeWidth={1.5} />
+            <Sparkles className="h-7 w-7" strokeWidth={1.5} />
           </div>
           <h1 className="mt-4 font-serif text-3xl leading-tight text-balance">
-            Recharge tes crédits
+            Choisis ton plan
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            1 crédit = 1 scan IA complet (audit fit, couleurs, touche 2026, shopping list).
+            Un pack ponctuel ou un abonnement Style Pass pour devenir une icône.
           </p>
         </div>
 
-        <div className="mt-8 grid grid-cols-2 gap-3">
-          {PACKS.map((p) => {
-            const active = selected === p.id;
+        <div className="mt-8 space-y-3">
+          {OFFERS.map((o) => {
+            const active = selected === o.id;
             return (
               <button
-                key={p.id}
-                onClick={() => setSelected(p.id)}
+                key={o.id}
+                onClick={() => setSelected(o.id)}
                 className={cn(
-                  "relative flex flex-col items-start gap-2 rounded-3xl border-2 p-4 text-left transition-all",
+                  "relative flex w-full flex-col gap-3 rounded-3xl border-2 p-5 text-left transition-all",
                   active
                     ? "border-accent bg-card shadow-cobalt"
                     : "border-border bg-card hover:border-accent/40",
                 )}
               >
-                {p.tag && (
-                  <span className="absolute -top-2 right-3 rounded-full bg-accent px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-accent-foreground">
-                    {p.tag}
+                {o.tag && (
+                  <span className="absolute -top-2 right-4 rounded-full bg-accent px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-accent-foreground">
+                    {o.tag}
                   </span>
                 )}
-                <span
-                  className={cn(
-                    "flex h-9 w-9 items-center justify-center rounded-2xl",
-                    active ? "bg-accent text-accent-foreground" : "bg-secondary text-foreground",
-                  )}
-                >
-                  {p.icon}
-                </span>
-                <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                  {p.name}
-                </span>
-                <span className="font-serif text-2xl leading-none">{p.price}</span>
-                <span className="text-sm font-medium">{p.scans} scans</span>
-                <span className="text-[10px] text-muted-foreground">{p.perScan}</span>
+                <div className="flex items-start gap-3">
+                  <span
+                    className={cn(
+                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl",
+                      active ? "bg-accent text-accent-foreground" : "bg-secondary text-foreground",
+                    )}
+                  >
+                    {o.icon}
+                  </span>
+                  <div className="flex-1">
+                    <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                      {o.name}
+                    </div>
+                    <div className="mt-0.5 font-serif text-2xl leading-tight">{o.price}</div>
+                    <div className="text-xs text-muted-foreground">{o.subtitle}</div>
+                  </div>
+                </div>
+                <ul className="space-y-1 pl-1">
+                  {o.perks.map((perk) => (
+                    <li key={perk} className="flex gap-2 text-xs text-foreground/80">
+                      <span className="text-accent">•</span>
+                      <span>{perk}</span>
+                    </li>
+                  ))}
+                </ul>
               </button>
             );
           })}
         </div>
 
         <p className="mt-6 rounded-2xl border border-border bg-card px-4 py-3 text-xs text-muted-foreground">
-          Paiement sécurisé via Stripe. Crédits sans expiration, utilisables quand tu veux.
+          Paiement sécurisé via Stripe. Abonnements résiliables à tout moment, crédits sans expiration.
         </p>
 
         <div className="fixed bottom-24 left-0 right-0 px-5">
@@ -164,7 +182,7 @@ export default function Paywall() {
               onClick={buy}
               className="h-14 w-full rounded-2xl bg-accent text-accent-foreground hover:bg-accent/90 text-base font-semibold shadow-cobalt"
             >
-              Acheter ce pack
+              {current.cta}
             </Button>
             <button
               onClick={() => toast("Achats restaurés (mock)")}
