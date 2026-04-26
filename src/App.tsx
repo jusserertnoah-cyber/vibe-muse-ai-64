@@ -6,6 +6,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { lazy, Suspense, useEffect } from "react";
 import { applyTheme } from "@/lib/theme";
 import { initDailyChallengeNotif } from "@/lib/dailyNotif";
+import { initPush } from "@/lib/push";
+import { supabase } from "@/integrations/supabase/client";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Onboarding from "./pages/Onboarding.tsx";
@@ -30,6 +32,15 @@ const App = () => {
     applyTheme();
     // Démarre la planif de la notif quotidienne 7h (no-op si pas opt-in).
     initDailyChallengeNotif();
+    // Init OneSignal Web Push (App ID récupéré côté serveur car non bundlé).
+    (async () => {
+      try {
+        const { data } = await supabase.functions.invoke("push-config");
+        if (data?.appId) initPush(data.appId);
+      } catch {
+        // silencieux : push optionnel
+      }
+    })();
     const onStorage = (e: StorageEvent) => {
       if (!e.key || e.key === "vibe.profile.v1" || e.key === "vibe.theme.v1") applyTheme();
     };
