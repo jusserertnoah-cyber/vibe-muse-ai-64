@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { StripeCheckoutModal } from "@/components/StripeCheckoutModal";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+import { VibeLogo } from "@/components/vibe/VibeLogo";
 import { supabase } from "@/integrations/supabase/client";
 
 type OfferId = "discovery" | "monthly" | "quarterly";
@@ -113,7 +114,7 @@ export default function Paywall() {
       <div className="mx-auto max-w-md px-5 pt-2">
         <div className="text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-accent text-accent-foreground shadow-cobalt">
-            <Sparkles className="h-7 w-7" strokeWidth={1.5} />
+            <VibeLogo variant="icon" className="h-9 w-9" />
           </div>
           <h1 className="mt-4 font-serif text-3xl leading-tight text-balance">
             Vibe : un boost de confiance en soi.
