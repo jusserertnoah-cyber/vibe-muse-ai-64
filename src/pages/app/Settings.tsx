@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -13,6 +13,7 @@ import {
   User as UserIcon,
   Check,
   Palette,
+  MapPin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -81,9 +82,10 @@ export default function Settings() {
   const [heightCm, setHeightCm] = useState(profile?.heightCm?.toString() ?? "");
   const [weightKg, setWeightKg] = useState(profile?.weightKg?.toString() ?? "");
   const [age, setAge] = useState(profile?.age?.toString() ?? "");
-  const [morningTip, setMorningTip] = useState(
-    () => localStorage.getItem("vibe.morningTip") === "1",
+  const [locationOn, setLocationOn] = useState(
+    () => localStorage.getItem("vibe.locationEnabled") === "1",
   );
+  const [locationBusy, setLocationBusy] = useState(false);
   const [units, setUnits] = useState<"metric" | "imperial">(
     () => (localStorage.getItem("vibe.units") as any) ?? "metric",
   );
@@ -93,6 +95,32 @@ export default function Settings() {
     setThemeState(t);
     setTheme(t);
   };
+
+  // Synchronise l'état du switch avec la permission navigateur réelle.
+  // Si l'utilisateur a révoqué la permission au niveau OS/navigateur,
+  // le toggle se met automatiquement à OFF.
+  const refreshLocationPermission = async () => {
+    try {
+      if (!("permissions" in navigator)) return;
+      const status = await navigator.permissions.query({ name: "geolocation" as PermissionName });
+      const granted = status.state === "granted";
+      setLocationOn(granted);
+      localStorage.setItem("vibe.locationEnabled", granted ? "1" : "0");
+      status.onchange = () => {
+        const g = status.state === "granted";
+        setLocationOn(g);
+        localStorage.setItem("vibe.locationEnabled", g ? "1" : "0");
+      };
+    } catch {
+      // ignore
+    }
+  };
+
+  // Au mount : on aligne le toggle avec la permission OS/navigateur.
+  useEffect(() => {
+    refreshLocationPermission();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const save = () => {
     updateProfile({
@@ -105,9 +133,43 @@ export default function Settings() {
     toast.success(t("settings.saved"));
   };
 
-  const toggleMorning = (v: boolean) => {
-    setMorningTip(v);
-    localStorage.setItem("vibe.morningTip", v ? "1" : "0");
+  const toggleLocation = (v: boolean) => {
+    if (!v) {
+      // On ne peut pas révoquer la permission depuis le code web — on
+      // désactive juste l'usage côté app et on explique à l'utilisateur.
+      setLocationOn(false);
+      localStorage.setItem("vibe.locationEnabled", "0");
+      toast(t("settings.locationOff", {
+        defaultValue: "Localisation désactivée dans Vibe. Pour la révoquer complètement, va dans les réglages de ton navigateur.",
+      }));
+      return;
+    }
+    if (!("geolocation" in navigator)) {
+      toast.error(t("settings.locationUnavailable", { defaultValue: "Géolocalisation indisponible sur cet appareil." }));
+      return;
+    }
+    setLocationBusy(true);
+    navigator.geolocation.getCurrentPosition(
+      () => {
+        setLocationOn(true);
+        localStorage.setItem("vibe.locationEnabled", "1");
+        setLocationBusy(false);
+        toast.success(t("settings.locationOn", { defaultValue: "Localisation activée." }));
+      },
+      (err) => {
+        setLocationBusy(false);
+        setLocationOn(false);
+        localStorage.setItem("vibe.locationEnabled", "0");
+        if (err.code === err.PERMISSION_DENIED) {
+          toast.error(t("settings.locationDenied", {
+            defaultValue: "Permission refusée. Active la localisation dans les réglages de ton navigateur.",
+          }));
+        } else {
+          toast.error(t("settings.locationError", { defaultValue: "Impossible d'obtenir ta position." }));
+        }
+      },
+      { timeout: 8000 },
+    );
   };
 
   const setUnit = (u: "metric" | "imperial") => {
@@ -270,8 +332,15 @@ export default function Settings() {
         {/* Notif quotidienne du défi à 7h */}
         <DailyNotifCta />
         <div className="flex items-center justify-between rounded-xl border border-border bg-background px-4 py-3">
-          <span className="text-sm">{t("settings.morningTip")}</span>
-          <Switch checked={morningTip} onCheckedChange={toggleMorning} />
+          <div className="flex items-center gap-2 text-sm">
+            <MapPin className="h-4 w-4 text-muted-foreground" />
+            {t("settings.location", { defaultValue: "Activer ma localisation" })}
+          </div>
+          <Switch
+            checked={locationOn}
+            disabled={locationBusy}
+            onCheckedChange={toggleLocation}
+          />
         </div>
         <div className="rounded-xl border border-border bg-background p-4">
           <div className="mb-2 flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">

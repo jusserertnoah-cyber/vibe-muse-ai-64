@@ -320,6 +320,25 @@ export default function Onboarding() {
     }
   };
 
+  const signInWithApple = async () => {
+    setBusy(true);
+    if (!loginOnly) {
+      savePending({ lang, email: email.trim().toLowerCase(), firstName, gender, heightCm, weightKg, age, city });
+    }
+    const pendingParam = !loginOnly
+      ? `?pending=${encodeURIComponent(encodePending({ lang, email: email.trim().toLowerCase(), firstName, gender, heightCm, weightKg, age, city }))}`
+      : "";
+    const { error } = await lovable.auth.signInWithOAuth("apple", {
+      redirect_uri: `${getAuthRedirectBaseUrl()}/onboarding${pendingParam}`,
+    });
+    if (error) {
+      setBusy(false);
+      toast.error(t("onboarding.email.errorTitle", { defaultValue: "Connexion impossible" }), {
+        description: error.message,
+      });
+    }
+  };
+
   if (loading || returning) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
@@ -571,6 +590,15 @@ export default function Onboarding() {
                   >
                     <span className="mr-2 font-semibold" aria-hidden="true">G</span>
                     {t("onboarding.email.google", { defaultValue: "Continuer avec Google" })}
+                  </Button>
+                  <Button
+                    onClick={signInWithApple}
+                    disabled={busy}
+                    variant="outline"
+                    className="h-14 w-full rounded-2xl text-base"
+                  >
+                    <span className="mr-2 text-lg leading-none" aria-hidden="true"></span>
+                    {t("onboarding.email.apple", { defaultValue: "Continuer avec Apple" })}
                   </Button>
                   <p className="text-[10px] text-muted-foreground">
                     {t("onboarding.email.legal", {
