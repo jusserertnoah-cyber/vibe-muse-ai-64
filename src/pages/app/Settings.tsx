@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -117,9 +117,10 @@ export default function Settings() {
   };
 
   // Au mount : on aligne le toggle avec la permission OS/navigateur.
-  // (eslint disable: on veut un effet one-shot)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useState(() => { refreshLocationPermission(); return null; });
+  useEffect(() => {
+    refreshLocationPermission();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const save = () => {
     updateProfile({
