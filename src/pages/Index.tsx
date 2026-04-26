@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useSession } from "@/hooks/useSession";
 import { getProfile, hydrateProfileFromDb } from "@/lib/profile";
+import { VibeLogo } from "@/components/vibe/VibeLogo";
 
 const Index = () => {
   const { session, loading } = useSession();
@@ -41,8 +42,12 @@ const Index = () => {
 
   if (loading || hydrating) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-muted border-t-foreground" />
+      <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-background px-6">
+        <VibeLogo variant="full" className="text-4xl" />
+        <p className="font-serif text-sm italic text-muted-foreground text-center max-w-xs">
+          Vibe : ne doute plus jamais de ton style.
+        </p>
+        <div className="h-5 w-5 animate-spin rounded-full border-2 border-muted border-t-foreground" />
       </div>
     );
   }
