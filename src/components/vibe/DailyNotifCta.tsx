@@ -7,6 +7,7 @@ import {
   isOptedIn,
   requestNotifPermission,
 } from "@/lib/dailyNotif";
+import { requestPushPermission } from "@/lib/push";
 
 export const DailyNotifCta = () => {
   const [supported, setSupported] = useState(false);
@@ -27,8 +28,11 @@ export const DailyNotifCta = () => {
       if (p === "granted") {
         setEnabled(true);
         initDailyChallengeNotif();
+        // Souscrit aussi aux push OneSignal (défi du jour + nouveautés
+        // envoyées par broadcast serveur, fonctionne app fermée).
+        await requestPushPermission().catch(() => false);
         toast.success("Notif activée", {
-          description: "Tu recevras le défi du jour chaque matin à 7h.",
+          description: "Défi du jour à 7h + nouveautés Vibe.",
         });
       } else {
         toast.error("Permission refusée", {
@@ -44,7 +48,7 @@ export const DailyNotifCta = () => {
     return (
       <div className="flex items-center gap-2 rounded-3xl border border-border bg-card px-4 py-3 text-xs text-muted-foreground">
         <Check className="h-3.5 w-3.5 text-emerald-500" />
-        Notif "Défi du jour" activée — 7h chaque matin.
+        Notifs activées — défi du jour 7h + nouveautés.
       </div>
     );
   }
@@ -59,9 +63,9 @@ export const DailyNotifCta = () => {
         <Bell className="h-5 w-5 text-foreground" strokeWidth={1.6} />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="font-serif text-base leading-none">Reçois ton défi à 7h</p>
+        <p className="font-serif text-base leading-none">Active les notifs Vibe</p>
         <p className="mt-1 text-xs text-muted-foreground">
-          Une notif chaque matin avec le défi du jour adapté à ton style.
+          Défi du jour à 7h + alertes nouveautés et challenges spéciaux.
         </p>
       </div>
       <BellOff className="h-4 w-4 text-muted-foreground" />
