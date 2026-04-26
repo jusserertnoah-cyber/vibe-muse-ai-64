@@ -31,7 +31,7 @@ const OFFERS: Offer[] = [
     subtitle: "Usage ponctuel · sans engagement",
     perks: [
       "5 scans (0,40 € / scan)",
-      "Analyse IA standard",
+      "IA premium (identique aux abonnements)",
       "Sans renouvellement automatique",
       "Idéal pour un événement (mariage, soirée…)",
     ],
