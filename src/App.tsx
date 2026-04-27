@@ -68,15 +68,12 @@ const App = () => {
     };
   }, []);
 
-  // Quand l'animation de la barre est finie ET que React/Supabase sont prêts,
-  // on retire le splash. Ici l'app est déjà montée → on attend juste la barre.
+  // Quand la dernière lettre du splash a disparu → on bascule sur l'accueil.
+  // L'app est déjà montée derrière, donc le rendu est instantané.
   useEffect(() => {
     if (showSplash && splashMinDone) {
-      const t = setTimeout(() => {
-        setShowSplash(false);
-        try { sessionStorage.setItem("vibe.splashShown", "1"); } catch {}
-      }, 200);
-      return () => clearTimeout(t);
+      setShowSplash(false);
+      try { sessionStorage.setItem("vibe.splashShown", "1"); } catch {}
     }
   }, [showSplash, splashMinDone]);
 
