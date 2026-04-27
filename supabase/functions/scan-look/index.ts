@@ -231,6 +231,20 @@ ${outputRule}`;
     let parsed: any = {};
     try { parsed = JSON.parse(args); } catch (e) { console.error("parse fail", e, args); }
 
+    // Si l'IA a détecté que ce n'est PAS une tenue humaine → on rembourse le crédit
+    // et on renvoie une erreur claire au client (status 422 not_human).
+    const isError = parsed?.verdict === "ERREUR" || parsed?.score === 0 || parsed?.strong === "ERREUR";
+    if (isError) {
+      try {
+        await getSupabase().rpc("add_credits", { target_user: userData.user.id, scans: 1 });
+      } catch (e) {
+        console.error("refund credit failed", e);
+      }
+      return new Response(JSON.stringify({ error: "not_human", refunded: true }), {
+        status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // Plafond 9.9 hard côté serveur (rarissime 10.0)
     if (typeof parsed.score === "number") {
       if (parsed.score >= 10) {
