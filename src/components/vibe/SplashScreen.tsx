@@ -31,8 +31,10 @@ export const SplashScreen = ({ onDone }: { onDone?: () => void }) => {
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       {/* Logo VIBE — chaque lettre s'efface une par une au rythme du chargement.
-          Quand la dernière disparaît → onDone() → l'accueil prend le relais. */}
-      <div className="flex items-baseline" style={{ gap: "0.05em" }}>
+          Quand la dernière disparaît → onDone() → l'accueil prend le relais.
+          NB : on espace clairement les lettres pour éviter tout chevauchement
+          visuel (sinon le "I" + "B" peuvent ressembler à un "J"). */}
+      <div className="flex items-baseline" style={{ gap: "0.18em" }}>
         {LETTERS.map((letter, i) => {
           const isGone = i < removed;
           return (
@@ -53,6 +55,8 @@ export const SplashScreen = ({ onDone }: { onDone?: () => void }) => {
               style={{
                 fontSize: "clamp(4rem, 16vw, 7rem)",
                 lineHeight: 1,
+                fontFamily: "Inter, system-ui, sans-serif",
+                letterSpacing: "0.04em",
                 textShadow: `0 0 18px ${LIME}99, 0 0 36px ${LIME}55`,
               }}
             >
