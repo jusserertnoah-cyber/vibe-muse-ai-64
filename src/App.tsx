@@ -3,7 +3,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import { applyTheme } from "@/lib/theme";
 import { initDailyChallengeNotif } from "@/lib/dailyNotif";
 import { initPush } from "@/lib/push";
@@ -14,6 +15,7 @@ import Onboarding from "./pages/Onboarding.tsx";
 import { AppLayout } from "./components/vibe/AppLayout";
 import Home from "./pages/app/Home.tsx";
 import ScrollToTop from "./components/ScrollToTop";
+import { SplashScreen } from "./components/vibe/SplashScreen";
 // Route-level code splitting: keep the initial bundle small (better FCP/LCP).
 // Heavy deps like Stripe SDK are pulled in only when the user opens the Paywall.
 const Scan = lazy(() => import("./pages/app/Scan.tsx"));
@@ -29,6 +31,18 @@ const Terms = lazy(() => import("./pages/legal/Terms.tsx"));
 const queryClient = new QueryClient();
 
 const App = () => {
+  // Splash : affiché au boot, masque le chargement Supabase / lazy chunks.
+  // Ne s'affiche QU'UNE FOIS par session (sessionStorage) pour ne pas
+  // saouler l'utilisateur à chaque navigation interne.
+  const [showSplash, setShowSplash] = useState(() => {
+    try {
+      return sessionStorage.getItem("vibe.splashShown") !== "1";
+    } catch {
+      return true;
+    }
+  });
+  const [splashMinDone, setSplashMinDone] = useState(false);
+
   useEffect(() => {
     applyTheme();
     // Démarre la planif de la notif quotidienne 7h (no-op si pas opt-in).
@@ -54,11 +68,28 @@ const App = () => {
     };
   }, []);
 
+  // Quand l'animation de la barre est finie ET que React/Supabase sont prêts,
+  // on retire le splash. Ici l'app est déjà montée → on attend juste la barre.
+  useEffect(() => {
+    if (showSplash && splashMinDone) {
+      const t = setTimeout(() => {
+        setShowSplash(false);
+        try { sessionStorage.setItem("vibe.splashShown", "1"); } catch {}
+      }, 200);
+      return () => clearTimeout(t);
+    }
+  }, [showSplash, splashMinDone]);
+
   return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <AnimatePresence>
+        {showSplash && (
+          <SplashScreen key="splash" onDone={() => setSplashMinDone(true)} />
+        )}
+      </AnimatePresence>
       <BrowserRouter>
         <ScrollToTop />
         <Suspense fallback={<div className="min-h-screen bg-background" />}>
