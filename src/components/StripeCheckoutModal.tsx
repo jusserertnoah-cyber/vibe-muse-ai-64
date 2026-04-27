@@ -11,6 +11,12 @@ interface Props {
   onClose: () => void;
 }
 
+// IMPORTANT : on garde UNE SEULE référence à la Promise Stripe pour tout
+// le cycle de vie de l'app. Si on appelle `getStripe()` à chaque render,
+// `EmbeddedCheckoutProvider` reçoit une nouvelle prop `stripe` et démonte
+// le formulaire → erreur "cannot change client secret after creation".
+const stripePromise = getStripe();
+
 export function StripeCheckoutModal({ open, priceId, onClose }: Props) {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +62,7 @@ export function StripeCheckoutModal({ open, priceId, onClose }: Props) {
           </div>
         ) : (
           <div id="checkout">
-            <EmbeddedCheckoutProvider stripe={getStripe()} options={{ clientSecret }}>
+            <EmbeddedCheckoutProvider stripe={stripePromise} options={{ clientSecret }}>
               <EmbeddedCheckout />
             </EmbeddedCheckoutProvider>
           </div>

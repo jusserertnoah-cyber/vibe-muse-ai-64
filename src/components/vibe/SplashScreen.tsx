@@ -1,62 +1,77 @@
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 const LETTERS = ["V", "I", "B", "E"];
 const LIME = "#DFFF00";
 
+// Durée totale du splash : 4 lettres × 700ms = 2.8s avant la sortie.
+const STEP_MS = 700;
+
 export const SplashScreen = ({ onDone }: { onDone?: () => void }) => {
+  // Index de la prochaine lettre à retirer (0 → 4). Quand il atteint
+  // LETTERS.length, on déclenche la sortie + onDone.
+  const [removed, setRemoved] = useState(0);
+
+  useEffect(() => {
+    if (removed >= LETTERS.length) {
+      // Dernière lettre partie → on prévient l'app que l'accueil peut arriver.
+      onDone?.();
+      return;
+    }
+    const t = setTimeout(() => setRemoved((n) => n + 1), STEP_MS);
+    return () => clearTimeout(t);
+  }, [removed, onDone]);
+
   return (
     <motion.div
       initial={{ y: 0, opacity: 1 }}
       exit={{ y: "-100%", opacity: 0 }}
-      transition={{ duration: 0.6, ease: [0.65, 0, 0.35, 1] }}
+      transition={{ duration: 0.7, ease: [0.65, 0, 0.35, 1] }}
       className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
-      {/* Logo VIBE — lettres apparaissent une par une avec lueur lime */}
-      <div className="flex items-center gap-1">
-        {LETTERS.map((letter, i) => (
-          <motion.span
-            key={letter}
-            initial={{ opacity: 0, y: 8, filter: "blur(8px)" }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              filter: "blur(0px)",
-              textShadow: [
-                `0 0 0px ${LIME}`,
-                `0 0 24px ${LIME}, 0 0 48px ${LIME}80`,
-                `0 0 12px ${LIME}, 0 0 32px ${LIME}40`,
-              ],
-            }}
-            transition={{
-              delay: 0.15 + i * 0.18,
-              duration: 0.6,
-              ease: "easeOut",
-              textShadow: { duration: 1.2, delay: 0.15 + i * 0.18 },
-            }}
-            className="font-black text-white"
-            style={{
-              fontSize: "clamp(3.5rem, 14vw, 6rem)",
-              letterSpacing: "0.08em",
-              lineHeight: 1,
-            }}
-          >
-            {letter}
-          </motion.span>
-        ))}
+      {/* Logo VIBE — chaque lettre s'efface une par une au rythme du chargement.
+          Quand la dernière disparaît → onDone() → l'accueil prend le relais. */}
+      <div className="flex items-baseline" style={{ gap: "0.05em" }}>
+        {LETTERS.map((letter, i) => {
+          const isGone = i < removed;
+          return (
+            <motion.span
+              key={`${letter}-${i}`}
+              initial={{ opacity: 0, y: 12, filter: "blur(10px)" }}
+              animate={
+                isGone
+                  ? { opacity: 0, y: -16, filter: "blur(8px)", scale: 0.9 }
+                  : { opacity: 1, y: 0, filter: "blur(0px)", scale: 1 }
+              }
+              transition={{
+                duration: isGone ? 0.45 : 0.55,
+                delay: isGone ? 0 : 0.1 + i * 0.12,
+                ease: [0.65, 0, 0.35, 1],
+              }}
+              className="font-black text-white inline-block"
+              style={{
+                fontSize: "clamp(4rem, 16vw, 7rem)",
+                lineHeight: 1,
+                textShadow: `0 0 18px ${LIME}99, 0 0 36px ${LIME}55`,
+              }}
+            >
+              {letter}
+            </motion.span>
+          );
+        })}
       </div>
 
-      {/* Barre de progression fine — remplissage fluide 2s */}
+      {/* Barre fine — se remplit en synchro avec les lettres qui partent. */}
       <div
         className="mt-10 h-[2px] w-48 overflow-hidden rounded-full bg-white/10"
         role="progressbar"
         aria-label="Chargement"
       >
         <motion.div
-          initial={{ width: "0%" }}
-          animate={{ width: "100%" }}
-          transition={{ duration: 2, ease: [0.4, 0, 0.2, 1] }}
-          onAnimationComplete={() => onDone?.()}
+          initial={false}
+          animate={{ width: `${(removed / LETTERS.length) * 100}%` }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
           className="h-full"
           style={{
             background: LIME,
