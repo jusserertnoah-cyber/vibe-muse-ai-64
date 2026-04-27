@@ -8,6 +8,18 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+// Lazy service-role client (pour rembourser un crédit en cas de scan invalide).
+let _supabaseAdmin: ReturnType<typeof createClient> | null = null;
+function getSupabase() {
+  if (!_supabaseAdmin) {
+    _supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
+  }
+  return _supabaseAdmin;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
