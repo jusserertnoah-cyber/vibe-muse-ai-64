@@ -157,6 +157,24 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html, body, #root {
+    /* Vrai plein écran sur mobile : on remplit tout l'espace disponible
+       (y compris derrière la status bar et la home indicator iPhone). */
+    min-height: 100vh;
+    min-height: 100dvh;
+    width: 100%;
+    overscroll-behavior-y: none; /* pas de bounce blanc en haut/bas */
+  }
+
+  body {
+    /* Padding safe-area : le contenu reste lisible sous la notch / home bar.
+       Les composants internes peuvent l'override si besoin. */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', system-ui, sans-serif;
