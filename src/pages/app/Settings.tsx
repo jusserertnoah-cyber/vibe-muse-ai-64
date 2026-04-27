@@ -7,6 +7,7 @@ import {
   CreditCard,
   FileText,
   Globe,
+  HelpCircle,
   Ruler,
   ShieldCheck,
   Trash2,
@@ -368,6 +369,11 @@ export default function Settings() {
 
       {/* Legal */}
       <Section icon={<ShieldCheck className="h-4 w-4" />} title={t("settings.legal")}>
+        <Row
+          icon={<HelpCircle className="h-4 w-4" />}
+          label={t("settings.faq", { defaultValue: "FAQ & Support" })}
+          onClick={() => navigate("/app/faq")}
+        />
         <Row
           icon={<FileText className="h-4 w-4" />}
           label={t("settings.privacy")}

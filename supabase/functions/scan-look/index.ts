@@ -8,6 +8,18 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+// Lazy service-role client (pour rembourser un crédit en cas de scan invalide).
+let _supabaseAdmin: ReturnType<typeof createClient> | null = null;
+function getSupabase() {
+  if (!_supabaseAdmin) {
+    _supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
+  }
+  return _supabaseAdmin;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -50,7 +62,7 @@ serve(async (req) => {
 
     const body = await req.json();
     const {
-      imageDataUrl, gender, heightCm, weightKg,
+      imageDataUrl, gender, heightCm, weightKg, age,
       lang = "fr",
       challenge,         // { name, detect }  — défi du jour, optionnel
       occasion,          // string libre / preset (ex "Soirée", "Mariage")
@@ -85,6 +97,7 @@ serve(async (req) => {
 
     const profileLine = [
       gender ? `genre: ${gender}` : null,
+      age ? `âge: ${age} ans` : null,
       heightCm ? `taille: ${heightCm}cm` : null,
       weightKg ? `poids: ${weightKg}kg` : null,
     ].filter(Boolean).join(", ");
@@ -114,6 +127,20 @@ Tu DOIS examiner la photo et décider :
       : "";
 
     const systemPrompt = `Tu es un STYLISTE HAUTE COUTURE EXTRÊMEMENT SÉLECTIF (Vogue, Saint Laurent). Tu notes une tenue avec une rigueur compétitive.
+
+RÈGLE ABSOLUE D'ENTRÉE :
+Avant TOUTE analyse, vérifie qu'il s'agit bien d'une PHOTO D'UN ÊTRE HUMAIN PORTANT UNE TENUE.
+Si l'image n'est PAS une personne réelle portant des vêtements (ex : objet seul, paysage, animal, écran/capture, dessin, photo vide, vêtement posé sans humain, selfie sans tenue visible), tu DOIS appeler la fonction tool "vibe_check" avec UNIQUEMENT :
+  { "score": 0, "style": "Classique", "verdict": "ERREUR", "strong": "ERREUR", "weak": "ERREUR", "tips": ["ERREUR","ERREUR","ERREUR"], "fit": "ERREUR", "colors": "ERREUR", "touch2026": "ERREUR", "shopping": [{"name":"ERREUR","brand":"ERREUR","price":"-","why":"ERREUR","query":"-"},{"name":"ERREUR","brand":"ERREUR","price":"-","why":"ERREUR","query":"-"},{"name":"ERREUR","brand":"ERREUR","price":"-","why":"ERREUR","query":"-"}] }
+Ne donne aucun avis, aucune note, aucune analyse dans ce cas.
+
+ADAPTATION À L'ÂGE — IMPÉRATIF :
+On ne s'habille pas pareil à 18 ans qu'à 60 ans. Adapte tes conseils, le verdict et la touche 2026 à l'âge de la personne :
+• 13–22 : codes streetwear / Y2K / oversize assumés autorisés.
+• 23–35 : équilibre tendance / élégance, pièces statement OK.
+• 36–50 : élégance affirmée, coupes nettes, pièces durables, pas de gimmicks ado.
+• 51+ : élégance intemporelle, matières nobles, coupes ajustées sans excès, JAMAIS de conseils type "hoodie crop", "baggy ado", couleurs criardes ou pièces TikTok. Vise Old Money / Classique / Sobre.
+Si l'âge est inconnu, vise neutre adulte 25–35.
 
 ÉCHELLE DE NOTATION (sur 10, OBLIGATOIREMENT avec 1 décimale, ex 7.4, 8.6, 9.1) :
 • 1.0–4.9 : look raté, fautes majeures (couleurs criardes, coupes inadaptées, mismatch total).
@@ -215,6 +242,20 @@ ${outputRule}`;
     const args = j?.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments ?? "{}";
     let parsed: any = {};
     try { parsed = JSON.parse(args); } catch (e) { console.error("parse fail", e, args); }
+
+    // Si l'IA a détecté que ce n'est PAS une tenue humaine → on rembourse le crédit
+    // et on renvoie une erreur claire au client (status 422 not_human).
+    const isError = parsed?.verdict === "ERREUR" || parsed?.score === 0 || parsed?.strong === "ERREUR";
+    if (isError) {
+      try {
+        await getSupabase().rpc("add_credits", { target_user: userData.user.id, scans: 1 });
+      } catch (e) {
+        console.error("refund credit failed", e);
+      }
+      return new Response(JSON.stringify({ error: "not_human", refunded: true }), {
+        status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     // Plafond 9.9 hard côté serveur (rarissime 10.0)
     if (typeof parsed.score === "number") {

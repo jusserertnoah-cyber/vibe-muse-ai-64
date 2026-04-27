@@ -22,6 +22,7 @@ const Paywall = lazy(() => import("./pages/app/Paywall.tsx"));
 const Settings = lazy(() => import("./pages/app/Settings.tsx"));
 const HistoryPage = lazy(() => import("./pages/app/HistoryPage.tsx"));
 const TopVibes = lazy(() => import("./pages/app/TopVibes.tsx"));
+const FAQ = lazy(() => import("./pages/app/FAQ.tsx"));
 const Privacy = lazy(() => import("./pages/legal/Privacy.tsx"));
 const Terms = lazy(() => import("./pages/legal/Terms.tsx"));
 
@@ -77,6 +78,7 @@ const App = () => {
             <Route path="settings" element={<Settings />} />
             <Route path="history" element={<HistoryPage />} />
             <Route path="topvibes" element={<TopVibes />} />
+            <Route path="faq" element={<FAQ />} />
           </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

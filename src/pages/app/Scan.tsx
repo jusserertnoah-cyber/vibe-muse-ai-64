@@ -112,6 +112,7 @@ export default function Scan() {
         body: {
           imageDataUrl: img,
           gender: profile?.gender,
+          age: profile?.age,
           heightCm: profile?.heightCm,
           weightKg: profile?.weightKg,
           lang: i18n.language?.split("-")[0] ?? "fr",
@@ -132,7 +133,16 @@ export default function Scan() {
           navigate("/app/paywall");
           return;
         }
+        // 422 = pas une tenue humaine → crédit déjà remboursé côté serveur
+        if (msg.includes("422") || msg.toLowerCase().includes("not_human")) {
+          toast.error(t("scan.errors.notHuman", { defaultValue: "Cette image n'est pas une tenue. Aucun crédit n'a été utilisé." }));
+          return;
+        }
         throw error;
+      }
+      if ((data as any)?.error === "not_human") {
+        toast.error(t("scan.errors.notHuman", { defaultValue: "Cette image n'est pas une tenue. Aucun crédit n'a été utilisé." }));
+        return;
       }
       if ((data as any)?.error === "no_credits") {
         toast.error(t("scan.creditInsufficient"), { description: t("scan.creditTopup") });
