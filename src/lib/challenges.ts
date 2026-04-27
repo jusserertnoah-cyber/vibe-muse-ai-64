@@ -80,19 +80,11 @@ export function bandFromTemp(tempC?: number | null): WeatherBand | null {
 export function getDailyChallenge(
   _audience: ChallengeAudience = "unisexe",
   date = new Date(),
-  tempC?: number | null,
+  _tempC?: number | null,
 ): DailyChallenge {
-  const band = bandFromTemp(tempC);
-  // Si météo connue : on filtre les défis compatibles (any + bande courante).
-  // Sinon : tout le pool.
-  const pool = band
-    ? CHALLENGES_UNISEX.filter((c) => {
-        const w = c.weather ?? ["any"];
-        return w.includes("any") || w.includes(band);
-      })
-    : CHALLENGES_UNISEX;
-  const list = pool.length > 0 ? pool : CHALLENGES_UNISEX;
-  return list[dayIndex(date) % list.length];
+  // Défi du jour STRICTEMENT identique pour tous les utilisateurs dans le monde.
+  // Aucun filtre météo / genre / localisation : un seul défi global par jour.
+  return CHALLENGES_UNISEX[dayIndex(date) % CHALLENGES_UNISEX.length];
 }
 
 /**
