@@ -263,7 +263,7 @@
       "l2c": "Améliorer la qualité des modèles (de manière agrégée et anonymisée).",
       "l2d": "Sécurité, prévention de la fraude, obligations légales.",
       "h3": "3. Photos & IA",
-      "p3": "Tes photos sont envoyées à nos prestataires IA (Google Gemini, OpenAI) uniquement pour générer l'analyse demandée. Elles ne sont pas utilisées pour entraîner leurs modèles et sont supprimées après traitement.",
+      "p3": "Tes photos sont envoyées à nos prestataires IA (Mistral AI) uniquement pour générer l'analyse demandée. Elles ne sont pas utilisées pour entraîner leurs modèles et sont supprimées après traitement.",
       "h4": "4. Partage",
       "p4": "Nous ne vendons jamais tes données. Elles sont partagées uniquement avec : nos hébergeurs, Stripe (paiements), nos fournisseurs IA, et les autorités si la loi l'exige.",
       "h5": "5. Conservation",
