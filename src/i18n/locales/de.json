@@ -263,7 +263,7 @@
       "l2c": "Modellqualität verbessern (aggregiert und anonymisiert).",
       "l2d": "Sicherheit, Betrugsprävention, gesetzliche Pflichten.",
       "h3": "3. Fotos & KI",
-      "p3": "Deine Fotos gehen an unsere KI-Anbieter (Google Gemini, OpenAI) nur zur Erstellung der angefragten Analyse. Sie werden nicht zum Training genutzt und nach Verarbeitung gelöscht.",
+      "p3": "Deine Fotos gehen an unsere KI-Anbieter (Mistral AI) nur zur Erstellung der angefragten Analyse. Sie werden nicht zum Training genutzt und nach Verarbeitung gelöscht.",
       "h4": "4. Weitergabe",
       "p4": "Wir verkaufen deine Daten nie. Sie werden nur geteilt mit: Hosting-Anbietern, Stripe, KI-Anbietern und Behörden, falls gesetzlich nötig.",
       "h5": "5. Aufbewahrung",

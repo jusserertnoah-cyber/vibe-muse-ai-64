@@ -17,6 +17,8 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { ScanOverlay } from "@/components/vibe/ScanOverlay";
+import { compressImageFile } from "@/lib/imageCompress";
 
 interface ShoppingItem {
   name: string;
@@ -42,13 +44,9 @@ interface ScanResult {
   challenge_reward?: { total_completed: number; granted_credit: boolean };
 }
 
-const fileToDataUrl = (file: File) =>
-  new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
+// Conversion + compression : on envoie ~1024px JPEG q0.82 à l'IA pour limiter
+// le payload et éviter les rate-limits.
+const fileToDataUrl = (file: File) => compressImageFile(file, 1024, 0.82);
 
 const OCCASION_KEYS = [
   "date","evening","work","brunch","wedding","friends","romantic","school","sport","travel",
@@ -62,6 +60,9 @@ export default function Scan() {
   const [dataUrl, setDataUrl] = useState<string | null>(null);
   const [result, setResult] = useState<ScanResult | null>(null);
   const [loading, setLoading] = useState(false);
+  // Score "fini" injecté dans l'overlay pour déclencher l'animation finale.
+  // Reste à null tant que l'analyse n'est pas terminée avec succès.
+  const [finishingScore, setFinishingScore] = useState<number | null>(null);
   const [sharing, setSharing] = useState(false);
   const [shared, setShared] = useState(false);
   const [confirmShare, setConfirmShare] = useState(false);
@@ -99,6 +100,7 @@ export default function Scan() {
   const analyze = async (img: string, ctx?: { occasion?: string; note?: string }) => {
     const profile = getProfile();
     setLoading(true);
+    setFinishingScore(null);
     // Météo auto (l'IA "sait" déjà, vu qu'on l'a dans l'app)
     let weather: WeatherSnapshot | null = null;
     try {
@@ -150,7 +152,9 @@ export default function Scan() {
         return;
       }
       if ((data as any)?.error === "rate_limited") {
-        toast.error(t("scan.errors.rate"));
+        toast.error("L'IA analyse trop de styles en ce moment, réessaie dans 30 secondes 😅", {
+          description: "Aucun crédit utilisé.",
+        });
         return;
       }
       if ((data as any)?.error === "payment_required") {
@@ -161,8 +165,11 @@ export default function Scan() {
         toast.error(t("scan.errors.blur"));
         return;
       }
-      setResult(data as ScanResult);
       const r = data as ScanResult;
+      setResult(r);
+      // Déclenche l'animation finale dans l'overlay (compteur + score),
+      // l'overlay se ferme tout seul via onDone.
+      setFinishingScore(typeof r.score === "number" ? r.score : 0);
       if (r.challenge_met) {
         if (r.challenge_reward?.granted_credit) {
           toast.success(t("scan.challengeBonus"), { description: t("scan.challengeBonusDesc") });
@@ -181,6 +188,7 @@ export default function Scan() {
     } catch (e) {
       console.error(e);
       toast.error(t("scan.errors.generic"));
+      setFinishingScore(null);
     } finally {
       setLoading(false);
     }
@@ -231,6 +239,12 @@ export default function Scan() {
 
   return (
     <div className="space-y-6 px-5 pt-8">
+      <ScanOverlay
+        imageUrl={preview ?? ""}
+        open={loading || finishingScore != null}
+        finishingScore={finishingScore}
+        onDone={() => setFinishingScore(null)}
+      />
       {/* HERO Scan — visuel marquant */}
       <section className="relative overflow-hidden rounded-3xl border border-border bg-card p-6 text-foreground shadow-card">
         {/* halos lime adoucis sur fond clair */}
@@ -377,20 +391,18 @@ export default function Scan() {
                 </div>
               </div>
             )}
-            {result.score >= 9 ? (
-              <Button
-                onClick={() => setConfirmShare(true)}
-                disabled={sharing || shared}
-                className="mt-4 h-11 w-full rounded-2xl bg-gradient-brand text-foreground shadow-brand"
-              >
-                {sharing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Share2 className="mr-2 h-4 w-4" />}
-                {shared ? t("scan.sharedDone") : t("scan.shareCta")}
-              </Button>
-            ) : (
-              <p className="mt-4 rounded-2xl bg-secondary p-3 text-center text-xs text-muted-foreground">
-                {t("scan.scoreNeeded", { score: result.score.toFixed(1) })}
-              </p>
-            )}
+            <Button
+              onClick={() => setConfirmShare(true)}
+              disabled={sharing || shared || result.score < 9}
+              className="mt-4 h-12 w-full rounded-2xl bg-gradient-brand text-foreground shadow-brand"
+            >
+              {sharing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Share2 className="mr-2 h-4 w-4" />}
+              {shared
+                ? t("scan.sharedDone")
+                : result.score >= 9
+                ? "Partager mon score"
+                : t("scan.scoreNeeded", { score: result.score.toFixed(1) })}
+            </Button>
           </div>
 
           {/* Points forts / À améliorer */}
