@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Outlet, Navigate } from "react-router-dom";
+import { Outlet, Navigate, useLocation } from "react-router-dom";
 import { BottomNav } from "./BottomNav";
 import { getProfile, hydrateProfileFromDb } from "@/lib/profile";
 import { useSession } from "@/hooks/useSession";
@@ -8,6 +8,7 @@ export const AppLayout = () => {
   const { session, loading } = useSession();
   const [hydrating, setHydrating] = useState(true);
   const [profileReady, setProfileReady] = useState<boolean>(!!getProfile());
+  const location = useLocation();
 
   useEffect(() => {
     let cancelled = false;
@@ -54,7 +55,10 @@ export const AppLayout = () => {
   return (
     <div className="min-h-screen bg-background">
       <main className="mx-auto max-w-md pb-28">
-        <Outlet />
+        {/* Fade 0.3s à chaque changement de route — clé = pathname */}
+        <div key={location.pathname} className="vibe-page-fade">
+          <Outlet />
+        </div>
       </main>
       <BottomNav />
     </div>
