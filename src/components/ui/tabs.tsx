@@ -12,7 +12,8 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
+      // Conteneur pill style Cal.com : fond #F3F4F6, padding 4px, radius 10px.
+      "inline-flex h-10 items-center justify-center rounded-[10px] bg-muted p-1 text-muted-foreground",
       className,
     )}
     {...props}
@@ -27,7 +28,12 @@ const TabsTrigger = React.forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+      // Onglets minimalistes Cal.com : actif blanc + ombre subtile, inactif gris.
+      "inline-flex items-center justify-center whitespace-nowrap rounded-[8px] px-3 py-1.5 text-[14px] font-medium text-[hsl(220_9%_46%)] transition-all duration-200",
+      "hover:text-[hsl(220_17%_24%)]",
+      "data-[state=active]:bg-white data-[state=active]:text-[hsl(220_39%_11%)] data-[state=active]:shadow-[0_2px_4px_rgba(0,0,0,0.05)]",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+      "disabled:pointer-events-none disabled:opacity-50",
       className,
     )}
     {...props}
