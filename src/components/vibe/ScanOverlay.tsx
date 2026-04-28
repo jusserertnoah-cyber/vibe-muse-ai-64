@@ -140,16 +140,16 @@ export const ScanOverlay = ({
             </div>
           )}
 
-          {/* Score final fade-in/scale */}
+          {/* Score final fade-in/scale + micro-vibration (haptic visuel) */}
           {finishing && (
             <div className="absolute inset-0 flex items-center justify-center">
               <div
-                className="rounded-3xl bg-white/85 px-8 py-6 text-center shadow-2xl backdrop-blur"
+                className="vibe-haptic rounded-xl border border-[#E5E7EB] bg-white px-8 py-6 text-center shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
                 style={{
-                  animation: "vibeScoreIn 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both",
+                  animation: "vibeScoreIn 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both, vibeHaptic 0.45s 0.7s cubic-bezier(0.36, 0.07, 0.19, 0.97) both",
                 }}
               >
-                <p className="font-mono-tech text-[10px] uppercase tracking-[0.3em] text-neutral-500">
+                <p className="font-mono-tech text-[12px] font-bold uppercase tracking-[0.1em] text-neutral-500">
                   Vibe Score
                 </p>
                 <p
