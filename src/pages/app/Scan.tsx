@@ -391,20 +391,18 @@ export default function Scan() {
                 </div>
               </div>
             )}
-            {result.score >= 9 ? (
-              <Button
-                onClick={() => setConfirmShare(true)}
-                disabled={sharing || shared}
-                className="mt-4 h-11 w-full rounded-2xl bg-gradient-brand text-foreground shadow-brand"
-              >
-                {sharing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Share2 className="mr-2 h-4 w-4" />}
-                {shared ? t("scan.sharedDone") : t("scan.shareCta")}
-              </Button>
-            ) : (
-              <p className="mt-4 rounded-2xl bg-secondary p-3 text-center text-xs text-muted-foreground">
-                {t("scan.scoreNeeded", { score: result.score.toFixed(1) })}
-              </p>
-            )}
+            <Button
+              onClick={() => setConfirmShare(true)}
+              disabled={sharing || shared || result.score < 9}
+              className="mt-4 h-12 w-full rounded-2xl bg-gradient-brand text-foreground shadow-brand"
+            >
+              {sharing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Share2 className="mr-2 h-4 w-4" />}
+              {shared
+                ? t("scan.sharedDone")
+                : result.score >= 9
+                ? "Partager mon score"
+                : t("scan.scoreNeeded", { score: result.score.toFixed(1) })}
+            </Button>
           </div>
 
           {/* Points forts / À améliorer */}
