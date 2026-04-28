@@ -57,8 +57,8 @@ serve(async (req) => {
       });
     }
 
-    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
-    if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY missing");
+    const MISTRAL_API_KEY = Deno.env.get("MISTRAL_API_KEY");
+    if (!MISTRAL_API_KEY) throw new Error("MISTRAL_API_KEY missing");
 
     const body = await req.json();
     const {
@@ -206,16 +206,18 @@ ${outputRule}`;
       required.push("challenge_met", "challenge_reason");
     }
 
-    const aiRes = await fetch("https://api.openai.com/v1/chat/completions", {
+    // Mistral Pixtral — vision + tool calling pour JSON strict.
+    const aiRes = await fetch("https://api.mistral.ai/v1/chat/completions", {
       method: "POST",
-      headers: { Authorization: `Bearer ${OPENAI_API_KEY}`, "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${MISTRAL_API_KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: tier === "premium" ? "gpt-5" : "gpt-5-mini",
+        model: "pixtral-12b-2409",
+        temperature: 0.4,
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: [
             { type: "text", text: userText },
-            { type: "image_url", image_url: { url: imageDataUrl } },
+            { type: "image_url", image_url: imageDataUrl },
           ]},
         ],
         tools: [{
@@ -226,16 +228,22 @@ ${outputRule}`;
             parameters: { type: "object", properties, required, additionalProperties: false },
           },
         }],
-        tool_choice: { type: "function", function: { name: "vibe_check" } },
+        tool_choice: "any",
       }),
     });
 
     if (!aiRes.ok) {
-      const t = await aiRes.text();
-      console.error("scan-look ai fail", aiRes.status, t);
-      if (aiRes.status === 429) return new Response(JSON.stringify({ error: "rate_limited" }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      if (aiRes.status === 402) return new Response(JSON.stringify({ error: "payment_required" }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      throw new Error(`ai ${aiRes.status}`);
+      const errText = await aiRes.text();
+      console.error("scan-look mistral fail", aiRes.status, errText);
+      // En cas d'échec IA → on rembourse le crédit consommé.
+      try { await getSupabase().rpc("add_credits", { target_user: userData.user.id, scans: 1 }); } catch (_) {}
+      if (aiRes.status === 429 || aiRes.status === 503 || aiRes.status === 529) {
+        return new Response(JSON.stringify({ error: "rate_limited", refunded: true }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      if (aiRes.status === 402) {
+        return new Response(JSON.stringify({ error: "payment_required", refunded: true }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      return new Response(JSON.stringify({ error: "ai_error", refunded: true }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     const j = await aiRes.json();
