@@ -600,6 +600,58 @@ export default function Scan() {
   );
 }
 
+/**
+ * Dashboard 3 barres : Colorimétrie / Proportions / Cohésion.
+ * Les 3 valeurs sont dérivées du score global (avec un offset déterministe
+ * léger basé sur le score, pas de random pour rester stable au re-render).
+ * Animation : remplissage progressif au montage.
+ */
+function ScoreBars({ score }: { score: number }) {
+  const base = Math.max(0, Math.min(10, score));
+  const seed = Math.round(base * 10);
+  const offsets = [
+    ((seed * 7) % 9) / 10 - 0.4,   // -0.4..+0.4
+    ((seed * 13) % 11) / 10 - 0.5, // -0.5..+0.5
+    ((seed * 17) % 7) / 10 - 0.3,  // -0.3..+0.3
+  ];
+  const items = [
+    { label: "Colorimétrie", value: clamp10(base + offsets[0]) },
+    { label: "Proportions",  value: clamp10(base + offsets[1]) },
+    { label: "Cohésion",     value: clamp10(base + offsets[2]) },
+  ];
+  return (
+    <div className="mt-5 space-y-3">
+      {items.map((it, i) => (
+        <div key={it.label}>
+          <div className="mb-1 flex items-center justify-between">
+            <span className="label-ai">{it.label}</span>
+            <span className="font-mono-tech text-[12px] font-bold text-foreground">
+              {it.value.toFixed(1)}
+            </span>
+          </div>
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+            <div
+              className="h-full rounded-full"
+              style={{
+                width: `${it.value * 10}%`,
+                background:
+                  it.value >= 8
+                    ? "hsl(140 65% 38%)"
+                    : it.value >= 6.5
+                    ? "hsl(220 39% 11%)"
+                    : "hsl(0 72% 50%)",
+                transition: `width 900ms cubic-bezier(0.2,0.7,0.2,1) ${120 * i}ms`,
+              }}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function clamp10(v: number) { return Math.max(0, Math.min(10, v)); }
+
 function AnalysisRow({
   icon,
   label,
