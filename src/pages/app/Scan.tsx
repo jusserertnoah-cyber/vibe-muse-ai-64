@@ -364,26 +364,29 @@ export default function Scan() {
       </div>
 
       {result && (
-        <div className="animate-fade-up space-y-4">
+        <div className="animate-fade-up space-y-6">
           {/* Score */}
-          <div className="rounded-3xl bg-card p-6 shadow-card">
+          <div className="vibe-haptic rounded-xl border border-border bg-card p-6 shadow-card">
             <div className="flex items-end justify-between">
               <div>
-                <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                  {t("scan.kicker")}
-                </p>
+                <p className="label-ai">Vibe Score</p>
                 <div className={`font-mono-tech text-6xl font-bold leading-none tracking-tighter ${scoreColor}`}>
                   {Number.isInteger(result.score) ? result.score : result.score.toFixed(1)}
                   <span className="text-2xl text-muted-foreground">/10</span>
                 </div>
               </div>
-              <div className="rounded-full bg-accent px-3 py-1 font-mono-tech text-[10px] uppercase tracking-widest text-accent-foreground shadow-brand">
-                {t("scan.vibers")}
+              <div className="rounded-full border border-border bg-secondary px-3 py-1 font-mono-tech text-[10px] font-bold uppercase tracking-[0.1em] text-foreground">
+                {result.style ?? t("scan.vibers")}
               </div>
             </div>
-            <p className="mt-3 font-serif text-lg leading-snug">{result.verdict}</p>
+            <p className="mt-3 text-base leading-snug text-foreground">{result.verdict}</p>
+
+            {/* Dashboard d'analyse — 3 barres dérivées du score (avec léger
+                offset déterministe pour donner du relief, sans changer la note). */}
+            <ScoreBars score={result.score} />
+
             {result.challenge_met != null && (
-              <div className={`mt-3 flex items-start gap-2 rounded-2xl p-3 text-sm ${result.challenge_met ? "bg-accent/15 text-foreground" : "bg-muted text-muted-foreground"}`}>
+              <div className={`mt-4 flex items-start gap-2 rounded-xl border p-3 text-sm ${result.challenge_met ? "border-accent/40 bg-accent/10 text-foreground" : "border-border bg-secondary text-muted-foreground"}`}>
                 <Flame className="mt-0.5 h-4 w-4 shrink-0" />
                 <div>
                   <p className="font-semibold">{t("scan.challengeLabel")} : {challenge.name}</p>
@@ -394,7 +397,7 @@ export default function Scan() {
             <Button
               onClick={() => setConfirmShare(true)}
               disabled={sharing || shared || result.score < 9}
-              className="mt-4 h-12 w-full rounded-2xl bg-gradient-brand text-foreground shadow-brand"
+              className="mt-4 h-12 w-full rounded-xl bg-foreground text-background hover:bg-foreground/90"
             >
               {sharing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Share2 className="mr-2 h-4 w-4" />}
               {shared
@@ -412,20 +415,21 @@ export default function Scan() {
           </div>
 
           {/* Conseils */}
-          <div className="rounded-3xl bg-secondary p-5">
-            <p className="mb-3 font-serif text-lg leading-none">
-              {t("scan.tipsTitle")}
-            </p>
-            <ol className="space-y-3">
-              {result.tips.map((t, i) => (
-                <li key={i} className="flex gap-3 text-sm leading-relaxed">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-brand text-[11px] font-semibold text-foreground">
-                    {i + 1}
+          <div className="space-y-3">
+            <p className="label-ai">{t("scan.tipsTitle")}</p>
+            <div className="grid gap-3">
+              {result.tips.map((tip, i) => (
+                <div
+                  key={i}
+                  className="flex items-start gap-3 rounded-xl border border-border bg-card p-4 shadow-soft"
+                >
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-border bg-secondary font-mono-tech text-[11px] font-bold text-foreground">
+                    {String(i + 1).padStart(2, "0")}
                   </span>
-                  <p>{t}</p>
-                </li>
+                  <p className="text-[15px] leading-snug text-foreground">{tip}</p>
+                </div>
               ))}
-            </ol>
+            </div>
           </div>
 
           {/* L'avis de VIBE — audit styliste */}
