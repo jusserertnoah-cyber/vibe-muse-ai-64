@@ -14,3 +14,18 @@ verify_jwt = false
 
 [functions.claim-welcome-pack]
 verify_jwt = false
+
+[functions.scan-look]
+verify_jwt = false
+
+[functions.chat-stylist]
+verify_jwt = false
+
+[functions.verify-story]
+verify_jwt = false
+
+[functions.send-push]
+verify_jwt = false
+
+[functions.push-config]
+verify_jwt = false
