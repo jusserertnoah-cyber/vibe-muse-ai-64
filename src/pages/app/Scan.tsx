@@ -68,6 +68,8 @@ export default function Scan() {
   const [confirmShare, setConfirmShare] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const galleryRef = useRef<HTMLInputElement>(null);
+  // Message "analyse approfondie" après 15s
+  const [longRunning, setLongRunning] = useState(false);
   // Étape "contexte" entre import photo et analyse
   const [contextOpen, setContextOpen] = useState(false);
   const [occasion, setOccasion] = useState<string>("");
@@ -101,6 +103,8 @@ export default function Scan() {
     const profile = getProfile();
     setLoading(true);
     setFinishingScore(null);
+    setLongRunning(false);
+    const longTimer = setTimeout(() => setLongRunning(true), 15000);
     // Météo auto (l'IA "sait" déjà, vu qu'on l'a dans l'app)
     let weather: WeatherSnapshot | null = null;
     try {
@@ -109,24 +113,30 @@ export default function Scan() {
     } catch {
       // pas de météo dispo, on continue sans
     }
+    const invokeOnce = () => supabase.functions.invoke("scan-look", {
+      body: {
+        imageDataUrl: img,
+        gender: profile?.gender,
+        age: profile?.age,
+        heightCm: profile?.heightCm,
+        weightKg: profile?.weightKg,
+        lang: i18n.language?.split("-")[0] ?? "fr",
+        tier: getTier(),
+        challenge: { name: challenge.name, detect: challenge.detect },
+        occasion: ctx?.occasion ?? undefined,
+        occasionNote: ctx?.note ?? undefined,
+        weather: weather
+          ? { temp: weather.temp, label: weather.label, city: weather.city ?? null }
+          : undefined,
+      },
+    });
     try {
-      const { data, error } = await supabase.functions.invoke("scan-look", {
-        body: {
-          imageDataUrl: img,
-          gender: profile?.gender,
-          age: profile?.age,
-          heightCm: profile?.heightCm,
-          weightKg: profile?.weightKg,
-          lang: i18n.language?.split("-")[0] ?? "fr",
-          tier: getTier(),
-          challenge: { name: challenge.name, detect: challenge.detect },
-          occasion: ctx?.occasion ?? undefined,
-          occasionNote: ctx?.note ?? undefined,
-          weather: weather
-            ? { temp: weather.temp, label: weather.label, city: weather.city ?? null }
-            : undefined,
-        },
-      });
+      // 1er essai + 1 retry discret en cas d'erreur réseau pure (pas 4xx).
+      let { data, error } = await invokeOnce();
+      if (error && /network|fetch|failed to fetch/i.test(String(error.message ?? ""))) {
+        await new Promise((r) => setTimeout(r, 800));
+        ({ data, error } = await invokeOnce());
+      }
       if (error) {
         // Edge function renvoie 402 quand pas de crédit → message clair + paywall
         const msg = String(error.message ?? "");
@@ -190,6 +200,8 @@ export default function Scan() {
       toast.error(t("scan.errors.generic"));
       setFinishingScore(null);
     } finally {
+      clearTimeout(longTimer);
+      setLongRunning(false);
       setLoading(false);
     }
   };
