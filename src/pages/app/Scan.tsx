@@ -331,33 +331,32 @@ export default function Scan() {
           }}
         />
 
-        {/* Bouton noir façon Home : "SCANNER MA TENUE" */}
-        <button
-          onClick={() => !loading && setPickerOpen(true)}
-          disabled={loading}
-          className={`group relative ${preview ? "mt-5" : ""} flex w-full flex-col items-center justify-center gap-3 overflow-hidden rounded-3xl bg-foreground px-6 py-8 text-background shadow-card transition-transform active:scale-[0.98] disabled:opacity-60`}
-        >
-          <div
-            className="pointer-events-none absolute inset-0 opacity-30"
-            style={{ background: "radial-gradient(circle at 50% 30%, hsl(var(--accent)) 0%, transparent 60%)" }}
-          />
-          <div
-            className="relative flex h-16 w-16 items-center justify-center rounded-full"
-            style={{ backgroundColor: "hsl(var(--accent))", boxShadow: "0 0 30px hsl(var(--accent) / 0.6)" }}
+        {/* Action directe : 2 cartes minimalistes (style Apple / Cal.com).
+            Cliquer ouvre directement le picker fichier — pas d'étape intermédiaire. */}
+        <div className={`grid grid-cols-2 gap-3 ${preview ? "mt-5" : ""}`}>
+          <button
+            onClick={() => !loading && fileRef.current?.click()}
+            disabled={loading}
+            className="group flex flex-col items-center justify-center gap-2.5 rounded-2xl border border-border bg-card p-6 text-foreground shadow-soft transition-all duration-200 ease-out hover:border-foreground/40 active:scale-95 disabled:opacity-60"
           >
-            {loading ? (
-              <Loader2 className="h-8 w-8 animate-spin text-accent-foreground" />
-            ) : (
-              <Camera className="h-8 w-8 text-accent-foreground" strokeWidth={2} />
-            )}
-          </div>
-          <span className="relative font-serif text-2xl tracking-tight">
-            {loading ? t("scan.loading") : preview ? t("scan.change").toUpperCase() : t("scan.ctaScan")}
-          </span>
-          <span className="relative text-[10px] uppercase tracking-[0.25em] opacity-70">
-            {t("scan.instant")}
-          </span>
-        </button>
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-foreground text-background transition-transform duration-200 group-hover:scale-105">
+              <Camera className="h-6 w-6" strokeWidth={1.6} />
+            </span>
+            <span className="text-[15px] font-medium leading-none">Prendre une photo</span>
+            <span className="text-[11px] text-muted-foreground">Caméra arrière</span>
+          </button>
+          <button
+            onClick={() => !loading && galleryRef.current?.click()}
+            disabled={loading}
+            className="group flex flex-col items-center justify-center gap-2.5 rounded-2xl border border-border bg-card p-6 text-foreground shadow-soft transition-all duration-200 ease-out hover:border-foreground/40 active:scale-95 disabled:opacity-60"
+          >
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary text-foreground transition-transform duration-200 group-hover:scale-105">
+              <Upload className="h-6 w-6" strokeWidth={1.6} />
+            </span>
+            <span className="text-[15px] font-medium leading-none">Importer une photo</span>
+            <span className="text-[11px] text-muted-foreground">Depuis la galerie</span>
+          </button>
+        </div>
 
         {preview && !loading && result && (
           <Button
@@ -369,8 +368,8 @@ export default function Scan() {
           </Button>
         )}
         {loading && (
-          <p className="mt-4 text-center font-serif text-sm italic text-muted-foreground">
-            Vibe : ne doute plus jamais de ton style.
+          <p className="mt-4 text-center font-serif text-sm italic text-muted-foreground transition-opacity duration-300">
+            {longRunning ? "Analyse approfondie en cours…" : "Vibe : ne doute plus jamais de ton style."}
           </p>
         )}
       </div>
