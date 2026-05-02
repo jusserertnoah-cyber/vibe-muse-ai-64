@@ -78,9 +78,9 @@ export default {
         "2xl": "calc(var(--radius) + 16px)",
       },
       fontFamily: {
-        serif: ['Inter', 'system-ui', 'sans-serif'],
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['Syne', 'system-ui', 'sans-serif'],
+        sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
+        display: ['Syne', 'system-ui', 'sans-serif'],
         mono: ['"Azeret Mono"', '"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
       backgroundImage: {
