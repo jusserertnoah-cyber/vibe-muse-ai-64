@@ -15,6 +15,7 @@ import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { SUPPORTED_LANGUAGES } from "@/i18n";
+import { IntroSlides, hasSeenIntro } from "@/components/vibe/IntroSlides";
 
 const GENDERS: { id: Gender; labelKey: string; fallback: string }[] = [
   { id: "femme", labelKey: "onboarding.gender.femme", fallback: "Femme" },
@@ -110,6 +111,7 @@ export default function Onboarding() {
   const { session, loading } = useSession();
 
   const [step, setStep] = useState(0);
+  const [showIntro, setShowIntro] = useState(() => !hasSeenIntro());
   const [lang, setLang] = useState<string>(i18n.language?.split("-")[0] || "fr");
   const [firstName, setFirstName] = useState("");
   const [gender, setGender] = useState<Gender | null>(null);
@@ -345,6 +347,10 @@ export default function Onboarding() {
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-muted border-t-foreground" />
       </div>
     );
+  }
+
+  if (showIntro && !session) {
+    return <IntroSlides onDone={() => setShowIntro(false)} />;
   }
 
   const canProceed = () => {
