@@ -181,40 +181,46 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'DM Sans', system-ui, sans-serif;
     font-feature-settings: "ss01", "cv11";
     font-weight: 400;
-    color: hsl(220 14% 34%); /* #4B5563 gray-600 corps */
-    line-height: 1.5;
-    font-size: 16px;
+    color: hsl(0 0% 100%);
+    line-height: 1.55;
+    font-size: 15px;
+    background-color: #0a0a0a;
   }
 
   h1 {
-    font-family: 'Inter', system-ui, sans-serif;
-    font-weight: 700;
-    letter-spacing: -0.05em;
-    color: hsl(220 39% 11%);
-    font-size: 2.5rem; /* 40px */
+    font-family: 'Syne', system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: hsl(0 0% 100%);
+    font-size: 2.25rem; /* 36px */
     line-height: 1.1;
   }
   h2 {
-    font-family: 'Inter', system-ui, sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    color: hsl(220 17% 24%); /* #374151 */
+    font-family: 'Syne', system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: hsl(0 0% 100%);
     font-size: 1.25rem; /* 20px */
     line-height: 1.3;
   }
   h3, h4 {
-    font-family: 'Inter', system-ui, sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    color: hsl(220 17% 24%);
+    font-family: 'Syne', system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: hsl(0 0% 100%);
   }
 
   button {
     letter-spacing: -0.01em;
     font-weight: 500;
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--neon));
+    outline-offset: 3px;
   }
 }
 
