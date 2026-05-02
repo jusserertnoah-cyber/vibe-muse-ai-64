@@ -287,6 +287,69 @@ All colors MUST be HSL.
   .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 }
 
+/* ─── Animations VIBE Pro ───────────────────────────────────────────── */
+@keyframes ringPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.06); opacity: 0.7; }
+}
+@keyframes ringPulseSoft {
+  0%, 100% { transform: scale(1); opacity: 0.18; }
+  50% { transform: scale(1.18); opacity: 0.05; }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes dotPulse {
+  0%, 100% { background: hsl(var(--border)); transform: scale(1); }
+  50% { background: hsl(var(--neon)); transform: scale(1.35); }
+}
+@keyframes livePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scoreReveal {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Spinner CSS pro */
+.vibe-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid hsl(var(--border));
+  border-top-color: hsl(var(--neon));
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Reveal en cascade pour les cartes d'une page */
+.card-reveal { animation: cardReveal 0.4s ease both; }
+.card-reveal-stagger > * { animation: cardReveal 0.4s ease both; }
+.card-reveal-stagger > *:nth-child(1) { animation-delay: 0s; }
+.card-reveal-stagger > *:nth-child(2) { animation-delay: 0.08s; }
+.card-reveal-stagger > *:nth-child(3) { animation-delay: 0.16s; }
+.card-reveal-stagger > *:nth-child(4) { animation-delay: 0.24s; }
+.card-reveal-stagger > *:nth-child(5) { animation-delay: 0.32s; }
+.card-reveal-stagger > *:nth-child(6) { animation-delay: 0.40s; }
+
+.live-dot {
+  width: 6px; height: 6px; border-radius: 9999px;
+  background: hsl(var(--neon));
+  animation: livePulse 1.4s ease-in-out infinite;
+}
+
 /* ─── Animations météo Home ─── */
 @keyframes vibe-rain {
   0% { transform: translateY(-20%); opacity: 0; }
