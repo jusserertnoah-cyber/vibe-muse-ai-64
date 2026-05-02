@@ -1,16 +1,40 @@
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ChevronRight, Crown, History, LogOut, Settings } from "lucide-react";
+import { ChevronRight, Crown, History, LogOut, Settings, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getProfile, clearProfile } from "@/lib/profile";
 import { getHistory } from "@/lib/history";
 import { supabase } from "@/integrations/supabase/client";
+
+const LEVELS = [
+  { name: "Débutant", min: 0 },
+  { name: "Styliste", min: 1 },
+  { name: "Trendsetter", min: 5 },
+  { name: "Icône", min: 15 },
+  { name: "Légende", min: 30 },
+];
+
+const getLevelInfo = (scans: number) => {
+  let current = LEVELS[0];
+  let next: typeof LEVELS[number] | null = LEVELS[1] ?? null;
+  for (let i = 0; i < LEVELS.length; i++) {
+    if (scans >= LEVELS[i].min) {
+      current = LEVELS[i];
+      next = LEVELS[i + 1] ?? null;
+    }
+  }
+  const span = next ? next.min - current.min : 1;
+  const progress = next ? Math.min(100, Math.round(((scans - current.min) / span) * 100)) : 100;
+  return { current, next, progress };
+};
 
 export default function Profil() {
   const { t } = useTranslation();
   const profile = getProfile();
   const navigate = useNavigate();
   const looks = getHistory().filter((h) => h.type === "scan" && h.imageUrl);
+  const totalScans = getHistory().filter((h) => h.type === "scan").length;
+  const { current, next, progress } = getLevelInfo(totalScans);
 
   const reset = () => {
     clearProfile();
@@ -24,13 +48,46 @@ export default function Profil() {
   };
 
   return (
-    <div className="space-y-6 px-5 pt-8">
+    <div className="space-y-6 px-5 pt-8 card-reveal-stagger">
       <header className="text-center">
-        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-accent font-serif text-3xl text-accent-foreground shadow-cobalt">
+        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-neon font-serif text-3xl text-neon-foreground shadow-brand">
           {profile?.firstName?.[0]?.toUpperCase()}
         </div>
         <h1 className="mt-3 font-serif text-2xl">{profile?.firstName}</h1>
+        <p className="mt-1 text-[11px] uppercase tracking-[0.25em] text-neon">
+          {current.name}
+        </p>
       </header>
+
+      {/* Niveau + barre de progression */}
+      <section className="rounded-3xl border border-border bg-card p-5">
+        <div className="flex items-center gap-2">
+          <Trophy className="h-4 w-4 text-neon" />
+          <span className="text-xs uppercase tracking-widest text-muted-foreground">Niveau</span>
+          <span className="ml-auto font-mono text-sm font-bold text-foreground">
+            {totalScans} scan{totalScans > 1 ? "s" : ""}
+          </span>
+        </div>
+        <div className="mt-3 flex items-baseline justify-between">
+          <p className="font-serif text-lg text-foreground">{current.name}</p>
+          {next && (
+            <p className="text-[11px] uppercase tracking-widest text-muted-foreground">
+              vers {next.name}
+            </p>
+          )}
+        </div>
+        <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-border">
+          <div
+            className="h-full rounded-full bg-neon transition-all duration-500"
+            style={{ width: `${progress}%`, boxShadow: "0 0 8px hsl(var(--neon))" }}
+          />
+        </div>
+        {next && (
+          <p className="mt-2 text-[11px] text-muted-foreground">
+            Encore {Math.max(0, next.min - totalScans)} scan{next.min - totalScans > 1 ? "s" : ""} pour passer {next.name}.
+          </p>
+        )}
+      </section>
 
       {/* Premium card */}
       <div className="rounded-3xl bg-foreground p-5 text-background shadow-soft">

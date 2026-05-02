@@ -8,61 +8,63 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* VIBE — Premium minimaliste (style Cal.com / Apple).
-       Toutes les couleurs sont en HSL pour passer dans hsl(var(--xxx)). */
-    --background: 0 0% 100%;              /* #FFFFFF blanc pur */
-    --foreground: 220 39% 11%;            /* #111827 gray-900 */
+    /* VIBE — Dark néon (style Apple noir + accent lime #CCFF00). */
+    --background: 0 0% 4%;                /* #0a0a0a noir profond */
+    --foreground: 0 0% 100%;              /* #ffffff */
 
-    --card: 0 0% 100%;                    /* #FFFFFF */
-    --card-foreground: 220 39% 11%;
+    --card: 0 0% 8%;                      /* #141414 carte */
+    --card-foreground: 0 0% 100%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 39% 11%;
+    --card-2: 0 0% 11%;                   /* #1c1c1c carte secondaire */
 
-    --primary: 220 39% 11%;               /* #111827 */
-    --primary-foreground: 0 0% 100%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 96%;             /* #F3F4F6 gray-100 */
-    --secondary-foreground: 220 39% 11%;
+    --primary: 73 100% 50%;               /* #CCFF00 néon */
+    --primary-foreground: 0 0% 4%;
 
-    --muted: 220 14% 96%;                 /* #F3F4F6 */
-    --muted-foreground: 220 9% 46%;       /* #6B7280 gray-500 */
+    --secondary: 0 0% 11%;                /* #1c1c1c */
+    --secondary-foreground: 0 0% 100%;
 
-    --accent: 71 100% 50%;                /* #DFFF00 lime — touches signature VIBE */
-    --accent-foreground: 0 0% 7%;
+    --muted: 0 0% 11%;
+    --muted-foreground: 0 0% 53%;         /* #888888 */
 
-    --destructive: 0 72% 50%;             /* rouge "flop" */
+    --accent: 73 100% 50%;                /* #CCFF00 néon — accent signature */
+    --accent-foreground: 0 0% 4%;
+
+    --destructive: 0 72% 55%;             /* rouge "flop" */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;                /* #E5E7EB gray-200 */
-    --input: 220 13% 91%;
-    --ring: 220 39% 11%;
+    --border: 0 0% 16%;                   /* #2a2a2a */
+    --input: 0 0% 11%;
+    --ring: 73 100% 50%;
 
-    --radius: 0.75rem;                    /* 12px global */
+    --radius: 1.25rem;                    /* 20px (cartes) */
 
-    /* Lime accent (5–10% de l'app) */
-    --lime: 71 100% 50%;                  /* #DFFF00 électrique */
-    --lime-foreground: 0 0% 7%;
+    /* Lime accent (signature VIBE) */
+    --lime: 73 100% 50%;                  /* #CCFF00 */
+    --lime-foreground: 0 0% 4%;
 
     /* Aliases (legacy) — tous mappés sur lime */
-    --cobalt: 71 100% 50%;
-    --cobalt-foreground: 0 0% 7%;
-    --neon: 71 100% 50%;
-    --neon-foreground: 0 0% 7%;
-    --brand-violet: 71 100% 50%;
-    --brand-blue:   71 100% 50%;
-    --brand-pink:   71 100% 50%;
+    --cobalt: 73 100% 50%;
+    --cobalt-foreground: 0 0% 4%;
+    --neon: 73 100% 50%;
+    --neon-foreground: 0 0% 4%;
+    --brand-violet: 73 100% 50%;
+    --brand-blue:   73 100% 50%;
+    --brand-pink:   73 100% 50%;
 
-    --gradient-brand: linear-gradient(135deg, hsl(71 100% 55%) 0%, hsl(71 100% 50%) 50%, hsl(71 100% 45%) 100%);
-    --gradient-brand-soft: linear-gradient(135deg, hsl(71 100% 50% / 0.18) 0%, hsl(71 100% 50% / 0.06) 100%);
-    --gradient-luxe: linear-gradient(135deg, hsl(0 0% 100%), hsl(220 14% 98%));
+    --gradient-brand: linear-gradient(135deg, hsl(73 100% 55%) 0%, hsl(73 100% 50%) 50%, hsl(73 100% 45%) 100%);
+    --gradient-brand-soft: linear-gradient(135deg, hsl(73 100% 50% / 0.18) 0%, hsl(73 100% 50% / 0.06) 100%);
+    --gradient-luxe: linear-gradient(135deg, hsl(0 0% 8%), hsl(0 0% 4%));
     --gradient-cobalt: var(--gradient-brand);
-    /* Ombres premium très légères style Cal.com */
-    --shadow-soft: 0 1px 2px rgba(17,24,39,0.04), 0 1px 3px rgba(17,24,39,0.04);
-    --shadow-card: 0 1px 2px rgba(17,24,39,0.04), 0 2px 6px rgba(17,24,39,0.04);
-    --shadow-cobalt: 0 8px 24px -10px hsl(var(--lime) / 0.35);
-    --shadow-brand:  0 0 0 1px hsl(var(--lime) / 0.18), 0 8px 24px -12px hsl(var(--lime) / 0.30);
-    --transition-luxe: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Ombres : on évite les box-shadow noirs (invisibles sur fond noir).
+       On garde de légers glows lime sur les éléments accentués. */
+    --shadow-soft: none;
+    --shadow-card: none;
+    --shadow-cobalt: 0 8px 32px -12px hsl(var(--lime) / 0.45);
+    --shadow-brand:  0 0 0 1px hsl(var(--lime) / 0.25), 0 0 24px -6px hsl(var(--lime) / 0.45);
+    --transition-luxe: all 0.2s ease;
 
     --sidebar-background: 0 0% 98%;
 
@@ -179,40 +181,46 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'DM Sans', system-ui, sans-serif;
     font-feature-settings: "ss01", "cv11";
     font-weight: 400;
-    color: hsl(220 14% 34%); /* #4B5563 gray-600 corps */
-    line-height: 1.5;
-    font-size: 16px;
+    color: hsl(0 0% 100%);
+    line-height: 1.55;
+    font-size: 15px;
+    background-color: #0a0a0a;
   }
 
   h1 {
-    font-family: 'Inter', system-ui, sans-serif;
-    font-weight: 700;
-    letter-spacing: -0.05em;
-    color: hsl(220 39% 11%);
-    font-size: 2.5rem; /* 40px */
+    font-family: 'Syne', system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: hsl(0 0% 100%);
+    font-size: 2.25rem; /* 36px */
     line-height: 1.1;
   }
   h2 {
-    font-family: 'Inter', system-ui, sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    color: hsl(220 17% 24%); /* #374151 */
+    font-family: 'Syne', system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: hsl(0 0% 100%);
     font-size: 1.25rem; /* 20px */
     line-height: 1.3;
   }
   h3, h4 {
-    font-family: 'Inter', system-ui, sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    color: hsl(220 17% 24%);
+    font-family: 'Syne', system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: hsl(0 0% 100%);
   }
 
   button {
     letter-spacing: -0.01em;
     font-weight: 500;
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--neon));
+    outline-offset: 3px;
   }
 }
 
@@ -277,6 +285,69 @@ All colors MUST be HSL.
   }
   .scrollbar-hide::-webkit-scrollbar { display: none; }
   .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+}
+
+/* ─── Animations VIBE Pro ───────────────────────────────────────────── */
+@keyframes ringPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.06); opacity: 0.7; }
+}
+@keyframes ringPulseSoft {
+  0%, 100% { transform: scale(1); opacity: 0.18; }
+  50% { transform: scale(1.18); opacity: 0.05; }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes dotPulse {
+  0%, 100% { background: hsl(var(--border)); transform: scale(1); }
+  50% { background: hsl(var(--neon)); transform: scale(1.35); }
+}
+@keyframes livePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scoreReveal {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Spinner CSS pro */
+.vibe-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid hsl(var(--border));
+  border-top-color: hsl(var(--neon));
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Reveal en cascade pour les cartes d'une page */
+.card-reveal { animation: cardReveal 0.4s ease both; }
+.card-reveal-stagger > * { animation: cardReveal 0.4s ease both; }
+.card-reveal-stagger > *:nth-child(1) { animation-delay: 0s; }
+.card-reveal-stagger > *:nth-child(2) { animation-delay: 0.08s; }
+.card-reveal-stagger > *:nth-child(3) { animation-delay: 0.16s; }
+.card-reveal-stagger > *:nth-child(4) { animation-delay: 0.24s; }
+.card-reveal-stagger > *:nth-child(5) { animation-delay: 0.32s; }
+.card-reveal-stagger > *:nth-child(6) { animation-delay: 0.40s; }
+
+.live-dot {
+  width: 6px; height: 6px; border-radius: 9999px;
+  background: hsl(var(--neon));
+  animation: livePulse 1.4s ease-in-out infinite;
 }
 
 /* ─── Animations météo Home ─── */

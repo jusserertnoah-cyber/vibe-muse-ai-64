@@ -64,14 +64,14 @@ export const ScanOverlay = ({
     finishingScore == null
       ? "hsl(var(--foreground))"
       : finishingScore >= 8
-      ? "hsl(140 70% 35%)"   // vert "top"
+      ? "hsl(var(--neon))"   // néon "top"
       : finishingScore >= 6.5
       ? "hsl(var(--foreground))"
-      : "hsl(0 75% 50%)";    // rouge "flop"
+      : "hsl(0 75% 60%)";    // rouge "flop"
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex flex-col bg-white"
+      className="fixed inset-0 z-[60] flex flex-col bg-background"
       style={{
         paddingTop: "env(safe-area-inset-top)",
         paddingBottom: "env(safe-area-inset-bottom)",
@@ -79,17 +79,17 @@ export const ScanOverlay = ({
     >
       {/* Header minimal */}
       <div className="flex items-center justify-between px-5 py-3">
-        <span className="font-mono-tech text-[10px] uppercase tracking-[0.3em] text-neutral-500">
+        <span className="font-mono-tech text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
           VIBE · scan en cours
         </span>
-        <span className="font-mono-tech text-xs font-semibold text-neutral-800">
+        <span className="font-mono-tech text-xs font-semibold text-foreground">
           {Math.floor(progress)}%
         </span>
       </div>
 
       {/* Zone photo + laser + jauge */}
       <div className="relative flex-1 overflow-hidden px-5 pb-6">
-        <div className="relative mx-auto h-full w-full max-w-md overflow-hidden rounded-3xl bg-neutral-100 shadow-[0_30px_60px_-30px_rgba(0,0,0,0.25)]">
+        <div className="relative mx-auto h-full w-full max-w-md overflow-hidden rounded-3xl bg-card border border-border">
           {/* Photo Ken Burns + blur final */}
           <img
             src={imageUrl}
@@ -117,7 +117,7 @@ export const ScanOverlay = ({
 
           {/* Jauge liquide verticale (à droite) */}
           {!finishing && (
-            <div className="absolute right-3 top-3 bottom-3 w-3 overflow-hidden rounded-full border border-neutral-200 bg-white/70 backdrop-blur">
+            <div className="absolute right-3 top-3 bottom-3 w-3 overflow-hidden rounded-full border border-border bg-card/70 backdrop-blur">
               <div
                 className="absolute inset-x-0 bottom-0 transition-[height] duration-500 ease-out"
                 style={{
@@ -144,12 +144,12 @@ export const ScanOverlay = ({
           {finishing && (
             <div className="absolute inset-0 flex items-center justify-center">
               <div
-                className="vibe-haptic rounded-xl border border-[#E5E7EB] bg-white px-8 py-6 text-center shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+                className="vibe-haptic rounded-xl border border-border bg-card px-8 py-6 text-center shadow-brand"
                 style={{
                   animation: "vibeScoreIn 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both, vibeHaptic 0.45s 0.7s cubic-bezier(0.36, 0.07, 0.19, 0.97) both",
                 }}
               >
-                <p className="font-mono-tech text-[12px] font-bold uppercase tracking-[0.1em] text-neutral-500">
+                <p className="font-mono-tech text-[12px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
                   Vibe Score
                 </p>
                 <p
@@ -157,7 +157,7 @@ export const ScanOverlay = ({
                   style={{ color: scoreColor }}
                 >
                   {counter.toFixed(1)}
-                  <span className="text-2xl text-neutral-400">/10</span>
+                  <span className="text-2xl text-muted-foreground">/10</span>
                 </p>
               </div>
             </div>
@@ -165,7 +165,7 @@ export const ScanOverlay = ({
         </div>
 
         {/* Tagline */}
-        <p className="mt-4 text-center font-serif text-sm italic text-neutral-500">
+        <p className="mt-4 text-center font-serif text-sm italic text-muted-foreground">
           {finishing ? "Verdict prêt." : "L'IA Vibe analyse ta tenue…"}
         </p>
       </div>
