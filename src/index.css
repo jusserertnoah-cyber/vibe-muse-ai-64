@@ -8,61 +8,63 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* VIBE — Premium minimaliste (style Cal.com / Apple).
-       Toutes les couleurs sont en HSL pour passer dans hsl(var(--xxx)). */
-    --background: 0 0% 100%;              /* #FFFFFF blanc pur */
-    --foreground: 220 39% 11%;            /* #111827 gray-900 */
+    /* VIBE — Dark néon (style Apple noir + accent lime #CCFF00). */
+    --background: 0 0% 4%;                /* #0a0a0a noir profond */
+    --foreground: 0 0% 100%;              /* #ffffff */
 
-    --card: 0 0% 100%;                    /* #FFFFFF */
-    --card-foreground: 220 39% 11%;
+    --card: 0 0% 8%;                      /* #141414 carte */
+    --card-foreground: 0 0% 100%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 39% 11%;
+    --card-2: 0 0% 11%;                   /* #1c1c1c carte secondaire */
 
-    --primary: 220 39% 11%;               /* #111827 */
-    --primary-foreground: 0 0% 100%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 96%;             /* #F3F4F6 gray-100 */
-    --secondary-foreground: 220 39% 11%;
+    --primary: 73 100% 50%;               /* #CCFF00 néon */
+    --primary-foreground: 0 0% 4%;
 
-    --muted: 220 14% 96%;                 /* #F3F4F6 */
-    --muted-foreground: 220 9% 46%;       /* #6B7280 gray-500 */
+    --secondary: 0 0% 11%;                /* #1c1c1c */
+    --secondary-foreground: 0 0% 100%;
 
-    --accent: 71 100% 50%;                /* #DFFF00 lime — touches signature VIBE */
-    --accent-foreground: 0 0% 7%;
+    --muted: 0 0% 11%;
+    --muted-foreground: 0 0% 53%;         /* #888888 */
 
-    --destructive: 0 72% 50%;             /* rouge "flop" */
+    --accent: 73 100% 50%;                /* #CCFF00 néon — accent signature */
+    --accent-foreground: 0 0% 4%;
+
+    --destructive: 0 72% 55%;             /* rouge "flop" */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;                /* #E5E7EB gray-200 */
-    --input: 220 13% 91%;
-    --ring: 220 39% 11%;
+    --border: 0 0% 16%;                   /* #2a2a2a */
+    --input: 0 0% 11%;
+    --ring: 73 100% 50%;
 
-    --radius: 0.75rem;                    /* 12px global */
+    --radius: 1.25rem;                    /* 20px (cartes) */
 
-    /* Lime accent (5–10% de l'app) */
-    --lime: 71 100% 50%;                  /* #DFFF00 électrique */
-    --lime-foreground: 0 0% 7%;
+    /* Lime accent (signature VIBE) */
+    --lime: 73 100% 50%;                  /* #CCFF00 */
+    --lime-foreground: 0 0% 4%;
 
     /* Aliases (legacy) — tous mappés sur lime */
-    --cobalt: 71 100% 50%;
-    --cobalt-foreground: 0 0% 7%;
-    --neon: 71 100% 50%;
-    --neon-foreground: 0 0% 7%;
-    --brand-violet: 71 100% 50%;
-    --brand-blue:   71 100% 50%;
-    --brand-pink:   71 100% 50%;
+    --cobalt: 73 100% 50%;
+    --cobalt-foreground: 0 0% 4%;
+    --neon: 73 100% 50%;
+    --neon-foreground: 0 0% 4%;
+    --brand-violet: 73 100% 50%;
+    --brand-blue:   73 100% 50%;
+    --brand-pink:   73 100% 50%;
 
-    --gradient-brand: linear-gradient(135deg, hsl(71 100% 55%) 0%, hsl(71 100% 50%) 50%, hsl(71 100% 45%) 100%);
-    --gradient-brand-soft: linear-gradient(135deg, hsl(71 100% 50% / 0.18) 0%, hsl(71 100% 50% / 0.06) 100%);
-    --gradient-luxe: linear-gradient(135deg, hsl(0 0% 100%), hsl(220 14% 98%));
+    --gradient-brand: linear-gradient(135deg, hsl(73 100% 55%) 0%, hsl(73 100% 50%) 50%, hsl(73 100% 45%) 100%);
+    --gradient-brand-soft: linear-gradient(135deg, hsl(73 100% 50% / 0.18) 0%, hsl(73 100% 50% / 0.06) 100%);
+    --gradient-luxe: linear-gradient(135deg, hsl(0 0% 8%), hsl(0 0% 4%));
     --gradient-cobalt: var(--gradient-brand);
-    /* Ombres premium très légères style Cal.com */
-    --shadow-soft: 0 1px 2px rgba(17,24,39,0.04), 0 1px 3px rgba(17,24,39,0.04);
-    --shadow-card: 0 1px 2px rgba(17,24,39,0.04), 0 2px 6px rgba(17,24,39,0.04);
-    --shadow-cobalt: 0 8px 24px -10px hsl(var(--lime) / 0.35);
-    --shadow-brand:  0 0 0 1px hsl(var(--lime) / 0.18), 0 8px 24px -12px hsl(var(--lime) / 0.30);
-    --transition-luxe: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Ombres : on évite les box-shadow noirs (invisibles sur fond noir).
+       On garde de légers glows lime sur les éléments accentués. */
+    --shadow-soft: none;
+    --shadow-card: none;
+    --shadow-cobalt: 0 8px 32px -12px hsl(var(--lime) / 0.45);
+    --shadow-brand:  0 0 0 1px hsl(var(--lime) / 0.25), 0 0 24px -6px hsl(var(--lime) / 0.45);
+    --transition-luxe: all 0.2s ease;
 
     --sidebar-background: 0 0% 98%;
 
