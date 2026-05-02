@@ -64,10 +64,10 @@ export const ScanOverlay = ({
     finishingScore == null
       ? "hsl(var(--foreground))"
       : finishingScore >= 8
-      ? "hsl(140 70% 35%)"   // vert "top"
+      ? "hsl(var(--neon))"   // néon "top"
       : finishingScore >= 6.5
       ? "hsl(var(--foreground))"
-      : "hsl(0 75% 50%)";    // rouge "flop"
+      : "hsl(0 75% 60%)";    // rouge "flop"
 
   return (
     <div
