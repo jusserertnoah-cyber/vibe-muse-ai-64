@@ -64,8 +64,8 @@ serve(async (req) => {
       }
     }
 
-    const MISTRAL_API_KEY = Deno.env.get("MISTRAL_API_KEY");
-    if (!MISTRAL_API_KEY) throw new Error("MISTRAL_API_KEY missing");
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY missing");
 
     const body = await req.json();
     const {
@@ -213,18 +213,17 @@ ${outputRule}`;
       required.push("challenge_met", "challenge_reason");
     }
 
-    // Mistral Pixtral — vision + tool calling pour JSON strict.
-    const aiRes = await fetch("https://api.mistral.ai/v1/chat/completions", {
+    // Lovable AI Gateway — vision + tool calling (Gemini Flash).
+    const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
-      headers: { Authorization: `Bearer ${MISTRAL_API_KEY}`, "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "pixtral-12b-2409",
-        temperature: 0.4,
+        model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: [
             { type: "text", text: userText },
-            { type: "image_url", image_url: imageDataUrl },
+            { type: "image_url", image_url: { url: imageDataUrl } },
           ]},
         ],
         tools: [{
@@ -235,13 +234,13 @@ ${outputRule}`;
             parameters: { type: "object", properties, required, additionalProperties: false },
           },
         }],
-        tool_choice: "any",
+        tool_choice: { type: "function", function: { name: "vibe_check" } },
       }),
     });
 
     if (!aiRes.ok) {
       const errText = await aiRes.text();
-      console.error("scan-look mistral fail", aiRes.status, errText);
+      console.error("scan-look ai fail", aiRes.status, errText);
       // En cas d'échec IA → on rembourse le crédit consommé (hors mode test).
       if (creditConsumed) {
         try { await getSupabase().rpc("add_credits", { target_user: userData.user.id, scans: 1 }); } catch (_) {}
