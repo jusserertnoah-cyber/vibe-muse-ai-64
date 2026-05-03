@@ -15,15 +15,8 @@ export const AppLayout = () => {
     const run = async () => {
       if (loading) return;
       const localProfile = getProfile();
-      if (localProfile) {
-        if (!cancelled) {
-          setProfileReady(true);
-          setHydrating(false);
-        }
-        return;
-      }
       if (session?.user?.id) {
-        const profile = await hydrateProfileFromDb(session.user.id);
+        const profile = localProfile ?? await hydrateProfileFromDb(session.user.id);
         if (!cancelled) {
           setProfileReady(!!profile);
           setHydrating(false);
@@ -46,10 +39,7 @@ export const AppLayout = () => {
       </div>
     );
   }
-  // Mode démo : si aucun provider SMS n'est branché, l'utilisateur n'a pas de
-  // session Supabase mais a quand même rempli son profil local — on le laisse
-  // entrer dans l'app pour ne pas le forcer à re-saisir son numéro.
-  if (!session && !profileReady) return <Navigate to="/onboarding" replace />;
+  if (!session) return <Navigate to="/onboarding" replace />;
   if (!profileReady) return <Navigate to="/onboarding" replace />;
 
   return (
