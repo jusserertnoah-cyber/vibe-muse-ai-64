@@ -13,18 +13,10 @@ const Index = () => {
     let cancelled = false;
     const run = async () => {
       if (loading) return;
-      // Already have a local profile → no DB roundtrip needed.
-      if (getProfile()) {
-        if (!cancelled) {
-          setHasProfile(true);
-          setHydrating(false);
-        }
-        return;
-      }
       // Logged-in user without local profile (new device / cleared cache):
       // try to rebuild it from the DB so we don't force onboarding again.
       if (session?.user?.id) {
-        const p = await hydrateProfileFromDb(session.user.id);
+        const p = getProfile() ?? await hydrateProfileFromDb(session.user.id);
         if (!cancelled) {
           setHasProfile(!!p);
           setHydrating(false);

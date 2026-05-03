@@ -74,9 +74,10 @@ const loadPendingFromUrl = (): PendingOnboarding | null => {
 };
 
 const getAuthRedirectBaseUrl = () => {
-  const isProd = window.location.hostname.endsWith(".lovable.app") &&
-    !window.location.hostname.startsWith("id-preview--");
-  return isProd ? window.location.origin : "https://vibe-muse-ai-64.lovable.app";
+  // Important: le lien magique/OAuth doit revenir sur le même domaine que celui
+  // utilisé par l'utilisateur. Sinon la session est créée sur le site publié,
+  // mais la preview reste avec un simple profil local → Edge Function 401.
+  return window.location.origin;
 };
 
 const readPendingFromUser = (user: User): PendingOnboarding | null => {
@@ -129,10 +130,7 @@ export default function Onboarding() {
 
   useEffect(() => {
     if (loading) return;
-    if (getProfile()) {
-      navigate("/app", { replace: true });
-      return;
-    }
+    const localProfile = getProfile();
     if (session?.user?.id) {
       // User just clicked the magic link. Hydrate, claim welcome pack, persist.
       (async () => {
@@ -155,6 +153,21 @@ export default function Onboarding() {
           if (pending.age) setAge(pending.age);
           if (pending.city) setCity(pending.city);
         }
+        if (!pending && localProfile) {
+          try {
+            await syncProfileToDb(session.user.id, {
+              ...localProfile,
+              email: session.user.email ?? localProfile.email,
+            });
+            navigate("/app", { replace: true });
+            return;
+          } catch (e) {
+            console.error(e);
+            toast.error(t("onboarding.email.errorTitle", { defaultValue: "Connexion impossible" }));
+            setReturning(false);
+            return;
+          }
+        }
         // On persiste TOUJOURS un profil minimal pour entrer dans l'app, même
         // si on n'a aucune réponse (cas où la session a survécu mais que les
         // réponses locales ont disparu — sinon l'utilisateur retomberait à
@@ -165,6 +178,12 @@ export default function Onboarding() {
           pending ?? undefined,
         );
       })();
+      return;
+    }
+    if (localProfile) {
+      setLoginOnly(true);
+      setStep(EMAIL_STEP);
+      if (localProfile.email) setEmail(localProfile.email);
     }
   }, [loading, session, navigate]);
 
