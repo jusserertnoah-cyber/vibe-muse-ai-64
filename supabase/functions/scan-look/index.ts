@@ -8,6 +8,10 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+// Mode test global : tant que Stripe n'est pas finalisé, aucun scan ne doit
+// bloquer sur le solde ni consommer de crédits.
+const TEST_MODE_NO_CREDITS = true;
+
 // Lazy service-role client (pour rembourser un crédit en cas de scan invalide).
 let _supabaseAdmin: ReturnType<typeof createClient> | null = null;
 function getSupabase() {
@@ -39,22 +43,25 @@ serve(async (req) => {
       });
     }
 
-    // Consommation atomique d'1 crédit
+    // Consommation atomique d'1 crédit — désactivée en mode test.
     const supabaseUser = createClient(
       Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!,
       { global: { headers: { Authorization: authHeader } } },
     );
-    const { data: ok, error: rpcErr } = await supabaseUser.rpc("consume_credit");
-    if (rpcErr) {
-      console.error("consume_credit error", rpcErr);
-      return new Response(JSON.stringify({ error: "credit_check_failed" }), {
-        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-    if (!ok) {
-      return new Response(JSON.stringify({ error: "no_credits" }), {
-        status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    const creditConsumed = !TEST_MODE_NO_CREDITS;
+    if (creditConsumed) {
+      const { data: ok, error: rpcErr } = await supabaseUser.rpc("consume_credit");
+      if (rpcErr) {
+        console.error("consume_credit error", rpcErr);
+        return new Response(JSON.stringify({ error: "credit_check_failed" }), {
+          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (!ok) {
+        return new Response(JSON.stringify({ error: "no_credits" }), {
+          status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
     }
 
     const MISTRAL_API_KEY = Deno.env.get("MISTRAL_API_KEY");
@@ -235,8 +242,10 @@ ${outputRule}`;
     if (!aiRes.ok) {
       const errText = await aiRes.text();
       console.error("scan-look mistral fail", aiRes.status, errText);
-      // En cas d'échec IA → on rembourse le crédit consommé.
-      try { await getSupabase().rpc("add_credits", { target_user: userData.user.id, scans: 1 }); } catch (_) {}
+      // En cas d'échec IA → on rembourse le crédit consommé (hors mode test).
+      if (creditConsumed) {
+        try { await getSupabase().rpc("add_credits", { target_user: userData.user.id, scans: 1 }); } catch (_) {}
+      }
       if (aiRes.status === 429 || aiRes.status === 503 || aiRes.status === 529) {
         return new Response(JSON.stringify({ error: "rate_limited", refunded: true }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
@@ -255,10 +264,12 @@ ${outputRule}`;
     // et on renvoie une erreur claire au client (status 422 not_human).
     const isError = parsed?.verdict === "ERREUR" || parsed?.score === 0 || parsed?.strong === "ERREUR";
     if (isError) {
-      try {
-        await getSupabase().rpc("add_credits", { target_user: userData.user.id, scans: 1 });
-      } catch (e) {
-        console.error("refund credit failed", e);
+      if (creditConsumed) {
+        try {
+          await getSupabase().rpc("add_credits", { target_user: userData.user.id, scans: 1 });
+        } catch (e) {
+          console.error("refund credit failed", e);
+        }
       }
       return new Response(JSON.stringify({ error: "not_human", refunded: true }), {
         status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" },
