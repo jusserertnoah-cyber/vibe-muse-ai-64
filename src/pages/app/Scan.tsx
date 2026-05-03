@@ -101,6 +101,14 @@ export default function Scan() {
 
   const analyze = async (img: string, ctx?: { occasion?: string; note?: string }) => {
     const profile = getProfile();
+    // Garde-fou : sans session Supabase, l'edge function rejette en 401.
+    // On redirige vers l'onboarding pour que l'utilisateur s'authentifie.
+    const { data: sess } = await supabase.auth.getSession();
+    if (!sess.session) {
+      toast.error(t("scan.errors.auth", { defaultValue: "Connecte-toi pour scanner ta tenue." }));
+      navigate("/onboarding");
+      return;
+    }
     setLoading(true);
     setFinishingScore(null);
     setLongRunning(false);
