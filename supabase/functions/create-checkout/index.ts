@@ -62,10 +62,11 @@ Deno.serve(async (req) => {
     }
     const stripePrice = prices.data[0];
     const scans = SCANS_BY_PRICE[priceId] ?? 0;
+    const isRecurring = stripePrice.type === "recurring";
 
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: stripePrice.id, quantity: 1 }],
-      mode: "payment",
+      mode: isRecurring ? "subscription" : "payment",
       ui_mode: "embedded",
       return_url: returnUrl,
       ...(customerEmail && { customer_email: customerEmail }),
@@ -74,6 +75,7 @@ Deno.serve(async (req) => {
         priceId,
         scans: String(scans),
       },
+      ...(isRecurring && userId && { subscription_data: { metadata: { userId, priceId } } }),
     });
 
     return new Response(JSON.stringify({ clientSecret: session.client_secret }), {
