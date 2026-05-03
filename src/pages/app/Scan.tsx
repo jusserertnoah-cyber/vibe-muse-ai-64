@@ -121,51 +121,59 @@ export default function Scan() {
     } catch {
       // pas de météo dispo, on continue sans
     }
-    const invokeOnce = () => supabase.functions.invoke("scan-look", {
-      body: {
-        imageDataUrl: img,
-        gender: profile?.gender,
-        age: profile?.age,
-        heightCm: profile?.heightCm,
-        weightKg: profile?.weightKg,
-        lang: i18n.language?.split("-")[0] ?? "fr",
-        tier: getTier(),
-        challenge: { name: challenge.name, detect: challenge.detect },
-        occasion: ctx?.occasion ?? undefined,
-        occasionNote: ctx?.note ?? undefined,
-        weather: weather
-          ? { temp: weather.temp, label: weather.label, city: weather.city ?? null }
-          : undefined,
+    // Appel direct via fetch : on évite supabase.functions.invoke qui
+    // log un console.error sur tout statut non-2xx (402, 422, 429…),
+    // ce qui déclenche l'overlay runtime-error "blank screen".
+    const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/scan-look`;
+    const token = sess.session.access_token;
+    const payload = {
+      imageDataUrl: img,
+      gender: profile?.gender,
+      age: profile?.age,
+      heightCm: profile?.heightCm,
+      weightKg: profile?.weightKg,
+      lang: i18n.language?.split("-")[0] ?? "fr",
+      tier: getTier(),
+      challenge: { name: challenge.name, detect: challenge.detect },
+      occasion: ctx?.occasion ?? undefined,
+      occasionNote: ctx?.note ?? undefined,
+      weather: weather
+        ? { temp: weather.temp, label: weather.label, city: weather.city ?? null }
+        : undefined,
+    };
+    const callOnce = () => fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
       },
+      body: JSON.stringify(payload),
     });
     try {
-      // 1er essai + 1 retry discret en cas d'erreur réseau pure (pas 4xx).
-      let { data, error } = await invokeOnce();
-      if (error && /network|fetch|failed to fetch/i.test(String(error.message ?? ""))) {
+      let res: Response;
+      try {
+        res = await callOnce();
+      } catch (netErr) {
+        // Retry discret en cas d'erreur réseau pure
         await new Promise((r) => setTimeout(r, 800));
-        ({ data, error } = await invokeOnce());
+        res = await callOnce();
       }
-      if (error) {
-        // FunctionsHttpError ne contient PAS le status dans .message
-        // → on lit le vrai status + body via error.context (Response)
-        const ctx: Response | undefined = (error as any)?.context;
-        let status = ctx?.status ?? 0;
-        let bodyErr = "";
-        if (ctx && typeof ctx.json === "function") {
-          try { const j = await ctx.clone().json(); bodyErr = String(j?.error ?? ""); } catch {}
-        }
-        const msg = `${error.message ?? ""} ${bodyErr}`.toLowerCase();
-        if (status === 402 || msg.includes("no_credits")) {
+      const status = res.status;
+      let data: any = null;
+      try { data = await res.json(); } catch {}
+      if (!res.ok) {
+        const errCode = String(data?.error ?? "").toLowerCase();
+        if (status === 402 || errCode === "no_credits") {
           toast.error(t("scan.creditInsufficient"), { description: t("scan.creditTopup") });
           navigate("/app/paywall");
           return;
         }
-        // 422 = pas une tenue humaine → crédit déjà remboursé côté serveur
-        if (status === 422 || msg.includes("not_human")) {
+        if (status === 422 || errCode === "not_human") {
           toast.error(t("scan.errors.notHuman", { defaultValue: "Cette image n'est pas une tenue. Aucun crédit n'a été utilisé." }));
           return;
         }
-        if (status === 429 || msg.includes("rate_limited")) {
+        if (status === 429 || errCode === "rate_limited") {
           toast.error("L'IA analyse trop de styles en ce moment, réessaie dans 30 secondes 😅", { description: "Aucun crédit utilisé." });
           return;
         }
@@ -174,28 +182,28 @@ export default function Scan() {
           navigate("/onboarding");
           return;
         }
-        throw error;
+        throw new Error(`scan-look ${status} ${errCode}`);
       }
-      if ((data as any)?.error === "not_human") {
+      if (data?.error === "not_human") {
         toast.error(t("scan.errors.notHuman", { defaultValue: "Cette image n'est pas une tenue. Aucun crédit n'a été utilisé." }));
         return;
       }
-      if ((data as any)?.error === "no_credits") {
+      if (data?.error === "no_credits") {
         toast.error(t("scan.creditInsufficient"), { description: t("scan.creditTopup") });
         navigate("/app/paywall");
         return;
       }
-      if ((data as any)?.error === "rate_limited") {
+      if (data?.error === "rate_limited") {
         toast.error("L'IA analyse trop de styles en ce moment, réessaie dans 30 secondes 😅", {
           description: "Aucun crédit utilisé.",
         });
         return;
       }
-      if ((data as any)?.error === "payment_required") {
+      if (data?.error === "payment_required") {
         toast.error(t("scan.errors.credits"));
         return;
       }
-      if (!(data as any)?.score) {
+      if (!data?.score) {
         toast.error(t("scan.errors.blur"));
         return;
       }
