@@ -146,16 +146,32 @@ export default function Scan() {
         ({ data, error } = await invokeOnce());
       }
       if (error) {
-        // Edge function renvoie 402 quand pas de crédit → message clair + paywall
-        const msg = String(error.message ?? "");
-        if (msg.includes("402") || msg.toLowerCase().includes("no_credits")) {
+        // FunctionsHttpError ne contient PAS le status dans .message
+        // → on lit le vrai status + body via error.context (Response)
+        const ctx: Response | undefined = (error as any)?.context;
+        let status = ctx?.status ?? 0;
+        let bodyErr = "";
+        if (ctx && typeof ctx.json === "function") {
+          try { const j = await ctx.clone().json(); bodyErr = String(j?.error ?? ""); } catch {}
+        }
+        const msg = `${error.message ?? ""} ${bodyErr}`.toLowerCase();
+        if (status === 402 || msg.includes("no_credits")) {
           toast.error(t("scan.creditInsufficient"), { description: t("scan.creditTopup") });
           navigate("/app/paywall");
           return;
         }
         // 422 = pas une tenue humaine → crédit déjà remboursé côté serveur
-        if (msg.includes("422") || msg.toLowerCase().includes("not_human")) {
+        if (status === 422 || msg.includes("not_human")) {
           toast.error(t("scan.errors.notHuman", { defaultValue: "Cette image n'est pas une tenue. Aucun crédit n'a été utilisé." }));
+          return;
+        }
+        if (status === 429 || msg.includes("rate_limited")) {
+          toast.error("L'IA analyse trop de styles en ce moment, réessaie dans 30 secondes 😅", { description: "Aucun crédit utilisé." });
+          return;
+        }
+        if (status === 401) {
+          toast.error(t("scan.errors.auth", { defaultValue: "Connecte-toi pour scanner ta tenue." }));
+          navigate("/onboarding");
           return;
         }
         throw error;
