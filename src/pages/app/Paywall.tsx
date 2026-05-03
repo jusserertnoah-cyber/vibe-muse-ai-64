@@ -8,6 +8,7 @@ import { StripeCheckoutModal } from "@/components/StripeCheckoutModal";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { VibeLogo } from "@/components/vibe/VibeLogo";
 import { supabase } from "@/integrations/supabase/client";
+import { isTestMode } from "@/lib/stripe";
 
 type OfferId = "discovery" | "monthly" | "quarterly";
 
@@ -92,6 +93,21 @@ export default function Paywall() {
 
   const buy = async () => {
     const offer = OFFERS.find((o) => o.id === selected)!;
+    // Mode test : on accorde les crédits gratuitement (Stripe pas encore live).
+    if (isTestMode()) {
+      try {
+        const { data, error } = await supabase.functions.invoke("grant-test-credits", {
+          body: { priceId: offer.priceId },
+        });
+        if (error) throw error;
+        toast.success(`Mode test : ${data?.scans ?? 5} crédits ajoutés gratuitement.`);
+        navigate("/app");
+      } catch (e) {
+        console.error(e);
+        toast.error("Impossible d'ajouter les crédits de test.");
+      }
+      return;
+    }
     setCheckoutPriceId(offer.priceId);
     setCheckoutOpen(true);
   };
