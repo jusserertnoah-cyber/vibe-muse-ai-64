@@ -413,6 +413,29 @@ export default function Scan() {
 
       {result && (
         <div className="animate-fade-up space-y-6">
+          {/* Photo de la tenue analysée + bouton "nouveau scan" */}
+          {preview && (
+            <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-card">
+              <img
+                src={preview}
+                alt={t("scan.previewAlt")}
+                className="h-72 w-full object-cover"
+              />
+            </div>
+          )}
+          <Button
+            variant="outline"
+            onClick={() => {
+              setResult(null);
+              setPreview(null);
+              setDataUrl(null);
+              setShared(false);
+              setFinishingScore(null);
+            }}
+            className="h-11 w-full rounded-3xl"
+          >
+            Nouveau scan
+          </Button>
           {/* Score */}
           <div className="vibe-haptic rounded-xl border border-border bg-card p-6 shadow-card">
             <div className="flex items-end justify-between">
