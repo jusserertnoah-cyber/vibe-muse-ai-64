@@ -289,7 +289,10 @@ export default function Scan() {
         finishingScore={finishingScore}
         onDone={() => setFinishingScore(null)}
       />
-      {/* HERO Scan — visuel marquant */}
+      {/* HERO + picker : masqués dès qu'un résultat est dispo, pour que la
+          page résultat remplace entièrement l'écran (pas de superposition). */}
+      {!result && (
+      <>
       <section className="relative overflow-hidden rounded-3xl border border-border bg-card p-6 text-foreground shadow-card">
         {/* halos lime adoucis sur fond clair */}
         <div
@@ -405,6 +408,8 @@ export default function Scan() {
           </p>
         )}
       </div>
+      </>
+      )}
 
       {result && (
         <div className="animate-fade-up space-y-6">
