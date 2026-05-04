@@ -2,12 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
+/* New design system fonts */
+@import url('https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;500;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap');
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */
 
 @layer base {
   :root {
+    /* === New VIBE design system tokens (raw colors) === */
+    --bg: #0A0A0A;
+    --bg-card: #111111;
+    --bg-raised: #1A1A1A;
+    --bg-input: #141414;
+    --accent-color: #C8F135;
+    --accent-soft: rgba(200, 241, 53, 0.10);
+    --on-accent: #0A0A0A;
+    --txt: #F0F0EB;
+    --txt-2: #5A5A5A;
+    --txt-3: #2E2E2E;
+    --border-1: #1C1C1C;
+    --border-2: #272727;
+    --hi: #C8F135;
+    --mid: #F5A623;
+    --lo: #E05252;
+
     /* VIBE — Dark néon (style Apple noir + accent lime #CCFF00). */
     --background: 0 0% 4%;                /* #0a0a0a noir profond */
     --foreground: 0 0% 100%;              /* #ffffff */
