@@ -481,8 +481,8 @@ export default function Scan() {
 
           {/* Points forts / À améliorer */}
           <div className="grid gap-3">
-            <AnalysisRow icon={<Check className="h-4 w-4" />} label={t("scan.strong")} text={result.strong} />
-            <AnalysisRow icon={<AlertCircle className="h-4 w-4" />} label={t("scan.weak")} text={result.weak} highlight />
+            <AnalysisRow icon={<Check className="h-4 w-4" />} label={t("scan.strong")} text={firstSentence(result.strong)} />
+            <AnalysisRow icon={<AlertCircle className="h-4 w-4" />} label={t("scan.weak")} text={firstSentence(result.weak)} highlight />
           </div>
 
           {/* Conseils */}
@@ -497,7 +497,7 @@ export default function Scan() {
                   <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-border bg-secondary font-mono-tech text-[11px] font-bold text-foreground">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <p className="text-[15px] leading-snug text-foreground">{tip}</p>
+                  <p className="text-[15px] leading-snug text-foreground">{firstSentence(tip)}</p>
                 </div>
               ))}
             </div>
@@ -514,34 +514,19 @@ export default function Scan() {
               </header>
               <div className="space-y-4">
                 {result.fit && (
-                  <AuditBlock icon={<Ruler className="h-4 w-4" />} title={t("scan.auditFit")} text={result.fit} />
+                  <AuditBlock icon={<Ruler className="h-4 w-4" />} title={t("scan.auditFit")} text={firstSentence(result.fit)} />
                 )}
                 {result.colors && (
-                  <AuditBlock icon={<Palette className="h-4 w-4" />} title={t("scan.auditColors")} text={result.colors} />
+                  <AuditBlock icon={<Palette className="h-4 w-4" />} title={t("scan.auditColors")} text={firstSentence(result.colors)} />
                 )}
                 {result.touch2026 && (
                   <AuditBlock
                     icon={<Sparkles className="h-4 w-4" />}
                     title={t("scan.auditTouch")}
-                    text={result.touch2026}
+                    text={firstSentence(result.touch2026)}
                     accent
                   />
                 )}
-              </div>
-            </section>
-          )}
-
-          {/* Shopping list affiliée */}
-          {result.shopping && result.shopping.length > 0 && (
-            <section>
-              <header className="mb-3 flex items-center gap-2 px-1">
-                <ShoppingBag className="h-4 w-4 text-foreground" strokeWidth={1.8} />
-                <p className="font-serif text-xl leading-none">{t("scan.completeOutfit")}</p>
-              </header>
-              <div className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2">
-                {result.shopping.map((item, i) => (
-                  <ShoppingCard key={i} item={item} buyLabel={t("scan.buy")} />
-                ))}
               </div>
             </section>
           )}
@@ -722,6 +707,13 @@ function ScoreBars({ score }: { score: number }) {
 }
 
 function clamp10(v: number) { return Math.max(0, Math.min(10, v)); }
+
+/** Garde uniquement la 1ère phrase d'un texte (ponctuation . ! ?). */
+function firstSentence(text: string): string {
+  if (!text) return text;
+  const m = text.match(/^[\s\S]*?[.!?](?=\s|$)/);
+  return (m ? m[0] : text).trim();
+}
 
 function AnalysisRow({
   icon,
