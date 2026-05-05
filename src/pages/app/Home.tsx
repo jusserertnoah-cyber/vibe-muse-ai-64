@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { getProfile } from "@/lib/profile";
 import { Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, Wind, MapPin, Zap, Flame } from "lucide-react";
 import { getCurrentWeather } from "@/lib/weather";
-import { MissionStory } from "@/components/vibe/MissionStory";
 import { audienceFromGender, getDailyChallenge, getLocalizedChallenge } from "@/lib/challenges";
 import { ChallengeDetailDialog } from "@/components/vibe/ChallengeDetailDialog";
 
@@ -174,9 +173,6 @@ export default function Home() {
           </div>
         </div>
       )}
-
-      {/* Mission Story — Jauge récompense */}
-      <MissionStory />
 
       <ChallengeDetailDialog
         open={challengeOpen}
