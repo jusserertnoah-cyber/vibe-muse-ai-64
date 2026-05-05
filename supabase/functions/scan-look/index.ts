@@ -99,8 +99,8 @@ serve(async (req) => {
     const langCode = ["fr", "en"].includes(lang) ? lang : "fr";
     const langName = langCode === "en" ? "English" : "français";
     const outputRule = langCode === "en"
-      ? "Every visible text field you return MUST be in English: verdict, strong, weak, tips, fit, colors, touch2026, shopping.name, shopping.why and challenge_reason. Keep only the brand name Vibe unchanged."
-      : "Tous les champs textuels visibles que tu renvoies DOIVENT être en français : verdict, strong, weak, tips, fit, colors, touch2026, shopping.name, shopping.why et challenge_reason. Garde seulement le nom Vibe inchangé.";
+      ? "Every visible text field you return MUST be in English: verdict, strong, weak, tips, shopping.name, shopping.why and challenge_reason. Keep only the brand name Vibe unchanged."
+      : "Tous les champs textuels visibles que tu renvoies DOIVENT être en français : verdict, strong, weak, tips, shopping.name, shopping.why et challenge_reason. Garde seulement le nom Vibe inchangé.";
 
     const profileLine = [
       gender ? `genre: ${gender}` : null,
@@ -138,16 +138,18 @@ Tu DOIS examiner la photo et décider :
 RÈGLE ABSOLUE D'ENTRÉE :
 Avant TOUTE analyse, vérifie qu'il s'agit bien d'une PHOTO D'UN ÊTRE HUMAIN PORTANT UNE TENUE.
 Si l'image n'est PAS une personne réelle portant des vêtements (ex : objet seul, paysage, animal, écran/capture, dessin, photo vide, vêtement posé sans humain, selfie sans tenue visible), tu DOIS appeler la fonction tool "vibe_check" avec UNIQUEMENT :
-  { "score": 0, "style": "Classique", "verdict": "ERREUR", "strong": "ERREUR", "weak": "ERREUR", "tips": ["ERREUR","ERREUR","ERREUR"], "fit": "ERREUR", "colors": "ERREUR", "touch2026": "ERREUR", "shopping": [{"name":"ERREUR","brand":"ERREUR","price":"-","why":"ERREUR","query":"-"},{"name":"ERREUR","brand":"ERREUR","price":"-","why":"ERREUR","query":"-"},{"name":"ERREUR","brand":"ERREUR","price":"-","why":"ERREUR","query":"-"}] }
+  { "score": 0, "style": "Classique", "verdict": "ERREUR", "strong": "ERREUR", "weak": "ERREUR", "tips": ["ERREUR","ERREUR","ERREUR"], "shopping": [{"name":"ERREUR","brand":"ERREUR","price":"-","why":"ERREUR","query":"-"},{"name":"ERREUR","brand":"ERREUR","price":"-","why":"ERREUR","query":"-"},{"name":"ERREUR","brand":"ERREUR","price":"-","why":"ERREUR","query":"-"}] }
 Ne donne aucun avis, aucune note, aucune analyse dans ce cas.
 
-ADAPTATION À L'ÂGE — IMPÉRATIF :
-On ne s'habille pas pareil à 18 ans qu'à 60 ans. Adapte tes conseils, le verdict et la touche 2026 à l'âge de la personne :
-• 13–22 : codes streetwear / Y2K / oversize assumés autorisés.
-• 23–35 : équilibre tendance / élégance, pièces statement OK.
-• 36–50 : élégance affirmée, coupes nettes, pièces durables, pas de gimmicks ado.
-• 51+ : élégance intemporelle, matières nobles, coupes ajustées sans excès, JAMAIS de conseils type "hoodie crop", "baggy ado", couleurs criardes ou pièces TikTok. Vise Old Money / Classique / Sobre.
+ADAPTATION À L'ÂGE — IMPÉRATIF (cette règle prime sur tout le reste) :
+On ne s'habille pas pareil à 18 ans qu'à 60 ans. Adapte STRICTEMENT verdict, strong, weak, tips et shopping à l'âge réel de la personne :
+• 13–17 : codes ado, basiques carrés, pas d'alcool/luxe ostentatoire dans le shopping. Marques accessibles (Zara, H&M, Carhartt, Adidas).
+• 18–22 : streetwear / Y2K / oversize / sneakers statement autorisés. Marques jeunes (Stüssy, Carhartt WIP, Nike, ASOS, Uniqlo).
+• 23–35 : équilibre tendance / élégance, pièces statement OK, denim brut, blazer, sneakers premium. (COS, Arket, Sandro, Maje, AMI, Acne).
+• 36–50 : élégance affirmée, coupes nettes, matières nobles (laine, cachemire, cuir), pas de gimmicks ado, pas de logos criards. (Loro Piana entry, Brunello entry, Theory, Vince, A.P.C., Officine Générale).
+• 51+ : élégance intemporelle, sobriété, tailoring, matières nobles, JAMAIS hoodie crop, baggy, sneakers chunky, couleurs fluo, pièces TikTok. Vise Old Money / Classique / Sobre. (Loro Piana, Brunello Cucinelli, Hermès, Ralph Lauren Purple Label, Church's, Crockett & Jones).
 Si l'âge est inconnu, vise neutre adulte 25–35.
+Tes 3 tips et tes 3 produits shopping DOIVENT correspondre à la tranche d'âge — on n'envoie JAMAIS un ado acheter du Loro Piana, ni un quinquagénaire acheter du baggy Y2K.
 
 ÉCHELLE DE NOTATION (sur 10, OBLIGATOIREMENT avec 1 décimale, ex 7.4, 8.6, 9.1) :
 • 1.0–4.9 : look raté, fautes majeures (couleurs criardes, coupes inadaptées, mismatch total).
@@ -168,10 +170,11 @@ EXEMPLES de critiques chirurgicales que tu DOIS savoir formuler quand pertinent 
 - "Le pantalon casse trop bas, ça écrase la silhouette."
 
 RÈGLES DE FORME :
-1. Ultra-court par champ (1 phrase percutante).
+1. Ultra-court par champ (1 phrase percutante MAX).
 2. Ton bienveillant mais expert. Jamais cassant gratuitement.
-3. JAMAIS de conseils vagues, toujours CONCRET (couleur, cm, matière nommée).
-4. Tu réponds STRICTEMENT en ${langName}, via la fonction tool fournie.
+3. JAMAIS de conseils vagues. TOUJOURS concret : nomme une couleur précise (ex "bordeaux", "écru"), une matière (ex "laine froide", "cuir grainé"), un cm (ex "ourlet 1 cm au-dessus de la cheville"), une marque ou un type de pièce précis. Interdiction d'écrire "ajoute un accessoire", "essaie autre chose", "varie les couleurs" — c'est trop vague.
+4. Les 3 tips sont 3 ACTIONS distinctes et activables tout de suite (pas 3 reformulations de la même idée).
+5. Tu réponds STRICTEMENT en ${langName}, via la fonction tool fournie.
 
 BIBLE STYLES : "Vintage", "Old Money", "Classique", "Sobre", "Sport", "Oversize", "Américain". Tu DOIS choisir UN style exact dans cette liste pour le champ "style".${contextBlock}${challengeBlock}
 ${profileLine ? `\nProfil : ${profileLine}.` : ""}
@@ -179,8 +182,8 @@ ${profileLine ? `\nProfil : ${profileLine}.` : ""}
 ${outputRule}`;
 
     const userText = langCode === "en"
-      ? `Analyze this outfit rigorously. Give a decimal score (e.g. 8.4, 9.2). Be selective with 9.5+. Return the verdict, strength, weakness, 3 concrete actions, fit, colors, 2026 touch and 3 shopping products in English.${challenge?.name ? ` Also evaluate the challenge: "${challenge.name}".` : ""}`
-      : `Analyse cette tenue avec rigueur. Donne une note décimale (ex 8.4, 9.2). Sois sélectif sur le 9.5+. Verdict, fort, faible, 3 actions concrètes, fit, couleurs, touche 2026, 3 produits shopping en français.${challenge?.name ? ` Évalue aussi le défi : "${challenge.name}".` : ""}`;
+      ? `Analyze this outfit rigorously. Decimal score (e.g. 8.4, 9.2). Be selective above 9.5. Return verdict, strength, weakness, 3 concrete and age-appropriate actions, and 3 shopping products perfectly fitted to the person's age (${age ?? "unknown"}).${challenge?.name ? ` Also evaluate the challenge: "${challenge.name}".` : ""}`
+      : `Analyse cette tenue avec rigueur. Note décimale (ex 8.4, 9.2). Sois sélectif au-delà de 9.5. Renvoie verdict, point fort, point faible, 3 actions concrètes et adaptées à l'âge, et 3 produits shopping parfaitement adaptés à l'âge (${age ?? "inconnu"}).${challenge?.name ? ` Évalue aussi le défi : "${challenge.name}".` : ""}`;
 
     const properties: any = {
       score: { type: "number", description: "Note /10 OBLIGATOIREMENT décimale (ex 7.4, 8.6, 9.1). 10.0 quasi interdit." },
@@ -188,10 +191,7 @@ ${outputRule}`;
       verdict: { type: "string" },
       strong: { type: "string" },
       weak: { type: "string" },
-      tips: { type: "array", items: { type: "string" }, minItems: 3, maxItems: 3 },
-      fit: { type: "string" },
-      colors: { type: "string" },
-      touch2026: { type: "string" },
+      tips: { type: "array", items: { type: "string" }, minItems: 3, maxItems: 3, description: "3 actions distinctes, concrètes, activables, adaptées à l'âge." },
       shopping: {
         type: "array", minItems: 3, maxItems: 3,
         items: {
@@ -205,7 +205,7 @@ ${outputRule}`;
         },
       },
     };
-    const required = ["score", "style", "verdict", "strong", "weak", "tips", "fit", "colors", "touch2026", "shopping"];
+    const required = ["score", "style", "verdict", "strong", "weak", "tips", "shopping"];
 
     if (challenge?.name) {
       properties.challenge_met = { type: "boolean", description: "true UNIQUEMENT si l'élément du défi est clairement visible sur la photo." };
