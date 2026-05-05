@@ -503,34 +503,6 @@ export default function Scan() {
             </div>
           </div>
 
-          {/* L'avis de VIBE — audit styliste */}
-          {(result.fit || result.colors || result.touch2026) && (
-            <section className="rounded-3xl bg-card p-5 shadow-card">
-              <header className="mb-4 flex items-center justify-between">
-                <p className="font-serif text-xl leading-none">{t("scan.vibeAdvice")}</p>
-                <span className="rounded-full bg-secondary px-2 py-1 text-[10px] uppercase tracking-widest text-muted-foreground">
-                  {t("scan.stylistAudit")}
-                </span>
-              </header>
-              <div className="space-y-4">
-                {result.fit && (
-                  <AuditBlock icon={<Ruler className="h-4 w-4" />} title={t("scan.auditFit")} text={firstSentence(result.fit)} />
-                )}
-                {result.colors && (
-                  <AuditBlock icon={<Palette className="h-4 w-4" />} title={t("scan.auditColors")} text={firstSentence(result.colors)} />
-                )}
-                {result.touch2026 && (
-                  <AuditBlock
-                    icon={<Sparkles className="h-4 w-4" />}
-                    title={t("scan.auditTouch")}
-                    text={firstSentence(result.touch2026)}
-                    accent
-                  />
-                )}
-              </div>
-            </section>
-          )}
-
           <StylistChat
             mode="scan"
             context={{ scan: result }}
