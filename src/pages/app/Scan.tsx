@@ -708,6 +708,13 @@ function ScoreBars({ score }: { score: number }) {
 
 function clamp10(v: number) { return Math.max(0, Math.min(10, v)); }
 
+/** Garde uniquement la 1ère phrase d'un texte (ponctuation . ! ?). */
+function firstSentence(text: string): string {
+  if (!text) return text;
+  const m = text.match(/^[\s\S]*?[.!?](?=\s|$)/);
+  return (m ? m[0] : text).trim();
+}
+
 function AnalysisRow({
   icon,
   label,
