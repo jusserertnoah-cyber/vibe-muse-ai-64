@@ -680,11 +680,27 @@ function ScoreBars({ score }: { score: number }) {
 
 function clamp10(v: number) { return Math.max(0, Math.min(10, v)); }
 
-/** Garde uniquement la 1ère phrase d'un texte (ponctuation . ! ?). */
+/** Garde uniquement la 1ère phrase courte (max 120 caractères). */
 function firstSentence(text: string): string {
   if (!text) return text;
-  const m = text.match(/^[\s\S]*?[.!?](?=\s|$)/);
-  return (m ? m[0] : text).trim();
+  
+  // Extrait la première phrase
+  let m = text.match(/^[\s\S]*?[.!?](?=\s|$)/);
+  let sentence = (m ? m[0] : text).trim();
+  
+  // Si plus de 120 caractères, tronque à la phrase la plus courte
+  if (sentence.length > 120) {
+    // Cherche le dernier espace avant 120 caractères
+    const truncated = sentence.substring(0, 120);
+    const lastSpace = truncated.lastIndexOf(" ");
+    if (lastSpace > 50) {
+      sentence = truncated.substring(0, lastSpace) + ".";
+    } else {
+      sentence = truncated + ".";
+    }
+  }
+  
+  return sentence;
 }
 
 function AnalysisRow({

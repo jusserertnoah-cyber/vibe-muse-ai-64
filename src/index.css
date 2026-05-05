@@ -1,9 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;500;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap');
+
+/* New design system fonts */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* New design system fonts */
-@import url('https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;500;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap');
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.

@@ -13,7 +13,6 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { SUPPORTED_LANGUAGES } from "@/i18n";
 import { IntroSlides, hasSeenIntro } from "@/components/vibe/IntroSlides";
 
@@ -77,7 +76,15 @@ const getAuthRedirectBaseUrl = () => {
   // Important: le lien magique/OAuth doit revenir sur le même domaine que celui
   // utilisé par l'utilisateur. Sinon la session est créée sur le site publié,
   // mais la preview reste avec un simple profil local → Edge Function 401.
-  return window.location.origin;
+  return window.location.origin.replace(/\/+$/, "");
+};
+
+const getOnboardingRedirectUrl = (pendingParam = "") => {
+  const url = new URL("/onboarding", getAuthRedirectBaseUrl());
+  if (pendingParam) {
+    url.search = pendingParam;
+  }
+  return url.toString();
 };
 
 const readPendingFromUser = (user: User): PendingOnboarding | null => {
@@ -123,7 +130,8 @@ export default function Onboarding() {
 
   // Email / Magic Link
   const [email, setEmail] = useState("");
-  const [linkSent, setLinkSent] = useState(false);
+  const [codeSent, setCodeSent] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
   const [busy, setBusy] = useState(false);
   const [loginOnly, setLoginOnly] = useState(false);
   const [returning, setReturning] = useState(false);
@@ -278,7 +286,7 @@ export default function Onboarding() {
     return profile;
   };
 
-  const sendMagicLink = async () => {
+  const sendEmailCode = async () => {
     const cleaned = email.trim().toLowerCase();
     if (!isValidEmail(cleaned)) {
       toast.error(t("onboarding.email.invalidTitle", { defaultValue: "Email invalide" }), {
@@ -293,12 +301,9 @@ export default function Onboarding() {
     if (!loginOnly) {
       savePending(pendingData);
     }
-    const baseUrl = getAuthRedirectBaseUrl();
-    const pendingParam = !loginOnly ? `?pending=${encodeURIComponent(encodePending(pendingData))}` : "";
     const { error } = await supabase.auth.signInWithOtp({
       email: cleaned,
       options: {
-        emailRedirectTo: `${baseUrl}/onboarding${pendingParam}`,
         shouldCreateUser: !loginOnly,
         data: loginOnly ? undefined : {
           first_name: firstName.trim(),
@@ -313,16 +318,43 @@ export default function Onboarding() {
       });
       return;
     }
-    setLinkSent(true);
-    toast.success(t("onboarding.email.sentTitle", { defaultValue: "Lien envoyé !" }), {
+    setCodeSent(true);
+    toast.success(t("onboarding.email.sentTitle", { defaultValue: "Code envoyé !" }), {
       description: t("onboarding.email.sentDesc", {
-        defaultValue: "Ouvre ton mail et clique sur le lien pour te connecter.",
+        defaultValue: "On t'a envoyé un code par email. Entre-le pour te connecter.",
         email: cleaned,
       }),
     });
   };
 
-  const signInWithGoogle = async () => {
+  const verifyEmailCode = async () => {
+    const cleaned = email.trim().toLowerCase();
+    const token = otpCode.trim();
+    if (!isValidEmail(cleaned)) {
+      toast.error(t("onboarding.email.invalidTitle", { defaultValue: "Email invalide" }));
+      return;
+    }
+    if (!token || token.length < 6) {
+      toast.error(t("onboarding.email.codeInvalid", { defaultValue: "Code invalide" }));
+      return;
+    }
+    setBusy(true);
+    const { error } = await supabase.auth.verifyOtp({
+      email: cleaned,
+      token,
+      type: "email",
+    });
+    setBusy(false);
+    if (error) {
+      toast.error(t("onboarding.email.errorTitle", { defaultValue: "Connexion impossible" }), {
+        description: error.message,
+      });
+      return;
+    }
+    setReturning(true);
+  };
+
+  const signInWithProvider = async (provider: "google" | "apple") => {
     setBusy(true);
     if (!loginOnly) {
       savePending({ lang, email: email.trim().toLowerCase(), firstName, gender, heightCm, weightKg, age, city });
@@ -330,8 +362,11 @@ export default function Onboarding() {
     const pendingParam = !loginOnly
       ? `?pending=${encodeURIComponent(encodePending({ lang, email: email.trim().toLowerCase(), firstName, gender, heightCm, weightKg, age, city }))}`
       : "";
-    const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${getAuthRedirectBaseUrl()}/onboarding${pendingParam}`,
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: getOnboardingRedirectUrl(pendingParam),
+      },
     });
     if (error) {
       setBusy(false);
@@ -341,23 +376,10 @@ export default function Onboarding() {
     }
   };
 
+  const signInWithGoogle = async () => signInWithProvider("google");
+
   const signInWithApple = async () => {
-    setBusy(true);
-    if (!loginOnly) {
-      savePending({ lang, email: email.trim().toLowerCase(), firstName, gender, heightCm, weightKg, age, city });
-    }
-    const pendingParam = !loginOnly
-      ? `?pending=${encodeURIComponent(encodePending({ lang, email: email.trim().toLowerCase(), firstName, gender, heightCm, weightKg, age, city }))}`
-      : "";
-    const { error } = await lovable.auth.signInWithOAuth("apple", {
-      redirect_uri: `${getAuthRedirectBaseUrl()}/onboarding${pendingParam}`,
-    });
-    if (error) {
-      setBusy(false);
-      toast.error(t("onboarding.email.errorTitle", { defaultValue: "Connexion impossible" }), {
-        description: error.message,
-      });
-    }
+    await signInWithProvider("apple");
   };
 
   if (loading || returning) {
@@ -573,7 +595,7 @@ export default function Onboarding() {
           {/* Step 5 — EMAIL MAGIC LINK */}
           {step === EMAIL_STEP && (
             <div className="space-y-6">
-              {!linkSent ? (
+              {!codeSent ? (
                 <>
                   <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary">
                     <Mail className="h-6 w-6 text-cobalt" strokeWidth={1.5} />
@@ -598,14 +620,14 @@ export default function Onboarding() {
                     className="h-14 rounded-2xl border-border bg-card text-lg"
                   />
                   <Button
-                    onClick={sendMagicLink}
+                    onClick={sendEmailCode}
                     disabled={busy || !isValidEmail(email)}
                     className="h-14 w-full rounded-2xl bg-gradient-brand text-foreground hover:opacity-90 text-base shadow-brand border-0"
                   >
                     <Sparkles className="mr-2 h-4 w-4" />
                     {busy
                       ? t("onboarding.email.sending", { defaultValue: "Envoi…" })
-                      : t("onboarding.email.receive", { defaultValue: "Recevoir le lien" })}
+                      : t("onboarding.email.receive", { defaultValue: "Recevoir le code" })}
                   </Button>
                   <Button
                     onClick={signInWithGoogle}
@@ -638,25 +660,36 @@ export default function Onboarding() {
                     <ShieldCheck className="h-6 w-6 text-cobalt" strokeWidth={1.5} />
                   </div>
                   <h1 className="font-serif text-4xl leading-tight text-balance">
-                    {t("onboarding.email.checkTitle", { defaultValue: "Check tes mails" })}
+                    {t("onboarding.email.checkTitle", { defaultValue: "Entre le code reçu" })}
                   </h1>
                   <p className="text-sm text-muted-foreground">
-                    {t("onboarding.email.sentTo", { defaultValue: "Lien envoyé à" })}{" "}
+                    {t("onboarding.email.sentTo", { defaultValue: "Code envoyé à" })}{" "}
                     <span className="font-medium text-foreground">{email}</span>.
                   </p>
-                  <p className="text-xs text-muted-foreground">
-                    {t("onboarding.email.openLink", {
-                      defaultValue:
-                        "Ouvre l'email et clique sur le lien — tu seras connecté automatiquement.",
-                    })}
-                  </p>
+                  <Input
+                    autoFocus
+                    inputMode="numeric"
+                    value={otpCode}
+                    onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    placeholder="123456"
+                    className="h-14 rounded-2xl border-border bg-card text-center text-2xl tracking-[0.3em]"
+                  />
                   <Button
-                    onClick={sendMagicLink}
+                    onClick={verifyEmailCode}
+                    disabled={busy || otpCode.trim().length < 6}
+                    className="h-14 w-full rounded-2xl bg-gradient-brand text-foreground hover:opacity-90 text-base shadow-brand border-0"
+                  >
+                    {busy
+                      ? t("onboarding.email.verifying", { defaultValue: "Vérification…" })
+                      : t("onboarding.email.verifyCode", { defaultValue: "Valider le code" })}
+                  </Button>
+                  <Button
+                    onClick={sendEmailCode}
                     disabled={busy}
                     variant="outline"
                     className="h-14 w-full rounded-2xl text-base"
                   >
-                    {t("onboarding.email.resend", { defaultValue: "Renvoyer le lien" })}
+                    {t("onboarding.email.resend", { defaultValue: "Renvoyer le code" })}
                   </Button>
                 </>
               )}

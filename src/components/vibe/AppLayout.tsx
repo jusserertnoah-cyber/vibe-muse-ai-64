@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Outlet, Navigate, useLocation } from "react-router-dom";
+import { Outlet, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { BottomNav } from "./BottomNav";
 import { getProfile, hydrateProfileFromDb } from "@/lib/profile";
 import { useSession } from "@/hooks/useSession";
@@ -9,6 +9,8 @@ export const AppLayout = () => {
   const [hydrating, setHydrating] = useState(true);
   const [profileReady, setProfileReady] = useState<boolean>(!!getProfile());
   const location = useLocation();
+  const navigate = useNavigate();
+  const showScanFab = !location.pathname.startsWith("/app/scan");
 
   useEffect(() => {
     let cancelled = false;
@@ -50,6 +52,30 @@ export const AppLayout = () => {
           <Outlet />
         </div>
       </main>
+      {showScanFab && (
+        <button
+          type="button"
+          onClick={() => navigate("/app/scan")}
+          aria-label="Ouvrir le scan"
+          className="fixed bottom-[88px] right-5 z-[60] flex h-[60px] w-[60px] items-center justify-center rounded-full bg-[#C8F135] text-black shadow-[0_8px_32px_rgba(200,241,53,0.35)] transition-transform duration-200 hover:scale-105 active:scale-95"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="26"
+            height="26"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M14.5 4h-5L8 6H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3l-1.5-2z" />
+            <circle cx="12" cy="13" r="3" />
+          </svg>
+        </button>
+      )}
       <BottomNav />
     </div>
   );

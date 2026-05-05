@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { Home, Trophy, ScanLine, User } from "lucide-react";
+import { Home, Trophy, User } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 
@@ -8,7 +8,6 @@ export const BottomNav = () => {
   const tabs = [
     { to: "/app", label: t("nav.home"), icon: Home, end: true },
     { to: "/app/topvibes", label: "Top Vibes", icon: Trophy },
-    { to: "/app/scan", label: t("nav.scan"), icon: ScanLine },
     { to: "/app/profil", label: t("nav.profile"), icon: User },
   ];
   return (
