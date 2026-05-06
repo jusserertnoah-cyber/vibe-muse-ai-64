@@ -11,6 +11,7 @@ export const AppLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const showScanFab = !location.pathname.startsWith("/app/scan");
+  const isHome = location.pathname === "/app";
 
   useEffect(() => {
     let cancelled = false;
@@ -57,7 +58,11 @@ export const AppLayout = () => {
           type="button"
           onClick={() => navigate("/app/scan")}
           aria-label="Ouvrir le scan"
-          className="fixed bottom-[88px] right-5 z-[60] flex h-[60px] w-[60px] items-center justify-center rounded-full bg-[#C8F135] text-black shadow-[0_8px_32px_rgba(200,241,53,0.35)] transition-transform duration-200 hover:scale-105 active:scale-95"
+          className={`fixed bottom-[88px] right-5 z-[60] flex h-[60px] w-[60px] items-center justify-center rounded-full transition-transform duration-200 hover:scale-105 active:scale-95 ${
+            isHome
+              ? "bg-[#7C5CFC] text-white shadow-[0_8px_32px_rgba(124,92,252,0.35)]"
+              : "bg-[#C8F135] text-black shadow-[0_8px_32px_rgba(200,241,53,0.35)]"
+          }`}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
