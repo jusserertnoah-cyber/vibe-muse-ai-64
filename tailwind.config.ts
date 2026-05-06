@@ -78,10 +78,10 @@ export default {
         "2xl": "calc(var(--radius) + 16px)",
       },
       fontFamily: {
-        serif: ['Syne', 'system-ui', 'sans-serif'],
-        sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
-        display: ['Syne', 'system-ui', 'sans-serif'],
-        mono: ['"Azeret Mono"', '"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        serif: ['"Playfair Display"', 'serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['"Playfair Display"', 'serif'],
+        mono: ['Inter', '"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
       backgroundImage: {
         'gradient-luxe': 'var(--gradient-luxe)',
