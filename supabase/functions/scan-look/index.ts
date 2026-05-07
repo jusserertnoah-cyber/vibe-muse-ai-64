@@ -138,18 +138,17 @@ Tu DOIS examiner la photo et décider :
 RÈGLE ABSOLUE D'ENTRÉE :
 Avant TOUTE analyse, vérifie qu'il s'agit bien d'une PHOTO D'UN ÊTRE HUMAIN PORTANT UNE TENUE.
 Si l'image n'est PAS une personne réelle portant des vêtements (ex : objet seul, paysage, animal, écran/capture, dessin, photo vide, vêtement posé sans humain, selfie sans tenue visible), tu DOIS appeler la fonction tool "vibe_check" avec UNIQUEMENT :
-  { "score": 0, "style": "Classique", "verdict": "ERREUR", "strong": "ERREUR", "weak": "ERREUR", "tips": ["ERREUR","ERREUR","ERREUR"], "shopping": [{"name":"ERREUR","brand":"ERREUR","price":"-","why":"ERREUR","query":"-"},{"name":"ERREUR","brand":"ERREUR","price":"-","why":"ERREUR","query":"-"},{"name":"ERREUR","brand":"ERREUR","price":"-","why":"ERREUR","query":"-"}] }
+  { "score": 0, "coherence": 0, "originalite": 0, "fit": 0, "point_fort": "ERREUR", "point_faible": "ERREUR", "conseil": "ERREUR" }
 Ne donne aucun avis, aucune note, aucune analyse dans ce cas.
 
 ADAPTATION À L'ÂGE — IMPÉRATIF (cette règle prime sur tout le reste) :
-On ne s'habille pas pareil à 18 ans qu'à 60 ans. Adapte STRICTEMENT verdict, strong, weak, tips et shopping à l'âge réel de la personne :
-• 13–17 : codes ado, basiques carrés, pas d'alcool/luxe ostentatoire dans le shopping. Marques accessibles (Zara, H&M, Carhartt, Adidas).
-• 18–22 : streetwear / Y2K / oversize / sneakers statement autorisés. Marques jeunes (Stüssy, Carhartt WIP, Nike, ASOS, Uniqlo).
-• 23–35 : équilibre tendance / élégance, pièces statement OK, denim brut, blazer, sneakers premium. (COS, Arket, Sandro, Maje, AMI, Acne).
-• 36–50 : élégance affirmée, coupes nettes, matières nobles (laine, cachemire, cuir), pas de gimmicks ado, pas de logos criards. (Loro Piana entry, Brunello entry, Theory, Vince, A.P.C., Officine Générale).
-• 51+ : élégance intemporelle, sobriété, tailoring, matières nobles, JAMAIS hoodie crop, baggy, sneakers chunky, couleurs fluo, pièces TikTok. Vise Old Money / Classique / Sobre. (Loro Piana, Brunello Cucinelli, Hermès, Ralph Lauren Purple Label, Church's, Crockett & Jones).
+On ne s'habille pas pareil à 18 ans qu'à 60 ans. Adapte STRICTEMENT tes notes et conseils à l'âge réel de la personne :
+• 13–17 : codes ado, basiques carrés. Nota stricte pas au-delà de 8.
+• 18–22 : streetwear / Y2K / oversize autorisés. Max 9 possible.
+• 23–35 : équilibre tendance / élégance. Max 9.2.
+• 36–50 : élégance affirmée, coupes nettes. Max 9.3.
+• 51+ : élégance intemporelle, sobriété. Max 9.4.
 Si l'âge est inconnu, vise neutre adulte 25–35.
-Tes 3 tips et tes 3 produits shopping DOIVENT correspondre à la tranche d'âge — on n'envoie JAMAIS un ado acheter du Loro Piana, ni un quinquagénaire acheter du baggy Y2K.
 
 ÉCHELLE DE NOTATION (sur 10, OBLIGATOIREMENT avec 1 décimale, ex 7.4, 8.6, 9.1) :
 • 1.0–4.9 : look raté, fautes majeures (couleurs criardes, coupes inadaptées, mismatch total).
@@ -157,55 +156,44 @@ Tes 3 tips et tes 3 produits shopping DOIVENT correspondre à la tranche d'âge 
 • 7.0–8.4 : bon look, intention claire, 1 ou 2 détails à peaufiner.
 • 8.5–9.0 : très haut niveau, harmonie réelle des matières et des coupes.
 • 9.1–9.4 : excellent — très peu de gens atteignent cette zone.
-• 9.5–9.7 : exceptionnel. Pour passer ce cap il faut une cohérence PARFAITE : harmonie des textures, ajustement des coupes (longueur des manches, tombé du pantalon, break, épaules), accord PRÉCIS des accessoires (taille de la montre vs poignet, bijoux non redondants).
-• 9.8–9.9 : QUASI-PARFAIT. Plafond pour quelqu'un qui a appliqué tous les conseils. Garde toujours UN micro-détail à améliorer pour le pousser à chercher l'ultime.
-• 10.0 : RARISSIME (1 sur 10 000). Réservé à un look digne d'un éditorial Vogue cover. Tu ne dois pratiquement JAMAIS donner 10.0.
+• 9.5–9.7 : exceptionnel. Pour passer ce cap il faut une cohérence PARFAITE : harmonie des textures, ajustement des coupes, accord PRÉCIS des accessoires.
+• 9.8–9.9 : QUASI-PARFAIT. Plafond pour quelqu'un qui a appliqué tous les conseils.
+• 10.0 : RARISSIME (1 sur 10 000). Réservé à un look digne d'un éditorial Vogue.
 
-COURBE DE DIFFICULTÉ : plus la note est haute, plus chaque dixième est difficile à gagner. Ne donne PAS 9.5+ si tu n'as pas analysé : matières (texture qui jure ?), coupes (manches trop longues, pantalon qui flotte/break ?), accessoires (montre proportionnée ? bijoux qui s'accordent ?).
+NOUVELLE STRUCTURE JSON STRICTE — LIS ATTENTIVEMENT :
+Tu DOIS retourner exactement ces 6 champs (plus challenge_met et challenge_reason si applicable) :
+- "score": Nombre décimal /10 (ex: 8.4, 7.2, 9.1). OBLIGATOIRE.
+- "coherence": Nombre entier 0–10. Mesure l'harmonie des matières, couleurs et coupes ensemble.
+- "originalite": Nombre entier 0–10. Mesure la personnalité et l'audace de la tenue.
+- "fit": Nombre entier 0–10. Mesure l'ajustement et la proportion des pièces sur la silhouette.
+- "point_fort": STRING texte brut, MAXIMUM 15 MOTS. Décris en 1 phrase ultra-courte ce qui marche le mieux. Direct, percutant. Pas de politesse.
+- "point_faible": STRING texte brut, MAXIMUM 15 MOTS. Décris le principal défaut en 1 phrase ultra-courte. Direct. Pas de politesse.
+- "conseil": STRING texte brut, MAXIMUM 15 MOTS. UNE action concrète et immédiate à faire pour améliorer. Nomme une couleur (ex "bordeaux"), une matière (ex "coton brut") ou un % (ex "raccourcir de 2cm"), JAMAIS vague.
 
-EXEMPLES de critiques chirurgicales que tu DOIS savoir formuler quand pertinent :
-- "Ta montre est trop massive pour ce poignet."
-- "Le tissu de ta chemise jure avec la texture de ton veston."
-- "Les manches dépassent de 2 cm — fais reprendre."
-- "Le pantalon casse trop bas, ça écrase la silhouette."
-
-RÈGLES DE FORME :
-1. Ultra-court par champ (1 phrase percutante MAX).
-2. Ton bienveillant mais expert. Jamais cassant gratuitement.
-3. JAMAIS de conseils vagues. TOUJOURS concret : nomme une couleur précise (ex "bordeaux", "écru"), une matière (ex "laine froide", "cuir grainé"), un cm (ex "ourlet 1 cm au-dessus de la cheville"), une marque ou un type de pièce précis. Interdiction d'écrire "ajoute un accessoire", "essaie autre chose", "varie les couleurs" — c'est trop vague.
-4. Les 3 tips sont 3 ACTIONS distinctes et activables tout de suite (pas 3 reformulations de la même idée).
-5. Tu réponds STRICTEMENT en ${langName}, via la fonction tool fournie.
-
-BIBLE STYLES : "Vintage", "Old Money", "Classique", "Sobre", "Sport", "Oversize", "Américain". Tu DOIS choisir UN style exact dans cette liste pour le champ "style".${contextBlock}${challengeBlock}
+RÈGLES STRICTES DE TEXTE :
+1. Chaque champ texte (point_fort, point_faible, conseil) : MAXIMUM 15 MOTS. Pas plus. Compte-les.
+2. Ton : direct, jeune, jeune, dans l'esprit Cal AI / fashion app Gen-Z. Court. Percutant.
+3. Jamais de formules de politesse ("Cet outfit...". "On remarque que...". "Cette tenue présente..." → INTERDIT).
+4. Jamais de ponctuation inutile (pas de "..." ni de "–" pour lister).
+5. Va DROIT au but. Coupe au maximum : pas de détails secondaires.${contextBlock}${challengeBlock}
 ${profileLine ? `\nProfil : ${profileLine}.` : ""}
 
 ${outputRule}`;
 
     const userText = langCode === "en"
-      ? `Analyze this outfit rigorously. Decimal score (e.g. 8.4, 9.2). Be selective above 9.5. Return verdict, strength, weakness, 3 concrete and age-appropriate actions, and 3 shopping products perfectly fitted to the person's age (${age ?? "unknown"}).${challenge?.name ? ` Also evaluate the challenge: "${challenge.name}".` : ""}`
-      : `Analyse cette tenue avec rigueur. Note décimale (ex 8.4, 9.2). Sois sélectif au-delà de 9.5. Renvoie verdict, point fort, point faible, 3 actions concrètes et adaptées à l'âge, et 3 produits shopping parfaitement adaptés à l'âge (${age ?? "inconnu"}).${challenge?.name ? ` Évalue aussi le défi : "${challenge.name}".` : ""}`;
+      ? `Analyze this outfit rigorously. Decimal score (e.g. 8.4, 9.2). Return: score, coherence (0-10), originalite (0-10), fit (0-10), point_fort (max 15 words), point_faible (max 15 words), conseil (max 15 words, concrete action).${challenge?.name ? ` Also evaluate the challenge: "${challenge.name}".` : ""}`
+      : `Analyse cette tenue avec rigueur. Note décimale (ex 8.4, 9.2). Renvoie : score, coherence (0-10), originalite (0-10), fit (0-10), point_fort (max 15 mots), point_faible (max 15 mots), conseil (max 15 mots, action concrète).${challenge?.name ? ` Évalue aussi le défi : "${challenge.name}".` : ""}`;
 
     const properties: any = {
       score: { type: "number", description: "Note /10 OBLIGATOIREMENT décimale (ex 7.4, 8.6, 9.1). 10.0 quasi interdit." },
-      style: { type: "string", enum: ["Vintage", "Old Money", "Classique", "Sobre", "Sport", "Oversize", "Américain"] },
-      verdict: { type: "string" },
-      strong: { type: "string" },
-      weak: { type: "string" },
-      tips: { type: "array", items: { type: "string" }, minItems: 3, maxItems: 3, description: "3 actions distinctes, concrètes, activables, adaptées à l'âge." },
-      shopping: {
-        type: "array", minItems: 3, maxItems: 3,
-        items: {
-          type: "object",
-          properties: {
-            name: { type: "string" }, brand: { type: "string" }, price: { type: "string" },
-            why: { type: "string" }, query: { type: "string" },
-          },
-          required: ["name", "brand", "price", "why", "query"],
-          additionalProperties: false,
-        },
-      },
+      coherence: { type: "integer", minimum: 0, maximum: 10, description: "Harmonie des matières, couleurs et coupes (0-10)." },
+      originalite: { type: "integer", minimum: 0, maximum: 10, description: "Personnalité et audace de la tenue (0-10)." },
+      fit: { type: "integer", minimum: 0, maximum: 10, description: "Ajustement et proportion des pièces (0-10)." },
+      point_fort: { type: "string", description: "Maximum 15 mots. 1 phrase ultra-courte, direct, percutant. Pas de politesse." },
+      point_faible: { type: "string", description: "Maximum 15 mots. 1 phrase ultra-courte, direct. Principal défaut." },
+      conseil: { type: "string", description: "Maximum 15 mots. 1 action concrète immédiate. Nomme couleur, matière ou %. Jamais vague." },
     };
-    const required = ["score", "style", "verdict", "strong", "weak", "tips", "shopping"];
+    const required = ["score", "coherence", "originalite", "fit", "point_fort", "point_faible", "conseil"];
 
     if (challenge?.name) {
       properties.challenge_met = { type: "boolean", description: "true UNIQUEMENT si l'élément du défi est clairement visible sur la photo." };
@@ -262,7 +250,7 @@ ${outputRule}`;
 
     // Si l'IA a détecté que ce n'est PAS une tenue humaine → on rembourse le crédit
     // et on renvoie une erreur claire au client (status 422 not_human).
-    const isError = parsed?.verdict === "ERREUR" || parsed?.score === 0 || parsed?.strong === "ERREUR";
+    const isError = parsed?.point_fort === "ERREUR" || parsed?.score === 0 || parsed?.point_faible === "ERREUR";
     if (isError) {
       if (creditConsumed) {
         try {
@@ -291,6 +279,27 @@ ${outputRule}`;
     if (challenge?.name && parsed.challenge_met === true) {
       const { data: rew } = await supabaseUser.rpc("reward_challenge");
       parsed.challenge_reward = rew;
+    }
+
+    // Enregistrer le résultat du scan dans la table scans
+    try {
+      await getSupabase().from("scans").insert({
+        user_id: userData.user.id,
+        image_url: img,
+        score: parsed.score,
+        coherence: parsed.coherence ?? 0,
+        originalite: parsed.originalite ?? 0,
+        fit: parsed.fit ?? 0,
+        point_fort: parsed.point_fort ?? "",
+        point_faible: parsed.point_faible ?? "",
+        conseil: parsed.conseil ?? "",
+        challenge_name: challenge?.name ?? null,
+        challenge_met: parsed.challenge_met ?? null,
+        challenge_reason: parsed.challenge_reason ?? null,
+      });
+    } catch (e) {
+      console.error("scan save error", e);
+      // Non-bloquant : on retourne quand même le résultat au client
     }
 
     return new Response(JSON.stringify(parsed), {

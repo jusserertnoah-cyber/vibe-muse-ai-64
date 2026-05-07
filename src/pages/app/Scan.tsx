@@ -20,25 +20,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScanOverlay } from "@/components/vibe/ScanOverlay";
 import { compressImageFile } from "@/lib/imageCompress";
 
-interface ShoppingItem {
-  name: string;
-  brand: string;
-  price: string;
-  why: string;
-  query: string;
-}
 
 interface ScanResult {
   score: number;
-  style?: string;
-  verdict: string;
-  strong: string;
-  weak: string;
-  tips: string[];
-  fit?: string;
-  colors?: string;
-  touch2026?: string;
-  shopping?: ShoppingItem[];
+  coherence?: number;
+  originalite?: number;
+  fit?: number;
+  point_fort: string;
+  point_faible: string;
+  conseil: string;
   challenge_met?: boolean;
   challenge_reason?: string;
   challenge_reward?: { total_completed: number; granted_credit: boolean };
