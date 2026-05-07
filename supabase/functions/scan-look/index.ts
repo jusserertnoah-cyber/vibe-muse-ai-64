@@ -166,32 +166,44 @@ Tu DOIS retourner exactement ces 6 champs (plus challenge_met et challenge_reaso
 - "coherence": Nombre entier 0–10. Mesure l'harmonie des matières, couleurs et coupes ensemble.
 - "originalite": Nombre entier 0–10. Mesure la personnalité et l'audace de la tenue.
 - "fit": Nombre entier 0–10. Mesure l'ajustement et la proportion des pièces sur la silhouette.
-- "point_fort": STRING texte brut, MAXIMUM 15 MOTS. Décris en 1 phrase ultra-courte ce qui marche le mieux. Direct, percutant. Pas de politesse.
-- "point_faible": STRING texte brut, MAXIMUM 15 MOTS. Décris le principal défaut en 1 phrase ultra-courte. Direct. Pas de politesse.
-- "conseil": STRING texte brut, MAXIMUM 15 MOTS. UNE action concrète et immédiate à faire pour améliorer. Nomme une couleur (ex "bordeaux"), une matière (ex "coton brut") ou un % (ex "raccourcir de 2cm"), JAMAIS vague.
+- "point_fort": STRING texte brut, MAXIMUM 12 MOTS. 1 phrase seulement. Direct, percutant, sans politesse.
+- "point_faible": STRING texte brut, MAXIMUM 12 MOTS. 1 phrase seulement. Direct, sans politesse.
+- "conseil": STRING texte brut, MAXIMUM 12 MOTS. 1 action concrète à faire. Nomme couleur/matière/% précis. Jamais vague.
 
-RÈGLES STRICTES DE TEXTE :
-1. Chaque champ texte (point_fort, point_faible, conseil) : MAXIMUM 15 MOTS. Pas plus. Compte-les.
-2. Ton : direct, jeune, jeune, dans l'esprit Cal AI / fashion app Gen-Z. Court. Percutant.
-3. Jamais de formules de politesse ("Cet outfit...". "On remarque que...". "Cette tenue présente..." → INTERDIT).
-4. Jamais de ponctuation inutile (pas de "..." ni de "–" pour lister).
-5. Va DROIT au but. Coupe au maximum : pas de détails secondaires.${contextBlock}${challengeBlock}
+RÈGLES STRICTES DE TEXTE — APPLIQUE À LA LETTRE :
+1. MAXIMUM 12 MOTS par champ (point_fort, point_faible, conseil). Compte manuellement. Pas d'exception.
+2. UNE SEULE PHRASE par champ. Jamais de listes (tirets), jamais de virgules pour enchaîner.
+3. Ton : direct, jeune, Gen-Z. Dans l'esprit Cal AI / fashion app. Court. Percutant. Pas d'hésitation.
+4. INTERDIT absolument :
+   - Formules de politesse : "Cette tenue présente...", "On peut noter que...", "Cet outfit possède..."
+   - Listes à tirets ou points
+   - Paragraphes ou textes longs
+   - Virgules chaînées : "X, Y et Z" → au max 2 éléments séparés
+5. EXEMPLES BON FORMAT :
+   - point_fort: "Belle harmonie entre le haut oversize et le pantalon slim."
+   - point_faible: "Les chaussures cassent le côté casual du look."
+   - conseil: "Remplace par des sneakers blanches pour plus de cohérence."
+6. EXEMPLES MAUVAIS FORMAT (À ÉVITER) :
+   - ❌ "Cette tenue présente une belle harmonie..." (formule politesse)
+   - ❌ "Le haut est oversize, les chaussures sont anciennes, le pantalon est slim." (énumération)
+   - ❌ "Ajoute un accessoire ou change de couleur." (vague, pas concret)
+7. Va DROIT au but. Pas d'introduction ni de contexte inutile.${contextBlock}${challengeBlock}
 ${profileLine ? `\nProfil : ${profileLine}.` : ""}
 
 ${outputRule}`;
 
     const userText = langCode === "en"
-      ? `Analyze this outfit rigorously. Decimal score (e.g. 8.4, 9.2). Return: score, coherence (0-10), originalite (0-10), fit (0-10), point_fort (max 15 words), point_faible (max 15 words), conseil (max 15 words, concrete action).${challenge?.name ? ` Also evaluate the challenge: "${challenge.name}".` : ""}`
-      : `Analyse cette tenue avec rigueur. Note décimale (ex 8.4, 9.2). Renvoie : score, coherence (0-10), originalite (0-10), fit (0-10), point_fort (max 15 mots), point_faible (max 15 mots), conseil (max 15 mots, action concrète).${challenge?.name ? ` Évalue aussi le défi : "${challenge.name}".` : ""}`;
+      ? `Analyze this outfit rigorously. Decimal score (e.g. 8.4, 9.2). Return: score, coherence (0-10), originalite (0-10), fit (0-10), point_fort (max 12 words), point_faible (max 12 words), conseil (max 12 words, concrete action).${challenge?.name ? ` Also evaluate the challenge: "${challenge.name}".` : ""}`
+      : `Analyse cette tenue avec rigueur. Note décimale (ex 8.4, 9.2). Renvoie : score, coherence (0-10), originalite (0-10), fit (0-10), point_fort (max 12 mots), point_faible (max 12 mots), conseil (max 12 mots, action concrète).${challenge?.name ? ` Évalue aussi le défi : "${challenge.name}".` : ""}`;
 
     const properties: any = {
       score: { type: "number", description: "Note /10 OBLIGATOIREMENT décimale (ex 7.4, 8.6, 9.1). 10.0 quasi interdit." },
       coherence: { type: "integer", minimum: 0, maximum: 10, description: "Harmonie des matières, couleurs et coupes (0-10)." },
       originalite: { type: "integer", minimum: 0, maximum: 10, description: "Personnalité et audace de la tenue (0-10)." },
       fit: { type: "integer", minimum: 0, maximum: 10, description: "Ajustement et proportion des pièces (0-10)." },
-      point_fort: { type: "string", description: "Maximum 15 mots. 1 phrase ultra-courte, direct, percutant. Pas de politesse." },
-      point_faible: { type: "string", description: "Maximum 15 mots. 1 phrase ultra-courte, direct. Principal défaut." },
-      conseil: { type: "string", description: "Maximum 15 mots. 1 action concrète immédiate. Nomme couleur, matière ou %. Jamais vague." },
+      point_fort: { type: "string", description: "Maximum 12 mots. 1 phrase seulement, direct, percutant. Pas de politesse, pas de tirets." },
+      point_faible: { type: "string", description: "Maximum 12 mots. 1 phrase seulement, direct. Principal défaut sans politesse." },
+      conseil: { type: "string", description: "Maximum 12 mots. 1 action concrète. Nomme couleur/matière/% précis. Jamais vague." },
     };
     const required = ["score", "coherence", "originalite", "fit", "point_fort", "point_faible", "conseil"];
 
