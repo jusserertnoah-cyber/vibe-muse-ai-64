@@ -1,13 +1,57 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getProfile } from "@/lib/profile";
 import { ArrowDownRight, Zap } from "lucide-react";
-import { getRecentScans } from "@/lib/history";
+import { supabase } from "@/integrations/supabase/client";
+
+interface ScanFromDB {
+  id: string;
+  score: number;
+  coherence: number;
+  originalite: number;
+  fit: number;
+  point_fort: string;
+  point_faible: string;
+  conseil: string;
+  image_url?: string;
+  created_at: string;
+}
 
 export default function Home() {
   const navigate = useNavigate();
   const profile = getProfile();
-  const scans = useMemo(() => getRecentScans(50), []);
+  const [dbScans, setDbScans] = useState<ScanFromDB[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load scans from Supabase
+  useEffect(() => {
+    const loadScans = async () => {
+      try {
+        const { data: sess } = await supabase.auth.getSession();
+        if (!sess.session?.user?.id) {
+          setLoading(false);
+          return;
+        }
+        
+        const { data, error } = await supabase
+          .from("scans")
+          .select("*")
+          .eq("user_id", sess.session.user.id)
+          .order("created_at", { ascending: false })
+          .limit(50);
+        
+        if (!error && data) {
+          setDbScans(data as ScanFromDB[]);
+        }
+      } catch (e) {
+        console.error("Failed to load scans from DB", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadScans();
+  }, []);
 
   const weekDays = useMemo(() => {
     const labels = ["L", "M", "M", "J", "V", "S", "D"];
@@ -28,34 +72,43 @@ export default function Home() {
   );
 
   const scansForSelectedDay = useMemo(
-    () => scans.filter((s) => toDateKey(new Date(s.at)) === selectedDay),
-    [scans, selectedDay]
+    () => dbScans.filter((s) => toDateKey(new Date(s.created_at)) === selectedDay),
+    [dbScans, selectedDay]
   );
 
-  const scansWithScore = scansForSelectedDay.filter((s) => typeof s.score === "number");
-  const avgScore = scansWithScore.length
-    ? Math.round(scansWithScore.reduce((acc, s) => acc + (s.score ?? 0), 0) / scansWithScore.length)
+  const avgScore = scansForSelectedDay.length
+    ? Math.round(scansForSelectedDay.reduce((acc, s) => acc + s.score, 0) / scansForSelectedDay.length * 10) / 10
     : 0;
-  const bestScore = scansWithScore.length
-    ? Math.max(...scansWithScore.map((s) => s.score ?? 0))
+  const bestScore = scansForSelectedDay.length
+    ? Math.max(...scansForSelectedDay.map((s) => s.score ?? 0))
+    : 0;
+  
+  const avgCoherence = scansForSelectedDay.length
+    ? Math.round(scansForSelectedDay.reduce((acc, s) => acc + s.coherence, 0) / scansForSelectedDay.length)
+    : 0;
+  const avgOriginalite = scansForSelectedDay.length
+    ? Math.round(scansForSelectedDay.reduce((acc, s) => acc + s.originalite, 0) / scansForSelectedDay.length)
+    : 0;
+  const avgFit = scansForSelectedDay.length
+    ? Math.round(scansForSelectedDay.reduce((acc, s) => acc + s.fit, 0) / scansForSelectedDay.length)
     : 0;
 
   const previousDay = useMemo(() => {
     const selected = new Date(selectedDay);
     selected.setDate(selected.getDate() - 1);
     const prevKey = toDateKey(selected);
-    const prev = scans.filter((s) => toDateKey(new Date(s.at)) === prevKey && typeof s.score === "number");
-    if (!prev.length) return 0;
-    const prevAvg = Math.round(prev.reduce((acc, s) => acc + (s.score ?? 0), 0) / prev.length);
-    return avgScore - prevAvg;
-  }, [selectedDay, scans, avgScore]);
+    const prev = dbScans.filter((s) => toDateKey(new Date(s.created_at)) === prevKey);
+    if (!prev.length) return null;
+    const prevAvg = Math.round(prev.reduce((acc, s) => acc + s.score, 0) / prev.length * 10) / 10;
+    return Math.round((avgScore - prevAvg) * 10) / 10;
+  }, [selectedDay, dbScans, avgScore]);
 
   const hasScansByDay = useMemo(() => {
-    const set = new Set<string>(scans.map((s) => toDateKey(new Date(s.at))));
+    const set = new Set<string>(dbScans.map((s) => toDateKey(new Date(s.created_at))));
     return set;
-  }, [scans]);
+  }, [dbScans]);
 
-  const progressPct = Math.max(0, Math.min(100, avgScore));
+  const progressPct = Math.max(0, Math.min(100, Math.round(avgScore * 10)));
   const ringDash = 2 * Math.PI * 28;
   const ringOffset = ringDash - (progressPct / 100) * ringDash;
 
@@ -63,7 +116,7 @@ export default function Home() {
     <div className="min-h-screen space-y-5 bg-[#FAFAFA] px-5 pt-8 pb-6 text-[#111111]">
       <header className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.2em] text-[#999999]">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-[#888888]">
             BONJOUR
           </p>
           <h1
@@ -73,7 +126,7 @@ export default function Home() {
             {profile?.firstName || "Vibe"}
           </h1>
         </div>
-        <div className="inline-flex items-center gap-1.5 rounded-full bg-[#EDE9FE] px-3 py-1.5 text-sm font-medium text-[#7C5CFC]">
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-[#F0F0F0] px-3 py-1.5 text-sm font-medium text-[#111111]">
           <Zap className="h-3.5 w-3.5" strokeWidth={2.2} />
           {profile?.vibers ?? 0}
         </div>
@@ -92,13 +145,13 @@ export default function Home() {
               >
                 <span
                   className={`flex h-8 w-8 items-center justify-center rounded-full text-sm ${
-                    active ? "bg-[#7C5CFC] text-white" : "text-[#111111]"
+                    active ? "bg-[#111111] text-white" : "text-[#111111]"
                   }`}
                   style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 500 }}
                 >
                   {day.label}
                 </span>
-                <span className={`h-1.5 w-1.5 rounded-full ${hasScan ? "bg-[#7C5CFC]" : "bg-transparent"}`} />
+                <span className={`h-1.5 w-1.5 rounded-full ${hasScan ? "bg-[#111111]" : "bg-transparent"}`} />
               </button>
             );
           })}
@@ -108,11 +161,11 @@ export default function Home() {
       <section className="rounded-2xl border border-[#F0F0F0] bg-white p-4 shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-xs text-[#999999]" style={{ fontFamily: '"DM Sans", system-ui, sans-serif' }}>
+            <p className="text-xs text-[#888888]" style={{ fontFamily: '"DM Sans", system-ui, sans-serif' }}>
               Score moyen du jour
             </p>
             <p
-              className="mt-1 text-5xl text-[#7C5CFC]"
+              className="mt-1 text-5xl text-[#111111]"
               style={{ fontFamily: '"Azeret Mono", ui-monospace, monospace', fontWeight: 600 }}
             >
               {avgScore}
@@ -120,13 +173,13 @@ export default function Home() {
           </div>
           <div className="relative h-20 w-20">
             <svg viewBox="0 0 72 72" className="h-20 w-20 -rotate-90">
-              <circle cx="36" cy="36" r="28" fill="none" stroke="#F0F0F0" strokeWidth="8" />
+              <circle cx="36" cy="36" r="28" fill="none" stroke="#E5E5E5" strokeWidth="8" />
               <circle
                 cx="36"
                 cy="36"
                 r="28"
                 fill="none"
-                stroke="#7C5CFC"
+                stroke="#111111"
                 strokeWidth="8"
                 strokeLinecap="round"
                 strokeDasharray={ringDash}
@@ -134,7 +187,7 @@ export default function Home() {
               />
             </svg>
             <div
-              className="absolute inset-0 flex items-center justify-center text-sm text-[#7C5CFC]"
+              className="absolute inset-0 flex items-center justify-center text-sm text-[#111111]"
               style={{ fontFamily: '"Azeret Mono", ui-monospace, monospace', fontWeight: 600 }}
             >
               {progressPct}%
@@ -145,11 +198,17 @@ export default function Home() {
           <MiniStat label="scans" value={scansForSelectedDay.length.toString()} />
           <MiniStat label="meilleur" value={bestScore ? `${bestScore}` : "--"} />
           <MiniStat
-            label="progression"
-            value={`${previousDay >= 0 ? "+" : ""}${previousDay}`}
-            isAccent={previousDay >= 0}
+            label="vs hier"
+            value={previousDay === null ? "--" : `${previousDay >= 0 ? "+" : ""}${previousDay}`}
+            color={previousDay === null ? "#888888" : previousDay > 0 ? "#22C55E" : previousDay < 0 ? "#EF4444" : "#888888"}
           />
         </div>
+      </section>
+
+      <section className="grid grid-cols-3 gap-2">
+        <RingCard label="Cohérence" value={avgCoherence} color="#7C5CFC" />
+        <RingCard label="Originalité" value={avgOriginalite} color="#F43F5E" />
+        <RingCard label="Fit" value={avgFit} color="#06B6D4" />
       </section>
 
       <section className="space-y-3">
@@ -168,10 +227,10 @@ export default function Home() {
             >
               Lance ton premier vibe
             </p>
-            <p className="mt-2 text-sm text-[#999999]" style={{ fontFamily: '"DM Sans", system-ui, sans-serif' }}>
+            <p className="mt-2 text-sm text-[#888888]" style={{ fontFamily: '"DM Sans", system-ui, sans-serif' }}>
               Fais un scan pour afficher tes stats du jour.
             </p>
-            <div className="mt-3 flex justify-center text-[#7C5CFC]">
+            <div className="mt-3 flex justify-center text-[#888888]">
               <ArrowDownRight className="h-5 w-5" />
             </div>
           </div>
@@ -179,27 +238,27 @@ export default function Home() {
           scansForSelectedDay.map((scan) => (
             <button
               key={scan.id}
-              onClick={() => navigate("/app/history")}
-              className="flex w-full items-center gap-3 rounded-2xl border border-[#F0F0F0] bg-white p-3 text-left shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
+              onClick={() => navigate(`/scan/${scan.id}`)}
+              className="flex w-full items-center gap-3 rounded-2xl border border-[#F0F0F0] bg-white p-3 text-left shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition hover:bg-[#FAFAFA]"
             >
-              {scan.imageUrl ? (
-                <img src={scan.imageUrl} alt="Scan" className="h-14 w-14 rounded-xl object-cover" />
+              {scan.image_url ? (
+                <img src={scan.image_url} alt="Scan" className="h-14 w-14 rounded-xl object-cover" />
               ) : (
-                <div className="h-14 w-14 rounded-xl bg-[#F4F1FA]" />
+                <div className="h-14 w-14 rounded-xl bg-[#F0F0F0]" />
               )}
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm text-[#111111]" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 500 }}>
                   Scan du jour
                 </p>
-                <p className="text-xs text-[#999999]" style={{ fontFamily: '"DM Sans", system-ui, sans-serif' }}>
-                  {new Date(scan.at).toLocaleString("fr-FR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
+                <p className="text-xs text-[#888888]" style={{ fontFamily: '"DM Sans", system-ui, sans-serif' }}>
+                  {new Date(scan.created_at).toLocaleString("fr-FR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
                 </p>
               </div>
               <span
-                className="rounded-full bg-[#EDE9FE] px-3 py-1 text-sm text-[#7C5CFC]"
+                className="rounded-full bg-[#111111] px-3 py-1 text-sm text-white"
                 style={{ fontFamily: '"Azeret Mono", ui-monospace, monospace', fontWeight: 600 }}
               >
-                {scan.score ?? "--"}
+                {scan.score}
               </span>
             </button>
           ))
@@ -209,17 +268,53 @@ export default function Home() {
   );
 }
 
-function MiniStat({ label, value, isAccent = false }: { label: string; value: string; isAccent?: boolean }) {
+function MiniStat({ label, value, color = "#111111" }: { label: string; value: string; color?: string }) {
   return (
     <div className="rounded-xl border border-[#F0F0F0] bg-white p-2">
-      <p className="text-[11px] uppercase tracking-[0.08em] text-[#999999]" style={{ fontFamily: '"DM Sans", system-ui, sans-serif' }}>
+      <p className="text-[11px] uppercase tracking-[0.08em] text-[#888888]" style={{ fontFamily: '"DM Sans", system-ui, sans-serif' }}>
         {label}
       </p>
       <p
-        className={`mt-1 text-base ${isAccent ? "text-[#7C5CFC]" : "text-[#111111]"}`}
-        style={{ fontFamily: '"Azeret Mono", ui-monospace, monospace', fontWeight: 600 }}
+        className="mt-1 text-base"
+        style={{ fontFamily: '"Azeret Mono", ui-monospace, monospace', fontWeight: 600, color }}
       >
         {value}
+      </p>
+    </div>
+  );
+}
+
+function RingCard({ label, value, color }: { label: string; value: number; color: string }) {
+  const ringDash = 2 * Math.PI * 20;
+  const ringOffset = ringDash - (value / 10) * ringDash;
+  const bgOpacity = color + "1A"; // 0.1 opacity hex
+  
+  return (
+    <div className="rounded-xl border border-[#F0F0F0] bg-white p-3 text-center shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
+      <div className="relative mx-auto h-16 w-16">
+        <svg viewBox="0 0 48 48" className="h-16 w-16 -rotate-90">
+          <circle cx="24" cy="24" r="16" fill="none" stroke={color} strokeWidth="4" opacity="0.1" />
+          <circle
+            cx="24"
+            cy="24"
+            r="16"
+            fill="none"
+            stroke={color}
+            strokeWidth="4"
+            strokeLinecap="round"
+            strokeDasharray={ringDash}
+            strokeDashoffset={ringOffset}
+          />
+        </svg>
+        <div
+          className="absolute inset-0 flex items-center justify-center text-sm font-bold"
+          style={{ fontFamily: '"Azeret Mono", ui-monospace, monospace', color: "#111111" }}
+        >
+          {value}
+        </div>
+      </div>
+      <p className="mt-2 text-xs text-[#888888]" style={{ fontFamily: '"DM Sans", system-ui, sans-serif' }}>
+        {label}
       </p>
     </div>
   );
