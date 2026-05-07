@@ -46,19 +46,27 @@ export const AppLayout = () => {
   if (!profileReady) return <Navigate to="/onboarding" replace />;
 
   return (
-    <div className="min-h-screen bg-background">
-      <main className="mx-auto max-w-md pb-28">
-        {/* Fade 0.3s à chaque changement de route — clé = pathname */}
+    <div
+      className="bg-background overflow-hidden flex flex-col"
+      style={{ height: "100dvh" }}
+    >
+      {/* Zone scrollable — flex: 1 pour remplir l'espace au-dessus de la navbar */}
+      <main
+        className="flex-1 overflow-y-auto mx-auto w-full max-w-md"
+        style={{ overscrollBehavior: "contain" }}
+      >
         <div key={location.pathname} className="vibe-page-fade">
           <Outlet />
         </div>
       </main>
+
+      {/* FAB scan — position: fixed, calé au-dessus de la navbar */}
       {showScanFab && (
         <button
           type="button"
           onClick={() => navigate("/app/scan")}
           aria-label="Ouvrir le scan"
-          className={`fixed bottom-[88px] right-5 z-[60] flex h-[60px] w-[60px] items-center justify-center rounded-full transition-transform duration-200 hover:scale-105 active:scale-95 ${
+          className={`fixed bottom-[76px] right-5 z-[60] flex h-[60px] w-[60px] items-center justify-center rounded-full transition-transform duration-200 hover:scale-105 active:scale-95 ${
             isHome
               ? "bg-[#7C5CFC] text-white shadow-[0_8px_32px_rgba(124,92,252,0.35)]"
               : "bg-[#C8F135] text-black shadow-[0_8px_32px_rgba(200,241,53,0.35)]"
@@ -81,6 +89,8 @@ export const AppLayout = () => {
           </svg>
         </button>
       )}
+
+      {/* Navbar — flex-shrink: 0, pas position: fixed */}
       <BottomNav />
     </div>
   );

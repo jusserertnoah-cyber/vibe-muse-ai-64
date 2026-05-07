@@ -158,33 +158,21 @@ All colors MUST be HSL.
   }
 
   html, body {
-    overscroll-behavior: none;
-    overflow-x: hidden;
-    width: 100%;
-    height: 100%;
     margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100dvh;
+    overflow: hidden;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: auto;
   }
 
-  /* body fixé au viewport = zéro rebond élastique iOS/Android */
-  body {
-    position: fixed;
-    inset: 0;
-  }
-
-  /* #root = unique conteneur de scroll ; safe-area pour notch/home bar */
   #root {
     width: 100%;
-    max-width: 430px;
-    margin: 0 auto;
-    height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
   body {
@@ -196,6 +184,8 @@ All colors MUST be HSL.
     line-height: 1.55;
     font-size: 16px;
     background-color: var(--bg);
+    max-width: 430px;
+    margin: 0 auto;
     -webkit-font-smoothing: antialiased;
   }
 
