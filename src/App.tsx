@@ -25,6 +25,7 @@ const Settings = lazy(() => import("./pages/app/Settings.tsx"));
 const HistoryPage = lazy(() => import("./pages/app/HistoryPage.tsx"));
 const TopVibes = lazy(() => import("./pages/app/TopVibes.tsx"));
 const FAQ = lazy(() => import("./pages/app/FAQ.tsx"));
+const ScanResult = lazy(() => import("./pages/app/ScanResult.tsx"));
 const Privacy = lazy(() => import("./pages/legal/Privacy.tsx"));
 const Terms = lazy(() => import("./pages/legal/Terms.tsx"));
 
@@ -108,6 +109,8 @@ const App = () => {
             <Route path="topvibes" element={<TopVibes />} />
             <Route path="faq" element={<FAQ />} />
           </Route>
+          {/* Page détail d'un scan — hors AppLayout (pas de BottomNav) */}
+          <Route path="/scan/:id" element={<ScanResult />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

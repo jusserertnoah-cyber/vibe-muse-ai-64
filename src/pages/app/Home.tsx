@@ -25,32 +25,32 @@ export default function Home() {
 
   // Load scans from Supabase
   useEffect(() => {
-    const loadScans = async () => {
+    let cancelled = false;
+
+    const fetchScans = async (userId: string) => {
       try {
-        const { data: sess } = await supabase.auth.getSession();
-        if (!sess.session?.user?.id) {
-          setLoading(false);
-          return;
-        }
-        
         const { data, error } = await supabase
           .from("scans")
           .select("*")
-          .eq("user_id", sess.session.user.id)
+          .eq("user_id", userId)
           .order("created_at", { ascending: false })
           .limit(50);
-        
-        if (!error && data) {
-          setDbScans(data as ScanFromDB[]);
-        }
+        if (!cancelled && !error && data) setDbScans(data as ScanFromDB[]);
       } catch (e) {
         console.error("Failed to load scans from DB", e);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
-    
-    loadScans();
+
+    // getUser() valide la session côté serveur, plus fiable que getSession()
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (cancelled) return;
+      if (user?.id) fetchScans(user.id);
+      else setLoading(false);
+    });
+
+    return () => { cancelled = true; };
   }, []);
 
   const weekDays = useMemo(() => {
@@ -216,7 +216,7 @@ export default function Home() {
           className="text-xl text-[#111111]"
           style={{ fontFamily: '"Azeret Mono", ui-monospace, monospace', fontWeight: 600 }}
         >
-          Mes derniers vibes
+          Mes scans
         </h2>
 
         {scansForSelectedDay.length === 0 ? (
